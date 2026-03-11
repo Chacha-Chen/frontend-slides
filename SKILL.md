@@ -94,11 +94,13 @@ html {
     /* Titles scale from mobile to desktop */
     --title-size: clamp(1.5rem, 5vw, 4rem);
     --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
-    --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+    --h3-size: clamp(1.2rem, 2.8vw, 2rem);
 
-    /* Body text */
-    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
-    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+    /* Body text — IMPORTANT: keep these proportionally large
+       relative to titles. Non-title text should be comfortably
+       readable on a projector, not tiny. */
+    --body-size: clamp(1rem, 2vw, 1.5rem);
+    --small-size: clamp(0.85rem, 1.4vw, 1.15rem);
 
     /* Spacing scales with viewport */
     --slide-padding: clamp(1rem, 4vw, 4rem);
@@ -157,7 +159,7 @@ img, .image-container {
         --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
         --content-gap: clamp(0.3rem, 1vw, 0.75rem);
         --title-size: clamp(1.1rem, 4vw, 2rem);
-        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        --body-size: clamp(0.8rem, 1.4vw, 1.1rem);
     }
 
     /* Hide non-essential elements */
@@ -172,7 +174,7 @@ img, .image-container {
         --slide-padding: clamp(0.4rem, 2vw, 1rem);
         --title-size: clamp(1rem, 3.5vw, 1.5rem);
         --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
-        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        --body-size: clamp(0.75rem, 1.2vw, 1rem);
     }
 }
 
@@ -744,8 +746,8 @@ Follow this structure for all presentations:
             --font-display: 'Clash Display', sans-serif;
             --font-body: 'Satoshi', sans-serif;
             --title-size: clamp(2rem, 6vw, 5rem);
-            --subtitle-size: clamp(0.875rem, 2vw, 1.25rem);
-            --body-size: clamp(0.75rem, 1.2vw, 1rem);
+            --subtitle-size: clamp(1rem, 2.2vw, 1.5rem);
+            --body-size: clamp(1rem, 2vw, 1.5rem);
 
             /* Spacing - MUST use clamp() for responsive scaling */
             --slide-padding: clamp(1.5rem, 4vw, 4rem);
@@ -1015,6 +1017,14 @@ document.addEventListener('keydown', (e) => {
 ```
 
 ### Code Quality Requirements
+
+**Typography Proportionality (IMPORTANT):**
+Non-title fonts (`--body-size`, `--small-size`, `--mono-size`, `--h3-size`) must be proportionally large relative to the title. Presentations are often projected on large screens — body text that looks fine on a laptop monitor can be unreadable on a projector. As a rule of thumb, `--body-size` should be at least `clamp(1rem, 2vw, 1.5rem)` and never drop below `clamp(0.85rem, ...)` at its minimum. If the title is `clamp(2rem, 5vw, 4rem)`, body text should not be smaller than roughly 40-50% of the title's minimum size.
+
+**Avoid Unnecessary Line Breaks and Restrictive max-width (IMPORTANT):**
+Do NOT use `<br>` tags inside headings (`<h1>`, `<h2>`) or subtitles to force line breaks. Let text flow naturally — the browser will wrap when needed based on viewport width. Only use `<br>` when a specific visual pause is explicitly requested by the user.
+
+Do NOT set restrictive `max-width` values (e.g., `max-width: 700px`, `max-width: 750px`) on paragraphs, highlight boxes, callout boxes, or any content element. This causes content to occupy only part of the slide width, looking cramped and misaligned. Let content span the full available width defined by the slide padding. The slide's own padding (`--slide-padding-left`, `--slide-padding-right`) already constrains the content area — adding a narrower `max-width` on top of that is almost always wrong.
 
 **Comments:**
 Every section should have clear comments explaining:

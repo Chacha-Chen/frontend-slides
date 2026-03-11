@@ -1,0 +1,732 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Are LLMs Optimal Information Processors?</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="3033e7ca-2d61-80b4-9c3f-f0f17dc3bd21" class="page serif"><header><h1 class="page-title" dir="auto"><strong>Are LLMs Optimal Information Processors?</strong></h1><p class="page-description" dir="auto"></p></header><div class="page-body"><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-80a0-ac2b-fc203f46cc45" class="">In complex domains like scientific reasoning, available evidence is rarely definitive; it is usually partial and ambiguous. Because of this, an AI system shouldn&#x27;t simply guess a final answer. It must maintain <strong>calibrated probabilities</strong>, keeping multiple hypotheses alive when evidence is weak, and narrowing them down only when evidence is strong.</p></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-80e8-89f8-ea7d6ab85b85" class="">However, current benchmarks primarily evaluate LLMs based on <strong>final-answer accuracy</strong>, which masks critical <em>process failures</em>. Consider a medical diagnosis: a doctor who sees a single mild symptom and immediately concludes &quot;cancer&quot; with 100% certainty is dangerously over-confident, even if they happen to guess correctly. Accuracy tells us <em>what</em> the model concluded, but not <em>how</em> it managed its uncertainty along the way.</p></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-8088-b9b8-fcc557387605" class=""><mark class="highlight-yellow_background">An optimal reasoner shifts beliefs in proportion to the evidence—no more, no less.</mark> Current LLMs, we found, systematically fail this standard. To diagnose this, we drew on economist Zellner&#x27;s Information Conservation Principle and propose <strong>Zellner’s Delta (</strong>Δ<strong>)</strong> <strong>as a </strong><em><strong>novel diagnostic metric</strong></em><strong>.</strong> Unlike accuracy, Δ measures whether a model&#x27;s probability updates are proportional to the strength of the evidence. Using this metric, we reveal that current LLMs systematically mismanage uncertainty—frequently over-updating on weak clues or under-updating on strong one —and that <em>high accuracy might masks this flawed reasoning process.</em></p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80d9-b2f7-e432b73e3135" class=""><mark class="highlight-blue"><strong>Accuracy measures what the model concludes. Our diagnostic measures </strong></mark><em><mark class="highlight-blue"><strong>how</strong></mark></em><mark class="highlight-blue"><strong> it reasons.</strong></mark></p></div><div style="display:contents" dir="auto"><h2 id="3033e7ca-2d61-80b7-a3f5-e11a95a38d7e" class=""><strong>What Makes an Optimal Information Processor</strong></h2></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80d0-b53e-fc60d92425e1" class="">Imagine a doctor diagnosing a patient. Early on, they have limited information—maybe just a few symptoms. A good doctor doesn&#x27;t leap to a confident diagnosis at this stage. Their uncertainty should reflect the ambiguity of the evidence.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8049-a3a4-efeb8496a803" class="">As more information arrives, lab test results, patient history, imaging, their confidence towards possible diagnosis should shift <em>in proportion to what the evidence actually supports</em>. Not faster, not slower. A slight hint should produce a slight update. Strong evidence should produce a strong update.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-803a-8f9e-ff2281a1544d" class="">This intuition is captured in what Arnold Zellner called the<mark class="highlight-blue"> </mark><mark class="highlight-blue"><strong>Information Conservation Principle (ICP)</strong></mark>: optimal reasoning neither fabricates information nor throws it away. Your probability prediction shifts in proportion to the evidence strength.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8058-8423-cc0c237fdfea" class="">We&#x27;ll call a system that behaves this way an <mark class="highlight-blue"><strong>optimal information processor</strong></mark><strong>.</strong></p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80c4-999e-fcc7cee9a5fb" class=""><em>Note: ICP is the information-theoretical equivalent of Bayesian update. </em></p></div><div style="display:contents" dir="auto"><h3 id="3053e7ca-2d61-8029-9270-de33362190e0" class="">Why ICP Matters for AI</h3></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8042-8b06-fa0967de8674" class="">Now consider LLMs. When you consult one with a problem, feeding it more and more information gradually, does it behave like our idealized doctor?</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8092-b8b7-f879fc554cd7" class="">We found that: typically, no. These models are trained to produce answers, not to represent uncertainty or update transparently as new evidence arrives. </p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-809e-aeb0-c2c10c6b07a0" class="">This matters because in sequential reasoning, the path matters. Each update shapes which hypotheses stay alive, what information you seek next, and when you decide to commit. A model that over-updates early might prematurely discard the correct hypothesis. One that under-updates might waste resources on possibilities the evidence has already ruled out.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8016-93ff-c5480b1cb3ee" class=""><strong>A doctor who guesses &quot;cancer&quot; on day one and happens to be right is not the same as one who arrives at &quot;cancer&quot; through appropriate evidence accumulation. </strong>We&#x27;re not just asking &quot;did you get it right?&quot; We&#x27;re asking: at each step, did you update appropriately given what you just learned?</p></div><div style="display:contents" dir="ltr"><figure id="3123e7ca-2d61-80da-a51a-de5c3d2763d5" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-25_at_2.54.26_PM.png"><img style="width:710px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-25_at_2.54.26_PM.png"/></a></figure></div><div style="display:contents" dir="auto"><h3 id="3053e7ca-2d61-80ff-a8d5-d653770229cc" class=""><strong>A Note on ICP, Calibration, and Accuracy</strong></h3></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80ee-bffe-d0cef03da557" class="">These three concepts are related but distinct:</p></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-80e3-a31b-e0e5f3550bf3" class="bulleted-list"><li style="list-style-type:disc"><strong>Accuracy </strong>asks: did the model get the right answer?</li></ul></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8020-8720-fa4b9faf9e7d" class="bulleted-list"><li style="list-style-type:disc"><strong>Calibration</strong> asks: does the model&#x27;s stated confidence match how often it&#x27;s actually right? (When it says 80%, is it correct 80% of the time?)</li></ul></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-804d-9a23-e20406e99d03" class="bulleted-list"><li style="list-style-type:disc"><strong>ICP </strong>asks: does the model update its beliefs <em>proportionally</em> to evidence strength at each step?</li></ul></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8011-b017-dfcd48ac31a5" class="">All three matter. But they measure different things.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8070-bf6a-c1f0a33e7200" class="">A model can be <strong>accurate but violate ICP</strong>—it gets the right answer through erratic reasoning. A model can be <strong>well-calibrated but violate ICP</strong>—its final confidence is reliable, but it got there through wild swings rather than proportional updates.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-807e-ba4e-f186b2584bbc" class=""><strong>And a model can satisfy ICP but still be wrong:</strong></p></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8001-ab64-d67efbcded88" class="bulleted-list"><li style="list-style-type:disc">It reasoned properly given the evidence, but the evidence was insufficient.</li></ul></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8067-b5a4-df70ecdb5ddf" class="bulleted-list"><li style="list-style-type:disc">The model misjudged the strength of the evidence itself (evidence miscalibration)</li></ul></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8043-a952-fd247b5d705a" class="">ICP measures whether updates are proportional to <em><strong>perceived</strong></em> evidence strength. It doesn&#x27;t guarantee the model perceives evidence strength correctly.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8000-8f83-e9de20c58471" class="">We focus on ICP because it captures something the other two miss: <em>the quality of the reasoning process itself</em>. In sequential settings, this is what determines whether a model can reliably navigate toward correct answers, not just stumble onto them.</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80d4-900f-d25e27555bb6" class=""><em>Note:</em><em> Endpoint calibration and accuracy alone do not imply ICP. </em><em><strong>But process calibration (calibrated at each step, not just the end) combined with likelihood calibration (correctly estimating evidence strength) does imply ICP. </strong></em><em>If you&#x27;re calibrated throughout and perceive evidence correctly, your updates must be proportional. Moving toward the correct answer follows as a consequence.</em></p></div><div style="display:contents" dir="auto"><h2 id="3063e7ca-2d61-8053-ae2a-c6153c78a1bf" class="">Measuring ICP with Zellner’s Delta <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span></span><span>﻿</span></span></h2></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8098-bf94-f3ddb08444e8" class="">We&#x27;ve said an optimal processor updates proportionally to evidence strength. But how do we quantify &quot;proportionally&quot;?</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80df-a175-d52cb903183d" class="">Zellner gave a precise, information-theoretic answer:</p></div><div style="display:contents" dir="auto"><figure id="3063e7ca-2d61-80f6-93fe-deda908c2e88" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><menclose notation="box"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="false"><mstyle scriptlevel="0" displaystyle="true"><mrow><mrow><mtext mathvariant="bold">Belief</mtext><mtext> </mtext><mtext mathvariant="bold">update</mtext></mrow><mtext>  </mtext><mo>=</mo><mtext>  </mtext><mrow><mtext mathvariant="bold">posterior-expected</mtext><mtext> </mtext><mtext mathvariant="bold">log-likelihood</mtext></mrow><mtext>  </mtext><mo>−</mo><mtext>  </mtext><mrow><mtext mathvariant="bold">log</mtext><mtext> </mtext><mtext mathvariant="bold">evidence</mtext></mrow></mrow></mstyle></mstyle></mstyle></menclose></mrow><annotation encoding="application/x-tex">\boxed{\textbf{Belief update}\;=\;\textbf{posterior-expected log-likelihood}\;-\;\textbf{log evidence}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.5689em;vertical-align:-0.5344em;"></span><span class="mord"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0344em;"><span style="top:-3.5689em;"><span class="pstrut" style="height:3.5689em;"></span><span class="boxpad"><span class="mord"><span class="mord"><span class="mord text"><span class="mord textbf">Belief update</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord text"><span class="mord textbf">posterior-expected log-likelihood</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord text"><span class="mord textbf">log evidence</span></span></span></span></span></span><span style="top:-3.0344em;"><span class="pstrut" style="height:3.5689em;"></span><span class="stretchy fbox" style="height:1.5689em;border-style:solid;border-width:0.04em;"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5344em;"><span></span></span></span></span></span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><figure id="3063e7ca-2d61-80d2-aea4-d7a7fe484fe8" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>D</mi><mrow><mi mathvariant="normal">K</mi><mi mathvariant="normal">L</mi></mrow></msub><mtext> ⁣</mtext><mrow><mo fence="true">(</mo><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo><mtext> </mtext><mi mathvariant="normal">∥</mi><mtext> </mtext><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo fence="true">)</mo></mrow><mo>=</mo><msub><mi mathvariant="double-struck">E</mi><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></msub><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>log</mi><mo>⁡</mo><mi>f</mi><mo stretchy="false">(</mo><mi>y</mi><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo><mo fence="true">]</mo></mrow><mo>−</mo><mi>log</mi><mo>⁡</mo><mi>p</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D_{\mathrm{KL}}\!\left(p(\theta \mid y)\,\|\,p(\theta)\right)=\mathbb{E}_{p(\theta \mid y)}\!\left[\log f(y \mid \theta)\right]-\log p(y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">KL</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">(</span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">∥</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">)</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span><span class="mrel mtight">∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">[</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">]</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8065-aaf6-cd616d0c3b69" class="">Left-hand side measures how much the belief moved, and right-hand size measur how strong the evidence was: </p></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80f4-8cfa-edecc3823e57" class="bulleted-list"><li style="list-style-type:disc"> <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="double-struck">E</mi><mrow><mi>p</mi><mo stretchy="false">(</mo><mi>θ</mi><mo>∣</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></msub><mtext> ⁣</mtext><mrow><mo fence="true">[</mo><mi>log</mi><mo>⁡</mo><mi>f</mi><mo stretchy="false">(</mo><mi>y</mi><mo>∣</mo><mi>θ</mi><mo stretchy="false">)</mo><mo fence="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbb{E}_{p(\theta \mid y)}\!\left[\log f(y \mid \theta)\right]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1052em;vertical-align:-0.3552em;"></span><span class="mord"><span class="mord mathbb">E</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.5198em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">p</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span><span class="mrel mtight">∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3552em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:-0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;">[</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∣</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mclose">)</span><span class="mclose delimcenter" style="top:0em;">]</span></span></span></span></span></span><span>﻿</span></span> means how well the evidence is explained <em>on average by hypotheses weighted according to the posterior.</em></li></ul></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80bf-9e87-f84c8f793259" class="bulleted-list"><li style="list-style-type:disc"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mi>log</mi><mo>⁡</mo><mi>p</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">-\log p(y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span></span><span>﻿</span></span> is a baseline term measuring how surprising the evidence was overall.</li></ul></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80ce-8bd3-d5fbb528f757" class="">If the evidence is both <em>surprising</em> and <em>well-explained by your updated beliefs</em>, it forces a large belief update.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8002-9a68-cc6be0cd2ccd" class="">Zellner reframed this idea in terms of <strong>information conservation, which we adopt as our ICP metric:</strong></p></div><div style="display:contents" dir="auto"><figure id="3063e7ca-2d61-8043-b047-fed0c5c6c167" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mtext>Zellner’s Delta </mtext><mi mathvariant="normal">Δ</mi><mo>=</mo><msub><mi>I</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub><mo>−</mo><msub><mi>I</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\text{Zellner&#x27;s Delta } \Delta = I_{out} − I_{in}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Zellner’s Delta </span></span><span class="mord">Δ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">in</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8048-b77f-c550d6c6668f" class="">where <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_{in}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">in</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> is the expected log-prior plus log-likelihood under the posterior (how much the inputs support your conclusion), and <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_{out}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> the negative entropy of the posterior plus the log-evidence (how concentrated your conclusion is, adjusted for how surprising the evidence was).</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8063-ab0b-d3beaec9c1a9" class=""><mark class="highlight-yellow_background">Δ = 0 means perfect conservation, intuitively the model updated exactly as </mark><mark class="highlight-yellow_background"><strong>Bayes&#x27; rule</strong></mark><mark class="highlight-yellow_background"> prescribes. This isn&#x27;t a coincidence: Zellner showed that conserving information </mark><em><mark class="highlight-yellow_background">just is</mark></em><mark class="highlight-yellow_background"> Bayesian updating, derived from first principles.</mark></p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8071-8bf0-e9c17726c456" class="">In other words, ICP also measures the &quot;<mark class="highlight-blue"><strong>Bayesianness</strong></mark>&quot; of the reasoning process.</p></div><div style="display:contents" dir="auto"><blockquote id="3063e7ca-2d61-80d0-8c0e-c494dce5bb64" class=""><strong>Formal math proof:</strong><div style="display:contents" dir="ltr"><figure id="3063e7ca-2d61-803c-a218-c7ef76e43ea6"><div class="source"><a href="Are%20LLMs%20Optimal%20Information%20Processors/write_up.pdf">write_up.pdf</a></div></figure></div></blockquote></div><div style="display:contents" dir="auto"><p id="3093e7ca-2d61-8015-8668-fb58200f532d" class=""><strong>Why use Zellner but not Bayes directly?</strong></p></div><div style="display:contents" dir="auto"><p id="3093e7ca-2d61-80a4-94e6-c787095dc5d9" class="">f the two are equivalent, why bother with the transformation?While bayesian formula tells us about the correct <strong>destination</strong>, Zellner’s <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span></span><span>﻿</span></span> gives us a single scalar metric that quantifies exactly how much the model’s update path deviates from the ideal, even if the final answer appears to be correct. </p></div><div style="display:contents" dir="auto"><h3 id="3063e7ca-2d61-80e8-90d1-ed12dde49b4b" class=""><strong>A Concrete Example</strong></h3></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80fc-928d-db51265dd722" class="">Consider a multiple-choice question with options A, B, C, D.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80a5-bfc5-d321af29cc95" class=""><strong>Prior: </strong>Before seeing evidence, the model believes [A: 25%, B: 25%, C: 25%, D: 25%].</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80cf-aeb2-d93047112fa2" class=""><strong>Evidence arrives: </strong>A clue suggesting the answer relates to photosynthesis.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8037-8b41-f0d24b3aa838" class=""><strong>Likelihood: </strong>How well does each option explain this clue? Say [A: 80%, B: 10%, C: 5%, D: 5%]—the clue strongly favors A.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-804c-a368-d4116e05ef16" class=""><strong>Bayesian posterior: </strong>Combining prior and likelihood via Bayes&#x27; rule gives roughly [A: 73%, B: 9%, C: 5%, D: 5%].</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80d2-b433-f54f9c160366" class=""><strong>Model&#x27;s actual posterior: </strong>Suppose the model outputs [A: 95%, B: 2%, C: 2%, D: 1%].</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80a7-86de-dd5bdfd4a911" class=""><strong>The model leapt to 95% when the evidence only warranted 73%. That&#x27;s </strong><em><strong>over-updating</strong></em><strong>.</strong></p></div><div style="display:contents" dir="auto"><h2 id="3053e7ca-2d61-8047-a25a-f278ff06d02b" class="">Experiments </h2></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8064-b232-ec3b74c26b68" class="">First we wanted to test a simple question: do LLMs actually update like optimal information processors? Or do they violate ICP in systematic ways?</p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8017-998c-ecf0fdab94b6" class="">To answer this, we needed a setting where reasoning is genuinely hard, where models can&#x27;t just pattern-match to an answer, and where we can observe how beliefs shift as evidence accumulates. We chose GPQA, a dataset of graduate-level scientific reasoning problems, as our testbed. These are problems difficult enough that even domain experts often need to work through them step by step. We also tested on medical reasoning benchmarks like MediQ and MedPAIR. </p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-8060-ba94-d57cb6505210" class=""><strong>What we found:</strong></p></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80f4-afcb-d81fe7142944" class="">LLMs are <em><strong>largely</strong></em> Bayesian, they do update in response to evidence, and often in the right direction. But they are not fully ICP-compliant.</p></div><div style="display:contents" dir="ltr"><figure id="3063e7ca-2d61-80de-a7a6-c9447ccca37c" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.05.23_PM.png"><img style="width:710px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.05.23_PM.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="3063e7ca-2d61-80fb-a873-dbd042707d94" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.09.16_PM.png"><img style="width:720px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.09.16_PM.png"/></a><figcaption>Zellner plots (Information In vs. Information Out) for GPQA Diamond dataset in using verbalized numeric uncertainty quantification methods. The diagonal line represents perfect Bayesian calibration. Points off the line represent non-optimal ICP updates. </figcaption></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80ab-92ae-d135d5d3c147" class="">Key observations:</p></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-806e-babb-d186659eaf6d" class="bulleted-list"><li style="list-style-type:disc">Accuracy: Models show reasonable performance ranging from 0.412-0.933</li></ul></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80ef-8779-dcee1031dd83" class="bulleted-list"><li style="list-style-type:disc">Zellner Abs Delta (ICP metrics): Values range from 0.098-0.331, indicating imperfect update process (perfect would have delta close to 0)</li></ul></div><div style="display:contents" dir="auto"><h3 id="3063e7ca-2d61-80f0-99a5-ed0e4eed1f93" class="">Failure patterns </h3></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80b1-8491-d22cd53c0eb1" class="">Where does LLMs fail at? We take a closer look at LLMs failure patterns</p></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8044-8b4a-dd7bf3efbb8c" class="bulleted-list"><li style="list-style-type:disc"><strong>Over-updating:</strong> <em>Symptom:</em> Jumping from 20% to 90% confidence based on one &quot;hint.&quot; <em>Consequence:</em> Prematurely ruling out the correct answer.</li></ul></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8068-8024-c76a7c10d29e" class="bulleted-list"><li style="list-style-type:disc"><strong>Under-updating:</strong> <em>Symptom:</em> Remaining at 50/50 even after strong evidence is provided. <em>Consequence:</em> Wasted compute and indecisive agents.</li></ul></div><div style="display:contents" dir="auto"><ul id="3053e7ca-2d61-8082-9584-eb98d523ba7f" class="bulleted-list"><li style="list-style-type:disc"><strong>Reversed updating: </strong>occasionally moving in the wrong direction entirely.</li></ul></div><div style="display:contents" dir="auto"><p id="3053e7ca-2d61-80da-85a1-dea853ac25da" class="">In other words: <strong>right destination, unreliable path. </strong>LLMs can be accurate without being ICP-compliant. They reach the right answer through unreliable reasoning, over-updating here, under-updating there. <strong>Accuracy masks process failures. But our ICP metrics flag these behaviors. </strong></p></div><div style="display:contents" dir="auto"><h2 id="3123e7ca-2d61-800c-9321-dbbb985a307f" class="">Practical Consequences of Bad Updates: When AI Commits Too Early, It Gets Things Wrong</h2></div><div style="display:contents" dir="ltr"><figure id="3123e7ca-2d61-80c1-8bf0-d156386990d4" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-25_at_2.54.39_PM.png"><img style="width:710px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-25_at_2.54.39_PM.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-80af-afbb-e97c4d4a5cde" class="">To expose the real-world cost of poor reasoning, we designed our benchmark to mirror how evidence actually arrives—sequentially, one clue at a time. At each step, we ask the model how confident it is across all possible answers. If its confidence crosses a threshold, we treat that as a committed decision and stop—just like a doctor who, after hearing one symptom, is certain enough to write a diagnosis. <mark class="highlight-default"><mark class="highlight-yellow_background">This setup reveals something the traditional benchmark never could: models that mismanage uncertainty don&#x27;t just reason sloppily in theory, they get locked into wrong answers in practice.</mark></mark><mark class="highlight-blue"> </mark>The chart above makes this concrete—the more a model over- or under-reacts to evidence, the more often it commits early and commits wrongly, frequently performing worse than random chance. Poor reasoning isn&#x27;t an abstract flaw. It&#x27;s a direct path to confidently wrong decisions.</p></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-8011-be67-e051e0e7e510" class="">You&#x27;ve probably experienced this: you describe a situation to an AI assistant, and it snaps back with a confident, definitive answer—only to be completely wrong. Not &quot;I&#x27;m not sure, it could be X or Y&quot;—just a flat, certain, incorrect conclusion. That overconfidence isn&#x27;t a glitch. It&#x27;s a symptom of poor reasoning.</p></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-8004-aeb6-d8c2df691112" class="">Poor reasoning isn&#x27;t an abstract flaw. It&#x27;s a direct path to confidently wrong decisions.</p></div><div style="display:contents" dir="auto"><h2 id="3053e7ca-2d61-802f-8543-c0351e02f7f2" class=""><strong>Can LLMs Be Optimal? A Synthetic Test</strong></h2></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80ce-bf8d-c698a4eb0985" class="">We&#x27;ve seen that on real-world tasks (GPQA, MediQ, MedPAIR), LLMs achieve reasonable accuracy but imperfect ICP. Is this a fundamental limitation, or just a hard task?</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8091-8025-f0bbb24612c8" class="">To find out, we constructed a synthetic setting: <strong>BumbleGrumble</strong>, a made-up animal prediction task with fabricated attributes. Crucially, we gave the model all the relevant probabilities directly in the prompt, no need to rely on its own knowledge or estimates.</p></div><div style="display:contents" dir="ltr"><figure id="3063e7ca-2d61-8022-9c7d-f2c4084af04f" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.55.53_PM.png"><img style="width:336px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.55.53_PM.png"/></a></figure></div><div style="display:contents" dir="ltr"><figure id="3063e7ca-2d61-8056-8a1a-fbb3eeb3d47b" class="image"><a href="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.54.30_PM.png"><img style="width:709.984375px" src="Are%20LLMs%20Optimal%20Information%20Processors/Screenshot_2026-02-12_at_4.54.30_PM.png"/></a></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-802d-a7ac-da9c8ce42f89" class="">The result: <strong>perfect ICP and perfect accuracy.</strong></p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80d1-84c8-e5a0d62cb391" class="">This tells us something important: LLMs <em><strong>can</strong></em> behave as optimal information processors, when the task is simple enough and when we remove uncertainty about evidence strength by providing it explicitly.</p></div><div style="display:contents" dir="auto"><h2 id="3033e7ca-2d61-80f9-94e0-cff7667f0fb1" class="">Training for ICP</h2></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-805b-91b3-f33a2be3baa9" class=""><strong>Approach 1: Classification + ICP</strong></p></div><div style="display:contents" dir="auto"><figure id="3063e7ca-2d61-8058-85e3-dcb407729bf8" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="script">L</mi><mo>=</mo><munder><munder><mrow><mo>−</mo><munder><mo>∑</mo><mi>c</mi></munder><msub><mi>y</mi><mi>c</mi></msub><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mo stretchy="true">⏟</mo></munder><msub><mi mathvariant="script">L</mi><mrow><mi>C</mi><mi>E</mi></mrow></msub></munder><mo>+</mo><mi>λ</mi><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi mathvariant="normal">Δ</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">\mathcal{L} = \underbrace{-\sum_c y_c \log P(c)}_{\mathcal{L}_{CE}} + \lambda \cdot |\Delta|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.7266em;vertical-align:-2.6766em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-0.4737em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathcal mtight">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">CE</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span class="svg-align" style="top:-1.152em;"><span class="pstrut" style="height:3.05em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
+ 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
+ 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
+-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"/></svg></span><span class="brace-center" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMidYMin slice"><path d="M199572 214
+c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
+ 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
+ 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
+-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"/></svg></span><span class="brace-right" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
+ 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
+-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"/></svg></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span class="mord"><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.9em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1514em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord mathnormal">c</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.898em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.6766em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣Δ∣</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8052-b9d3-eb86c3845a85" class="">where <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">L</mi><mrow><mi>C</mi><mi>E</mi></mrow></msub></mrow><annotation encoding="application/x-tex">{\mathcal{L}_{CE}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">CE</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> is cross-entropy over answer labels A/B/C/D. The model learns to classify. ICP <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi></mrow><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span></span></span></span></span><span>﻿</span></span> ensures the classification probabilities are Bayesian-coherent.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-804a-a13e-ee1d7c51af9a" class=""><em>Risk:</em> Becomes a classifier, may not generalize.</p></div><div style="display:contents" dir="auto"><hr id="3063e7ca-2d61-803d-9011-e07f60b9917c"/></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-809f-8696-d5394e2ccd68" class=""><strong>Approach 2: Language Modeling + ICP</strong></p></div><div style="display:contents" dir="auto"><figure id="3063e7ca-2d61-805c-81e4-f27efe6dfb7c" class="equation"><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><div class="equation-container"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi mathvariant="script">L</mi><mo>=</mo><munder><munder><mrow><mo>−</mo><munder><mo>∑</mo><mi>t</mi></munder><mi>log</mi><mo>⁡</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>x</mi><mrow><mo>&lt;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mo stretchy="true">⏟</mo></munder><msub><mi mathvariant="script">L</mi><mrow><mi>L</mi><mi>M</mi></mrow></msub></munder><mo>+</mo><mi>λ</mi><mo>⋅</mo><mi mathvariant="normal">∣</mi><mi mathvariant="normal">Δ</mi><mi mathvariant="normal">∣</mi></mrow><annotation encoding="application/x-tex">\mathcal{L} = \underbrace{-\sum_t \log P(x_t | x_{&lt;t})}_{\mathcal{L}_{LM}} + \lambda \cdot |\Delta|</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathcal">L</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:3.7266em;vertical-align:-2.6766em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-0.4737em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathcal mtight">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">L</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span class="mord munder"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span class="svg-align" style="top:-1.152em;"><span class="pstrut" style="height:3.05em;"></span><span class="stretchy" style="height:0.548em;min-width:1.6em;"><span class="brace-left" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMinYMin slice"><path d="M0 6l6-6h17c12.688 0 19.313.3 20 1 4 4 7.313 8.3 10 13
+ 35.313 51.3 80.813 93.8 136.5 127.5 55.688 33.7 117.188 55.8 184.5 66.5.688
+ 0 2 .3 4 1 18.688 2.7 76 4.3 172 5h399450v120H429l-6-1c-124.688-8-235-61.7
+-331-161C60.687 138.7 32.312 99.3 7 54L0 41V6z"/></svg></span><span class="brace-center" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMidYMin slice"><path d="M199572 214
+c100.7 8.3 195.3 44 280 108 55.3 42 101.7 93 139 153l9 14c2.7-4 5.7-8.7 9-14
+ 53.3-86.7 123.7-153 211-199 66.7-36 137.3-56.3 212-62h199568v120H200432c-178.3
+ 11.7-311.7 78.3-403 201-6 8-9.7 12-11 12-.7.7-6.7 1-18 1s-17.3-.3-18-1c-1.3 0
+-5-4-11-12-44.7-59.3-101.3-106.3-170-141s-145.3-54.3-229-60H0V214z"/></svg></span><span class="brace-right" style="height:0.548em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="0.548em" viewBox="0 0 400000 548" preserveAspectRatio="xMaxYMin slice"><path d="M399994 0l6 6v35l-6 11c-56 104-135.3 181.3-238 232-57.3
+ 28.7-117 45-179 50H-300V214h399897c43.3-7 81-15 113-26 100.7-33 179.7-91 237
+-174 2.7-5 6-9 10-13 .7-1 7.3-1 20-1h17z"/></svg></span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span class="mord"><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.05em;"><span style="top:-1.9em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span><span style="top:-3.05em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.25em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&lt;</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1774em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.898em;"><span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.6766em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">∣Δ∣</span></span></span></span></span></div></figure></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8080-b463-e106a301d56d" class="">where <style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style><span data-token-index="0" contenteditable="false" class="notion-text-equation-token" style="user-select:all;-webkit-user-select:all;-moz-user-select:all"><span></span><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">L</mi><mrow><mi>L</mi><mi>M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">{\mathcal{L}_{LM}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">L</span><span class="mord mathnormal mtight" style="margin-right:0.10903em;">M</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span></span><span>﻿</span></span> is next-token prediction on the full completion. The model learns to generate text. ICP regularizes the implicit probabilities (extracted from logits at the answer position) to be Bayesian-coherent.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8067-b8e1-e5c32b4f84f6" class=""><em>Hope:</em> Stays a language model, generalizes better.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80d1-8958-d8d5f2e8180a" class=""><strong>Setup:</strong> We fine-tune Qwen-3-8B using LoRA (rank 16, targeting attention layers) on a held-out subset of our evaluation data (~500 examples). We sweep over λ∈{0.1,0.5,1.0} to balance accuracy and ICP compliance.</p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-80dc-aaad-d1c3fb2c537e" class=""><strong>Evaluation:</strong> We test both in-distribution ICP (does the model become more Bayesian on similar problems?) and out-of-distribution generalization (does this transfer to unseen benchmarks?). </p></div><div style="display:contents" dir="auto"><p id="3063e7ca-2d61-8000-bb67-dd208c1af6da" class="">
+</p></div><div style="display:contents" dir="auto"><h3 id="3063e7ca-2d61-804f-b2dd-fe334ca4b8a3" class=""><strong>Our Findings</strong></h3></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80d5-be93-f0741364f594" class="bulleted-list"><li style="list-style-type:disc"><strong>LLMs reasoning is not “optimal”,</strong> they exhibit over-update, under-update, or reversed update patterns. </li></ul></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-8089-95b0-c2ef75767839" class="bulleted-list"><li style="list-style-type:disc"><strong>LLMs has the potential to be better.</strong> In our simple tests, the models reasoned perfectly. </li></ul></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80ee-ba34-ffde568caff1" class="bulleted-list"><li style="list-style-type:disc"><strong>The LLM’s &quot;inner thoughts&quot; do not match its &quot;words.&quot;</strong> (This is a simpler way to say the world view is inconsistent). What the LLMs says it believes is often different from how it actually solves the problem. Its intuition is often better than its explained math in its response.</li></ul></div><div style="display:contents" dir="auto"><ul id="3063e7ca-2d61-80f7-b378-dc4964667ced" class="bulleted-list"><li style="list-style-type:disc"><strong>Training might help.</strong></li></ul></div><div style="display:contents" dir="auto"><p id="3133e7ca-2d61-809b-9db0-dfba5cbaa9fe" class="">As we move from LLMs as simple chatbots to LLMs as autonomous agents, accuracy is no longer a sufficient metric. We need models that don&#x27;t just stumble upon the right answer, but navigate the path of uncertainty with mathematical rigor. By optimizing for <strong>Zellner’s Delta</strong>, we move closer to AI that we can trust—not because it&#x27;s right this time, but because its reasoning process is sound every time.</p></div><div style="display:contents" dir="auto"><hr id="3143e7ca-2d61-8028-a411-c5f6c36c2d44"/></div><div style="display:contents" dir="auto"><h2 id="3143e7ca-2d61-80d3-a910-e199540c53fc" class=""><strong>中文版本总结 (Chinese version summary)</strong></h2></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8085-b33a-c228cc6114b1" class=""><strong>从&quot;答对了&quot;到&quot;推理对了&quot;</strong></p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8075-a536-ff53209d4fd4" class="">想象你在面试一个医生。你告诉他一个模糊的症状——比如轻微疲劳——他立刻说：&quot;100%是癌症。&quot;结果他猜对了。你会信任他吗？</p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-80d4-b1ca-d53462ea8029" class="">不会。因为答案对，不代表推理对。</p></div><div style="display:contents" dir="auto"><hr id="3143e7ca-2d61-80f6-bf13-d8609984f547"/></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8068-8061-db9913d43a35" class=""><strong>这正是当前AI评测的核心问题。</strong></p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-80a8-a1c9-f0caf912897b" class="">现在所有主流benchmark都在问：模型答对了吗？但在医疗、科学、法律这些真实复杂场景里，证据从来不是一次性给齐的——它是零散的、模糊的、逐步累积的。一个可靠的AI不应该急着下结论，而应该做一个好专家该做的事：<strong>证据弱的时候保持不确定，证据强的时候才收敛判断。</strong></p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-80a9-a6bf-c5743e00f5a0" class="">准确率根本衡量不了这件事。</p></div><div style="display:contents" dir="auto"><hr id="3143e7ca-2d61-80c5-8802-eb3b1227b02e"/></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8068-b258-e8f11bf10a9c" class=""><strong>那我们应该衡量什么？</strong></p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-806a-aa0e-e1953984e879" class="">推理本质上是一个<strong>更新信念的过程</strong>。每一条新证据都应该让你的置信度发生变化——但变化的幅度必须&quot;刚刚好&quot;。更新太多，你过度自信；更新太少，你在忽视证据。</p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-803c-86b7-ea30710b8cd3" class="">我们借用经济学家Zellner提出的<strong>信息守恒原则</strong>——最优推理者应该严格按照证据的强度来更新信念，不多不少。</p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8071-90d4-ffa246cc5378" class="">我们把这个原则变成一个可以量化的指标：<strong>Zellner&#x27;s Delta（Δ）</strong>。它不问模型最终得出了什么结论，而是问：<strong>模型在推理过程中，每一步的信念更新是否合理？</strong></p></div><div style="display:contents" dir="auto"><hr id="3143e7ca-2d61-8047-9b16-c7b569b8a388"/></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-8017-99c0-f7e7c8c529a5" class=""><strong>我们发现了什么？</strong></p></div><div style="display:contents" dir="auto"><p id="3143e7ca-2d61-80df-95cb-fbcb0eb54816" class="">当前的大语言模型系统性地失败于这个标准：面对弱证据时过度更新，面对强证据时反而保守。更关键的是——<strong>高准确率完全掩盖了这个问题。</strong> 一个模型可以在benchmark上得高分，但它的推理过程从根本上就是坏掉的。</p></div></div></article><span class="sans" style="font-size:14px;padding-top:2em"><hr/><details open="" style="padding-top:1em"><summary style="font-weight:600;font-size:1.25em;line-height:1.3;margin:0">Inline comments</summary><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background">Typically, no.</mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><span class="icon text-icon user-icon"><span class="user-icon-inner">C</span></span><span><b>Chacha Chen</b> <time style="font-size:0.8em">Feb 12, 2026, 1:30 PM</time></span></span></div><div style="padding:0.2em">stronger (usually proprietary) seems better at confidence calibration and some post-training helps with this. But in our empirical experiments, we found majority of the models still exist this gap. </div><div style="padding:0.3em"></div></li></ul></div><hr/></div><div class="indented"><div><p style="padding:0.2em"><b>Block text</b>: <mark class="highlight-yellow_background"><em>Note:</em></mark></p><ul class="toggle"><li><div><span class="user" style="padding:0.2em"><span class="icon text-icon user-icon"><span class="user-icon-inner">C</span></span><span><b>Chacha Chen</b> <time style="font-size:0.8em">Feb 12, 2026, 2:59 PM</time></span></span></div><div style="padding:0.2em">I think we can formally prove this</div><div style="padding:0.3em"></div></li></ul></div><hr/></div></details></span></body></html>
