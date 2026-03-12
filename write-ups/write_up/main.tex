@@ -1,0 +1,951 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% Define argmax operator
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% This line sets the style for the "definition" environment
+\theoremstyle{definition} 
+
+% This line actually creates the "definition" environment
+\newtheorem{definition}{Definition}
+
+\begin{document}
+
+
+% Empirically observed quantities: (We use various UQ estimation methods to obtain prior, likelihood, and posterior). 
+% Let $p(\theta)$ be the prior, and $f(y|\theta)$ be the likelihood.
+% Let $q_0(\theta) = p(\theta)f(y|\theta)$ be the (unnormalized) input information.
+% Let $q{\theta}$ be the posterior (empirically obtained from model).
+% Evidence is calculated as $p(y)=\int p(\theta)f(y|\theta)d\theta$, can be interpreted as total probability of observing your data, averaged over all possible explanations.
+% It's called the model evidence or marginal likelihood.
+% We can also analytical posterior is $p(\theta)$x$f(y|\theta)$/p(y).
+
+\section{Definitions of Effective World Model and Empirical World Model}
+
+Large Language Models (LLMs) have shown strong performance in various tasks, which indicates that they possess some form of internal \textit{world model} to understand and reason about the world. We use the Bayesian framework as an external \textbf{analytical tool} to interpret and diagnose this behavior.
+
+\subsection{Effective World Model}
+We do not assume the LLM mechanistically performs Bayesian calculations. Instead, we model its complete input-output behavior using the Bayesian notations. This "Effective World Model" is the theoretical, unobservable system that would perfectly replicate the LLM's complete behavior. We can conceptualize its components as:
+
+\begin{itemize}
+    \item \textbf{Effective Prior ($p_{\text{true}}(\theta)$):} The LLM's latent, "true" belief about $\theta$ before it is given specific evidence. We might probe this by asking generic questions (e.g., "What is the capital of France?").
+    \item \textbf{Effective Likelihood ($f_{\text{true}}(y|\theta)$):} The LLM's implicit model of how evidence $y$ relates to hypothesis $\theta$. It captures which observations the LLM implicitly expects to see if a particular hypothesis were true.
+    \item \textbf{Effective Posterior ($q_{\text{true}}(\theta|y)$):} The LLM's latent, "true" final belief state after actually processing the evidence $y$. (This is distinct from the analytical $p_{\text{true}}(\theta|y)$, which would be the Bayesian update of $p_{\text{true}}$ and $f_{\text{true}}$).
+\end{itemize}
+This model is a theoretical construct that we cannot observe directly.
+
+Note that we make \textbf{no assumption} that $q_{\text{true}}(\theta|y)$ follows Bayes' rule. The relationship between $q_{\text{true}}(\theta|\emptyset)$ and $q_{\text{true}}(\theta|y)$ characterizes how the LLM actually updates its beliefs, which may or may not be Bayesian.
+
+
+
+% \begin{description}
+%     \item[Effective prior $p_{\text{eff}}(\theta|\emptyset)$:] The LLM's belief about concept $\theta$ in the absence of specific evidence. This serves as the baseline belief state, probed through generic queries (e.g., ``What is the capital of France?'').
+    
+    
+%     \item[Effective Posterior With Evidence $p_{\text{eff}}(\theta|y)$:] The LLM's belief about $\theta$ after processing evidence $y$ (e.g., response to ``Given that a new article claims the capital of France is Lyon, what is the capital?'').
+% \end{description}
+
+
+
+\subsection{The "Approximate" (Empirical) World Model}
+This model consists of the quantities we \textit{empirically measure} from the LLM using various Uncertainty Quantification (UQ) estimation methods (verbalized prompting, logits, and sampling etc). These are our "approximate" measurements of the Effective World Model components.
+
+\begin{description}
+    \item[Approximate Prior ($p(\theta)$):] 
+    Our empirical estimate of the LLM's effective prior belief, obtained via UQ methods.
+    
+    \item[Approximate Likelihood ($f(y|\theta)$):] 
+    Our empirical estimate of the LLM's effective likelihood function.
+    
+    \item[Approximate Posterior ($q(\theta|y)$):]
+    Our empirical measurement of the LLM's final belief state for $\theta$ after it has processed the evidence $y$.
+    
+    % \item[Unnormalized Input ($q_0(\theta)$):] 
+    % Defined as the product of our \textit{approximate} prior and likelihood.
+    % \begin{equation}
+    %     q_0(\theta) = p(\theta)f(y|\theta)
+    % \end{equation}
+    
+    \item[Model Evidence ($p(y)$):] 
+    The marginal likelihood \textit{derived from our approximate components}.
+    \begin{equation}
+        p(y) = \int p(\theta)f(y|\theta) \, d\theta
+    \end{equation}
+    This value represents the total probability of observing the data $y$, given our approximate model.
+    
+    \item[Analytical Posterior ($p(\theta|y)$):] 
+    The theoretical posterior distribution derived from our approximate prior $p(\theta)$ and likelihood $f(y|\theta)$ via Bayes' Theorem. \textbf{This is our "target" distribution.}
+    \begin{equation}
+        p(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)} = \frac{q_0(\theta)}{p(y)}
+    \end{equation}
+\end{description}
+
+% We estimate the following quantities from model behavior using Uncertainty Quantification (UQ) methods:
+
+% \begin{description}
+%     \item[Approximate Prior ($p(\theta)$):] 
+%     Represents the initial belief about the parameters $\theta$ before observing data.
+    
+%     \item[Approximate Likelihood ($f(y|\theta)$):] 
+%     Represents the probability of observing the data $y$ given a specific set of parameters $\theta$.
+    
+%     \item[Approximate Posterior ($q(\theta|y)$):]
+%     The approximate posterior distribution for $\theta$ given $y$, as obtained empirically from the model.
+    
+%     \item[Unnormalized Input ($q_0(\theta)$):] 
+%     Defined as the product of the prior and the likelihood.
+%     \begin{equation}
+%         q_0(\theta) = p(\theta)f(y|\theta)
+%     \end{equation}
+    
+%     \item[Model Evidence ($p(y)$):] 
+%     Also known as the marginal likelihood. It is calculated by integrating the prior-likelihood product over the entire parameter space.
+%     \begin{equation}
+%         p(y) = \int p(\theta)f(y|\theta) \, d\theta
+%     \end{equation}
+%     This value represents the total probability of observing the data $y$, averaged over all possible explanations (i.e., all values of $\theta$).
+    
+%     \item[Analytical Posterior ($p(\theta|y)$):] 
+%     The true, theoretical posterior distribution as defined by Bayes' Theorem, which normalizes the unnormalized input.
+%     \begin{equation}
+%         p(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)} = \frac{q_0(\theta)}{p(y)}
+%     \end{equation}
+% \end{description}
+
+\paragraph{A note on interpretation: a framework, not a mechanism.}
+It is crucial to state that this Bayesian framework is an \textbf{analytical tool} for interpretation, not a \textbf{mechanistic description} of how a Large Language Model (LLM) operates.
+Mechanistically, a transformer is a feed-forward network that maps a sequence of input tokens to a probability distribution over the next token. It does not contain literal, separate components for "prior" and "likelihood" that it combines using Bayes' rule.
+Instead, we are \textbf{modeling} the LLM's observable behavior \textbf{as if} it were a Bayesian agent.
+% \begin{itemize}
+%     \item \textbf{Empirical Measurements:} The distributions $p(\theta)$, $f(y|\theta)$, and $q(\theta|y)$ are all \textit{empirical estimates} of the LLM's effective behavior, obtained via UQ methods.
+    % \begin{itemize}
+    %     \item \textbf{$p(\theta)$} (Approximate Prior): Our measurement of the LLM's initial belief.
+    %     \item \textbf{$f(y|\theta)$} (Approximate Likelihood): Our measurement of the LLM's evidence-updating rule.
+    %     \item \textbf{$q(\theta|y)$} (Approximate Posterior): Our measurement of the LLM's \textit{final belief state} after processing the evidence $y$.
+    % \end{itemize}
+    
+%     \item \textbf{Analytical Target:} The distribution $p(\theta|y)$ is \textit{not} an empirical measurement. It is the \textit{analytical target} (or "correct" Bayesian answer) that we derive by applying Bayes' rule to our \textit{own measured} prior $p(\theta)$ and likelihood $f(y|\theta)$.
+% \end{itemize}
+% Therefore, the quantities we derive, such as $D_{KL}(q(\theta|y) \,\|\, p(\theta|y))$, are rigorous measures of how much the LLM's empirical reasoning ($q$) "diverges" from the output of an ideal Bayesian rule ($p$) based on its own measured components. It is a tool to understand *what* the model has learned, not *how* it computes.
+
+% \subsection{A Note on Interpretation: A Framework, Not a Mechanism}
+% This Bayesian framework is an \textbf{analytical tool} for interpretation, not a \textbf{mechanistic description} of how an LLM operates. Mechanistically, a transformer is a feed-forward network, not an agent that explicitly computes Bayes' rule.
+
+% We are \textbf{modeling} the LLM's observable behavior \textbf{as if} it were a Bayesian agent.
+% \begin{itemize}
+%     \item \textbf{$p(\theta)$} and \textbf{$f(y|\theta)$} are our empirical estimates of the LLM's "effective" beliefs and update rules.
+%     \item \textbf{$q(\theta|y)$} is our empirical measurement of the LLM's \textit{final belief state}.
+%     \item \textbf{$p(\theta|y)$} is the \textit{analytical target}. It represents the "correct" Bayesian answer \textit{given} our own measured prior and likelihood.
+% \end{itemize}
+% Therefore, the quantities we derive, such as $D_{KL}(q(\theta|y) \,\|\, p(\theta|y))$, are rigorous measures of how much the LLM's empirical reasoning ($q$) "diverges" from the ideal Bayesian result ($p$) that *should* follow from its own measured components ($p, f$). It is a tool to understand *what* the model has learned, not *how* it computes.
+
+\newpage
+
+\subsection{Internal and External Consistency}
+
+\begin{definition}[True Internal Consistency]
+Let the effective components be the prior $p_{\mathrm{true}}(\theta)$, likelihood $f_{\mathrm{true}}(y \mid \theta)$, and posterior $q_{\mathrm{true}}(\theta \mid y)$, where
+\[
+p_{\mathrm{true}}(\theta \mid y) \propto p_{\mathrm{true}}(\theta) \, f_{\mathrm{true}}(y \mid \theta).
+\]
+Define the \emph{latent internal inconsistency} at observation $y$ as:
+\[
+C_{\mathrm{true}}(y) \coloneqq D_{\mathrm{KL}}\big(q_{\mathrm{true}}(\theta \mid y) \,\|\, p_{\mathrm{true}}(\theta \mid y)\big).
+\]
+The model is internally consistent if and only if $C_{\mathrm{true}}(y) = 0$ for all $y$. \emph{These quantities are unobservable.}
+\end{definition}
+
+\begin{definition}[Empirical Internal Consistency]
+From elicited approximations $p, f, q$, define:
+\[
+C(y) \coloneqq D_{\mathrm{KL}}\big(q(\theta \mid y) \,\|\, p(\theta \mid y)\big) \geq 0.
+\]
+This measures how empirically internally consistent the model behaves. Internal consistency concerns empirical posterior relative to \textbf{analytical} posterior calculated from prior and likelihood.
+\end{definition}
+
+% \begin{definition}[Observable Evidence of Internal Consistency]
+% For tasks where the normative solution is Bayesian inference with ground-truth posterior $p^{\ast}(\theta \mid y)$, let $q(\theta \mid y)$ denote the empirical posterior elicited from the model. Define the \emph{as-if Bayesian score} over task distribution $\mathcal{D}$ by:
+% \[
+% C_{\mathrm{as\text{-}if}} \coloneqq \mathbb{E}_{y \sim \mathcal{D}} \left[ D_{\mathrm{KL}}\big(q(\theta \mid y) \,\|\, p^{\ast}(\theta \mid y)\big) \right].
+% \]
+% Small values of $C_{\mathrm{as\text{-}if}}$ provide conservative evidence of latent internal consistency.
+% \end{definition}
+
+\begin{definition}[External Consistency]
+External consistency concerns empirical accuracy relative to \textbf{ground truth or the real task}.
+For tasks with ground-truth posterior $p^{\ast}(\theta \mid y)$ and model predictions $q(\theta \mid y)$, define the \emph{external inconsistency} as:
+\[
+E_{\mathrm{ext}} \coloneqq \mathbb{E}_{y \sim \mathcal{D}} \left[ D_{\mathrm{KL}}\big(p^{\ast}(\theta \mid y) \,\|\, q(\theta \mid y)\big) \right].
+\]
+Large values of $E_{\mathrm{ext}}$ indicate poor alignment with ground truth. External consistency measures empirical accuracy independent of the model's internal coherence.
+\end{definition}
+
+
+
+% \paragraph{}
+% \begin{itemize}
+%     \item \textbf{Internal consistency} is about Bayesian coherence w.r.t. the model's own beliefs.
+%     \begin{itemize}
+%         \item \textbf{True internal consistency (latent, unobservable):} Let the Effective components be $p_{\mathrm{true}}(\theta)$, $f_{\mathrm{true}}(y\mid\theta)$, and the Effective posterior $q_{\mathrm{true}}(\theta\mid y)$. With $p_{\mathrm{true}}(\theta\mid y);\propto; p_{\mathrm{true}}(\theta),f_{\mathrm{true}}(y\mid\theta)$, define the latent internal inconsistency at $y$ by
+%         $C_{\text{true}}(y) \coloneqq D_{\text{KL}}\big(q_{\text{true}}(\theta\mid y) \parallel p_{\text{true}}(\theta\mid y)\big)$.
+%         The model is internally consistent iff $C_{\mathrm{true}}(y)=0$ for all $y$. These quantities are unobservable.
+%         \item \textbf{Empirical internal consistency (observable via UQ methods):} From elicited approximations $p, f, q$, define $p(\theta|y) \propto p(\theta) f(y|\theta)$, $C_{\text{emp}}(y) = D_{\text{KL}}(q(\theta|y) \parallel p(\theta|y))$. This is what we can compute. The ``information conservation gap'' is $C_{\text{emp}}(y) = D_{\text{KL}}(q \parallel p(\theta)) - [\mathbb{E}_{q}[\log f(y|\theta)] - \log p(y)] \geq 0$, which can be interpreted as how much LLMs are empirically internally consistent.
+%     \end{itemize}
+%     \item \textbf{External consistency} is about empirical accuracy to the real task or ground truth.
+% \end{itemize}
+
+% \begin{definition}[Observable evidence of internal consistency (as-if Bayesian)]
+% For tasks where the normative solution is Bayesian with ground-truth posterior $p^\ast(\theta\mid y)$, let $q}(\theta\mid y)$ be the empirical posterior elicited from the model. Define the as-if Bayesian score over a task distribution $\mathcal{D}$ by
+% \[
+% C_{\text{as-if}} \coloneqq \mathbb{E}_{y\sim\mathcal{D}} \left[ D_{\mathrm{KL}}\big(q}(\theta\mid y) \parallel p^\ast(\theta\mid y)\big) \right].
+% \]
+% Small $C_{\text{as-if}}$ (uniformly across $y$) constitutes conservative evidence—though not proof—of latent internal consistency, since only $q}$ and $p^\ast$ are observable.
+% \end{definition}
+
+
+
+
+\section{Zellner's Information-Theoretic Framework}
+\paragraph{Output Information ($I_{\text{out}}$):}
+
+% \subsection{3. Define Output Information $(I_{\text{out}})$:}
+\begin{equation}
+I_{\text{out}} = \int q(\theta|y) \log q(\theta|y) \, d\theta + \log p(y)
+\end{equation}
+$I_{\text{out}}$ is the \textbf{negative entropy} of the posterior distribution $q(\theta|y)$ \textbf{plus the log-evidence} $\log p(y)$.
+(Since Entropy $H(p) = -\int p \log p$, $I_{\text{out}} = -H(p(\theta|y)) + \log p(y)$).
+
+% \subsection{4. Define Input Information $(I_{\text{in}})$:}
+\paragraph{Input Information ($I_{\text{in}}$):}
+
+The input information $I_{\text{in}}$ is a functional of the approximate posterior $q(\theta|y)$.
+\begin{equation}
+I_{\text{in}}(q) = \int q(\theta|y) \log q_0(\theta) \, d\theta = \int q(\theta|y) \log[p(\theta)f(y|\theta)] \, d\theta
+\end{equation}
+$I_{\text{in}}(q)$ is the \textbf{negative cross-entropy} between the approximate posterior $q(\theta|y)$
+and the (unnormalized) input information $q_0(\theta)$.
+(Since Cross-Entropy $H(q, q_0) = -\int q \log q_0$, $I_{\text{in}}(q) = -H(q, q_0)$).
+
+
+% \subsubsection{3. Der. ive the Criterion Functional $G(p)$ (Information Loss):}
+\paragraph{Information Loss Functional ($G(q)$):}
+We minimize the information loss, which is the difference $I_{\text{out}} - I_{\text{in}}$.
+\begin{align}
+G(p) &= I_{\text{out}} - I_{\text{in}}\\
+ &= \int q(\theta|y) \log q(\theta|y) \, d\theta + \log p(y) - \int q(\theta|y) \log q_0(\theta) \, d\theta\\
+ &= \int q(\theta|y)\log \frac{q(\theta|y)}{q_0(\theta)}+ \log p(y)\\
+ &= \int q(\theta|y)\log \frac{q(\theta|y)}{p(\theta)f(y|\theta)}+ \log p(y)\\
+ &= \int \int q(\theta|y)\log \frac{q(\theta|y)}{p(\theta|y)}\\
+  &= D_{KL}(q(\theta|y) \,\|\, p(\theta|y))
+\end{align}
+where the analytical posterior is $p(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)}$.
+
+
+% Analytical posterior: $p(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)} $
+\paragraph{Optimal Posterior:}
+The KL divergence $D_{KL}(q(\theta|y) \,\|\, p(\theta|y))$ is minimized at 0 if and only if $q(\theta|y) = p(\theta|y)$.
+Therefore, the optimal posterior that conserves information is:
+\begin{equation}
+q_{\text{optimal}}(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)} = p(\theta|y)
+\end{equation}
+This is precisely Bayes' Rule.
+
+% \subsubsection{4. Relate to KL Divergence:}
+% The above derivation shows that the renormalized information loss functional $G(q)$ is mathematically identical to the Kullback-Leibler (KL) divergence, or relative entropy, between the approximate posterior $q(\theta|y)$ and the analytical posterior $p(\theta|y)$.
+% \begin{equation}
+% G(q) = D_{KL}(q(\theta|y) \,\|\, p(\theta|y))
+% \end{equation}
+% This establishes that minimizing the information loss (as defined in the renormalized framework) is equivalent to minimizing the KL divergence between the approximate posterior and the analytical posterior. 
+
+% This is the central objective in Variational Inference. The minimum value of $G(q)$ is $0$, which is achieved if and only if $q(\theta|y) = p(\theta|y)$.
+
+
+% \subsubsection{5. Minimize the Functional:}
+% The KL divergence $D_{KL}(q(\theta|y) \,\|\, p(\theta|y))$ is minimized at 0 if and only if $q(\theta|y) =  p(\theta|y)$.
+% Therefore, the optimal posterior $q_{\text{optimal}}(\theta|y)$ that conserves information (i.e., makes $G(p)$ as small as possible) is:
+
+% \begin{align}
+% % q_{\text{optimal}}(\theta|y) &\propto q_0(\theta)\\
+% q_{\text{optimal}}(\theta|y) &= \frac{p(\theta)f(y|\theta)}{p(y)} = p(\theta|y)
+% \end{align}
+% This is precisely Bayes' Rule.
+
+
+\section{Information Gain and Log-Likelihood Ratio}
+
+The **Information Gain** measures the change in information from the prior $p(\theta)$ to the analytical posterior $p(\theta|y)$, defined as the KL divergence between them.
+
+
+\textbf{Core Idea:} Under optimal Bayesian updating, the KL divergence from prior to posterior equals the expected log-likelihood under the posterior minus the log marginal likelihood. For binary hypothesis testing with equal priors, this simplifies to approximately the log-likelihood ratio when one hypothesis dominates.
+
+\textbf{Information Conservation:} Zellner's principle states that the information gain (KL from prior to posterior) should equal the information content of the data (log-likelihood ratio), establishing:
+\begin{equation}
+\boxed{D_{KL}(\text{posterior} \,\|\, \text{prior}) = \text{Information from Data} = \text{LLR} \text{ (for optimal processing)}}
+\end{equation}
+
+\begin{align}
+\text{Information Gain} &= D_{KL}(p(\theta|y) \,\|\, p(\theta)) \\
+&= \int p(\theta|y) \log\left[ \frac{p(\theta|y)}{p(\theta)} \right] d\theta
+\end{align}
+From our definition of the Analytical Posterior in Section 1, we can rearrange Bayes' Rule:
+\begin{equation}
+\frac{p(\theta|y)}{p(\theta)} = \frac{f(y|\theta)}{p(y)}
+\end{equation}
+We substitute this ratio into the Information Gain equation:
+\begin{align}
+\text{Information Gain} &= \int p(\theta|y) \log\left[ \frac{f(y|\theta)}{p(y)} \right] d\theta \\
+\intertext{We can split the logarithm:}
+&= \int p(\theta|y) \left( \log f(y|\theta) - \log p(y) \right) d\theta \\
+&= \int p(\theta|y) \log f(y|\theta) d\theta - \int p(\theta|y) \log p(y) d\theta \\
+\intertext{The first term is the posterior expectation of the log-likelihood. The second term simplifies because $\log p(y)$ is a constant and $\int p(\theta|y) d\theta = 1$:}
+&= E_{p(\theta|y)}[\log f(y|\theta)] - \log p(y)
+\end{align}
+This provides the fundamental identity:
+\begin{equation}
+D_{KL}(p(\theta|y) \,\|\, p(\theta)) = E_{p(\theta|y)}[\log f(y|\theta)] - \log p(y)
+\end{equation}
+This shows that the Information Gain is exactly the difference between the posterior-expected log-likelihood and the log-evidence.
+
+\subsection{Approximate Gain vs. Approximate LLR}
+
+We now analyze the relationship between two quantities derived from our \textbf{approximate posterior} $q(\theta|y)$.
+
+\begin{enumerate}
+    \item \textbf{Approximate Information Gain:} This measures the information-theoretic "distance" from the prior to our empirical posterior.
+    \begin{equation}
+        \text{Approximate Gain} = D_{KL}(q(\theta|y) \,\|\, p(\theta))
+    \end{equation}
+    
+    \item \textbf{Approximate LLR:} This is the "Log-Likelihood Ratio" term from Section 6, but evaluated using the expectation under our approximate posterior $q(\theta|y)$.
+    \begin{equation}
+        LLR_{\text{approx}} = E_{q(\theta|y)}[\log f(y|\theta)] - \log p(y)
+    \end{equation}
+\end{enumerate}
+
+We can find the difference between these two terms. This derivation relies on the \textbf{Evidence Lower Bound (ELBO)}, a term in a fundamental mathematical identity that holds for any choice of $p$, $f$, and $q$.
+
+The ELBO has two well-known definitions:
+\begin{align}
+    \mathcal{L}(q) &= \log p(y) - D_{KL}(q(\theta|y) \,\|\, p(\theta|y)) \label{eq:elbo_def_1} \\
+    \mathcal{L}(q) &= E_{q(\theta|y)}[\log f(y|\theta)] - D_{KL}(q(\theta|y) \,\|\, p(\theta)) \label{eq:elbo_def_2}
+\end{align}
+
+We start by rearranging the second ELBO identity (Equation \ref{eq:elbo_def_2}) to solve for our Approximate Gain term:
+\begin{equation}
+    D_{KL}(q(\theta|y) \,\|\, p(\theta)) = E_{q(\theta|y)}[\log f(y|\theta)] - \mathcal{L}(q) \label{eq:gain_elbo_rel}
+\end{equation}
+
+Now, we compute the difference of interest by substituting Equation \ref{eq:gain_elbo_rel} for the Approximate Gain:
+\begin{align}
+    & \text{Approximate Gain} - LLR_{\text{approx}} \\
+    &= \left( E_{q(\theta|y)}[\log f(y|\theta)] - \mathcal{L}(q) \right) - \left( E_{q(\theta|y)}[\log f(y|\theta)] - \log p(y) \right) \\
+    \intertext{The $E_{q}[\log f(y|\theta)]$ terms cancel out, leaving:}
+    &= \log p(y) - \mathcal{L}(q)
+\end{align}
+Finally, we use the first ELBO identity (Equation \ref{eq:elbo_def_1}), which states $\log p(y) - \mathcal{L}(q) = D_{KL}(q(\theta|y) \,\|\, p(\theta|y))$.
+This gives us our final result:
+\begin{equation}
+    D_{KL}(q(\theta|y) \,\|\, p(\theta)) - LLR_{\text{approx}} = D_{KL}(q(\theta|y) \,\|\, p(\theta|y))
+\end{equation}
+This identity mathematically proves that the difference between the "Approximate Gain" and the "Approximate LLR" is exactly the KL divergence between the approximate posterior $q(\theta|y)$ and the analytical posterior $p(\theta|y)$. This value, $D_{KL}(q \,\|\, p)$, is our approximation error and is guaranteed to be non-negative.
+
+
+
+\section{Fundamental Inequalities and Their Implications}
+
+\subsection{The Non-Negativity of Approximation Error}
+
+From Section 3, we derived that the information conservation gap (approximation error) is:
+\begin{equation}
+\Delta \coloneqq G(q) = I_{\text{out}} - I_{\text{in}} = D_{KL}(q(\theta|y) \,\|\, p(\theta|y)) \geq 0
+\end{equation}
+
+\textbf{Theorem 1 (Information Conservation Inequality):}
+For any approximate posterior $q(\theta|y)$, prior $p(\theta)$, and likelihood $f(y|\theta)$:
+\begin{equation}
+\boxed{I_{\text{out}} \geq I_{\text{in}}}
+\end{equation}
+with equality if and only if $q(\theta|y) = p(\theta|y)$ (perfect Bayesian updating).
+
+\textbf{Proof:} This follows immediately from the non-negativity of KL divergence: $D_{KL}(q \,\|\, p) \geq 0$ with equality iff $q = p$ almost everywhere. $\square$
+
+\subsection{The KL-LLR Inequality}
+
+From Section 7 (Equation at line 348-351), we proved:
+\begin{equation}
+D_{KL}(q(\theta|y) \,\|\, p(\theta)) - \text{LLR}_{\text{approx}} = D_{KL}(q(\theta|y) \,\|\, p(\theta|y))
+\end{equation}
+
+\textbf{Theorem 2 (KL-LLR Inequality):}
+For any approximate posterior $q(\theta|y)$:
+\begin{equation}
+\boxed{D_{KL}(q(\theta|y) \,\|\, p(\theta)) \geq \text{LLR}_{\text{approx}}}
+\end{equation}
+where $\text{LLR}_{\text{approx}} = E_{q(\theta|y)}[\log f(y|\theta)] - \log p(y)$, with equality if and only if $q(\theta|y) = p(\theta|y)$.
+
+\textbf{Proof:} Rearranging the identity above:
+\begin{align}
+D_{KL}(q \,\|\, p) &= \text{LLR}_{\text{approx}} + D_{KL}(q \,\|\, p(\theta|y)) \\
+&\geq \text{LLR}_{\text{approx}}
+\end{align}
+since $D_{KL}(q \,\|\, p(\theta|y)) \geq 0$. $\square$
+
+\subsection{Implications for Failure Pattern Classification}
+
+These fundamental inequalities have critical implications for classifying Bayesian updating failures:
+
+\begin{enumerate}
+    \item \textbf{No "Under-Update" by Global Metrics:} Since $I_{\text{out}} \geq I_{\text{in}}$ always holds, it is \emph{impossible} for a valid probability distribution to satisfy $I_{\text{out}} < I_{\text{in}}$. Any observed violations indicate numerical errors, not a distinct failure mode.
+
+    \item \textbf{No KL < LLR Violations:} Since $D_{KL}(q \,\|\, p) \geq \text{LLR}_{\text{approx}}$ always holds, scatter plots of KL vs LLR \emph{must} have all valid points on or above the diagonal line $y = x$.
+
+    \item \textbf{Slope Interpretation is Misleading:} Traditional interpretation of regression slope (slope $< 1$ = "under-update", slope $> 1$ = "over-update") is mathematically invalid given these constraints. The slope of a regression line through points constrained to lie above $y = x$ does not directly indicate "under" vs "over" updating.
+
+    \item \textbf{Need for Component-Level Analysis:} To rigorously differentiate failure types beyond the scalar approximation error $\Delta$, we must decompose errors into directional components (certainty, correctness, likelihood weighting).
+\end{enumerate}
+
+\newpage
+\section{Rigorous Failure Pattern Definitions}
+
+\subsection{Primary Metric: Approximation Error}
+
+The fundamental measure of how far the model deviates from optimal Bayesian updating is:
+\begin{definition}[Approximation Error]
+Given approximate posterior $q(\theta|y)$, prior $p(\theta)$, likelihood $f(y|\theta)$, and analytical posterior $p(\theta|y) = \frac{p(\theta)f(y|\theta)}{p(y)}$, the approximation error is:
+\begin{equation}
+\Delta \coloneqq D_{KL}(q(\theta|y) \,\|\, p(\theta|y)) \geq 0
+\end{equation}
+\end{definition}
+
+\textbf{Classification based on $\Delta$:}
+\begin{itemize}
+    \item $\Delta \approx 0$ (within numerical tolerance $\epsilon$): \textbf{Perfect Bayesian Updating}
+    \item $\Delta > 0$: \textbf{Approximate Updating} (requires component-level analysis to characterize)
+\end{itemize}
+
+\subsection{Component-Level Error Decomposition}
+
+Since $\Delta \geq 0$ provides only a scalar magnitude, we decompose errors into interpretable components to characterize the \emph{type} of failure.
+
+\subsubsection{Certainty Error (Entropy-Based)}
+
+\begin{definition}[Certainty Error]
+The certainty error measures whether the model became more or less certain than Bayes' rule prescribes:
+\begin{equation}
+\varepsilon_{\text{cert}} \coloneqq [H(p(\theta)) - H(q(\theta|y))] - [H(p(\theta)) - H(p(\theta|y))]
+\end{equation}
+where $H(\cdot)$ denotes Shannon entropy. Simplifying:
+\begin{equation}
+\varepsilon_{\text{cert}} = H(p(\theta|y)) - H(q(\theta|y))
+\end{equation}
+\end{definition}
+
+\textbf{Interpretation:}
+\begin{itemize}
+    \item $\varepsilon_{\text{cert}} > 0$: Model posterior has \textbf{lower entropy} than Bayesian posterior $\Rightarrow$ \textbf{Over-Confident}
+    \item $\varepsilon_{\text{cert}} < 0$: Model posterior has \textbf{higher entropy} than Bayesian posterior $\Rightarrow$ \textbf{Under-Confident}
+    \item $\varepsilon_{\text{cert}} \approx 0$: Matched certainty level
+\end{itemize}
+
+\paragraph{Example:} Consider a 4-option multiple choice question.
+
+\textbf{Bayes' rule posterior:}
+\begin{equation*}
+p(\theta|y) = \{A: 0.27, B: 0.63, C: 0.05, D: 0.05\} \quad \Rightarrow \quad H(p) \approx 1.2 \text{ bits}
+\end{equation*}
+
+\textbf{Over-Confident Model:}
+\begin{equation*}
+q(\theta|y) = \{A: 0.01, B: 0.97, C: 0.01, D: 0.01\} \quad \Rightarrow \quad H(q) \approx 0.2 \text{ bits}
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{cert}} = 1.2 - 0.2 = 1.0 > 0 \quad \Rightarrow \quad \text{Over-Confident}
+\end{equation*}
+The model is too certain (97\% vs Bayes' 63\%). This is a \emph{calibration failure} - the model will be overconfident in its predictions.
+
+\textbf{Under-Confident Model:}
+\begin{equation*}
+q(\theta|y) = \{A: 0.25, B: 0.25, C: 0.25, D: 0.25\} \quad \Rightarrow \quad H(q) = 2.0 \text{ bits}
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{cert}} = 1.2 - 2.0 = -0.8 < 0 \quad \Rightarrow \quad \text{Under-Confident}
+\end{equation*}
+The model is too uncertain (uniform distribution despite informative evidence). This represents \emph{failure to learn} from the data.
+
+\subsubsection{Peak Agreement Error (Hypothesis Ranking)}
+
+\begin{definition}[Peak Agreement Error - Internal Consistency]
+Without access to ground truth, we measure whether the model agrees with Bayes' rule on which hypothesis is most likely.
+
+Let $\theta_p^* = \argmax_{\theta} p(\theta|y)$ be the hypothesis favored by analytical Bayes' rule.
+
+Define the \emph{peak agreement error} as:
+\begin{equation}
+\varepsilon_{\text{peak}} \coloneqq q(\theta_p^*|y) - p(\theta_p^*|y)
+\end{equation}
+
+Additionally, define the \emph{peak disagreement indicator}:
+\begin{equation}
+\mathbb{1}_{\text{disagree}} = \begin{cases}
+1 & \text{if } \argmax_{\theta} q(\theta|y) \neq \theta_p^* \\
+0 & \text{otherwise}
+\end{cases}
+\end{equation}
+\end{definition}
+
+\textbf{Interpretation (Internal Consistency - No Ground Truth Required):}
+\begin{itemize}
+    \item $\mathbb{1}_{\text{disagree}} = 1$: \textbf{Peak Disagreement} - Model and Bayes favor different hypotheses (serious coherence failure)
+    \item $\varepsilon_{\text{peak}} > 0$: Model concentrates \emph{more} mass on Bayes-favored hypothesis
+    \item $\varepsilon_{\text{peak}} < 0$: Model concentrates \emph{less} mass on Bayes-favored hypothesis
+    \item $\varepsilon_{\text{peak}} \approx 0$: Appropriate mass allocation
+\end{itemize}
+
+\paragraph{Example:} Continuing from the previous example where Bayes favors option B.
+
+\textbf{Bayes' rule:}
+\begin{equation*}
+p(\theta|y) = \{A: 0.27, B: 0.63, C: 0.05, D: 0.05\} \quad \Rightarrow \quad \theta_p^* = B
+\end{equation*}
+
+\textbf{Peak Agreement (Model also favors B):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.01, B: 0.97, C: 0.01, D: 0.01\} \quad \Rightarrow \quad \theta_q^* = B
+\end{equation*}
+\begin{equation*}
+\mathbb{1}_{\text{disagree}} = 0 \quad \text{(both favor B)}
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{peak}} = q(B) - p(B) = 0.97 - 0.63 = 0.34 > 0
+\end{equation*}
+Model and Bayes agree on the most likely hypothesis (B), but model is more concentrated on it. This is \emph{internally coherent} (agrees with Bayes on ranking) but \emph{over-confident} (too concentrated).
+
+\textbf{Peak Disagreement (Model favors A instead):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.70, B: 0.20, C: 0.05, D: 0.05\} \quad \Rightarrow \quad \theta_q^* = A
+\end{equation*}
+\begin{equation*}
+\mathbb{1}_{\text{disagree}} = 1 \quad \text{(A vs B)}
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{peak}} = q(B) - p(B) = 0.20 - 0.63 = -0.43 < 0
+\end{equation*}
+This is a \emph{serious coherence failure}: model and Bayes disagree on which hypothesis is most likely. The model favors A (27\% according to Bayes) over B (63\% according to Bayes). This indicates the model is not following Bayesian reasoning from its own measured components.
+
+\begin{definition}[Directional Error - External Consistency]
+When ground truth $\theta^*$ (correct answer) is available, we can measure directional correctness:
+\begin{align}
+\Delta m_{\text{model}} &\coloneqq q(\theta^*|y) - p(\theta^*) \quad \text{(model's shift toward correct)} \\
+\Delta m_{\text{Bayes}} &\coloneqq p(\theta^*|y) - p(\theta^*) \quad \text{(Bayes' shift toward correct)}
+\end{align}
+The directional error is:
+\begin{equation}
+\varepsilon_{\text{dir}} \coloneqq \Delta m_{\text{model}} - \Delta m_{\text{Bayes}}
+\end{equation}
+\end{definition}
+
+\textbf{Interpretation (External Consistency - Requires Ground Truth):}
+\begin{itemize}
+    \item $\text{sign}(\Delta m_{\text{model}}) \neq \text{sign}(\Delta m_{\text{Bayes}})$: \textbf{Reversed Update} (moved away from correct answer)
+    \item $\varepsilon_{\text{dir}} > 0$: \textbf{Over-Shift} toward correct answer
+    \item $\varepsilon_{\text{dir}} < 0$: \textbf{Under-Shift} toward correct answer
+    \item $\varepsilon_{\text{dir}} \approx 0$: Appropriate shift magnitude toward correct answer
+\end{itemize}
+
+\textbf{Critical Distinction:} Peak agreement measures \emph{coherence with Bayes' rule}, while directional error measures \emph{correctness}. A model can have zero peak disagreement (agrees with Bayes) but still be wrong if the prior or likelihood are incorrect.
+
+\paragraph{Example:} Suppose ground truth $\theta^* = B$ (option B is objectively correct).
+
+\textbf{Setup:}
+\begin{align*}
+\text{Prior:} \quad &p(\theta) = \{A: 0.6, B: 0.2, C: 0.1, D: 0.1\} \\
+\text{Likelihood:} \quad &f(y|\theta) = \{A: 0.1, B: 0.7, C: 0.1, D: 0.1\} \\
+\text{Bayes:} \quad &p(\theta|y) = \{A: 0.27, B: 0.63, C: 0.05, D: 0.05\} \\
+\text{Ground Truth:} \quad &\theta^* = B
+\end{align*}
+
+Bayes' rule correctly shifts toward the correct answer:
+\begin{equation*}
+\Delta m_{\text{Bayes}} = p(B|y) - p(B) = 0.63 - 0.2 = 0.43 > 0
+\end{equation*}
+
+\textbf{Reversed Update (fatal directional error):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.8, B: 0.1, C: 0.05, D: 0.05\}
+\end{equation*}
+\begin{equation*}
+\Delta m_{\text{model}} = q(B|y) - p(B) = 0.1 - 0.2 = -0.1 < 0
+\end{equation*}
+\begin{equation*}
+\text{sign}(\Delta m_{\text{model}}) = \text{negative} \neq \text{positive} = \text{sign}(\Delta m_{\text{Bayes}})
+\end{equation*}
+The model moved \emph{away} from the objectively correct answer B (decreased from 20\% to 10\%) while Bayes moved toward it (increased to 63\%). This is a fatal directional failure - the evidence should have increased belief in B, but the model decreased it.
+
+\textbf{Under-Shift (insufficient movement toward correct):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.5, B: 0.35, C: 0.075, D: 0.075\}
+\end{equation*}
+\begin{equation*}
+\Delta m_{\text{model}} = 0.35 - 0.2 = 0.15 > 0
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{dir}} = 0.15 - 0.43 = -0.28 < 0 \quad \Rightarrow \quad \text{Under-Shift}
+\end{equation*}
+Both model and Bayes move toward B (same sign), but the model shifts less (15\% increase vs Bayes' 43\% increase). The model is responding to evidence in the right direction but insufficiently.
+
+\textbf{Over-Shift (excessive movement toward correct):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.01, B: 0.97, C: 0.01, D: 0.01\}
+\end{equation*}
+\begin{equation*}
+\Delta m_{\text{model}} = 0.97 - 0.2 = 0.77 > 0
+\end{equation*}
+\begin{equation*}
+\varepsilon_{\text{dir}} = 0.77 - 0.43 = 0.34 > 0 \quad \Rightarrow \quad \text{Over-Shift}
+\end{equation*}
+The model shifts toward B even more than Bayes prescribes (77\% increase vs 43\% increase). While moving in the correct direction and arriving at the correct answer, the model is overconfident given the evidence.
+
+\subsubsection{Likelihood Weighting Error}
+
+\begin{definition}[Likelihood Weighting Error]
+The likelihood weighting error measures how well the posterior tracks the evidence:
+\begin{align}
+\mathcal{E}_q &\coloneqq \mathbb{E}_{q(\theta|y)}[\log f(y|\theta)] = \sum_{\theta} q(\theta|y) \log f(y|\theta) \\
+\mathcal{E}_p &\coloneqq \mathbb{E}_{p(\theta|y)}[\log f(y|\theta)] = \sum_{\theta} p(\theta|y) \log f(y|\theta)
+\end{align}
+The likelihood weighting error is:
+\begin{equation}
+\varepsilon_{\text{like}} \coloneqq \mathcal{E}_q - \mathcal{E}_p
+\end{equation}
+\end{definition}
+
+\textbf{Interpretation:}
+\begin{itemize}
+    \item $\varepsilon_{\text{like}} > 0$: \textbf{Over-Weights Likelihood} (too much trust in evidence)
+    \item $\varepsilon_{\text{like}} < 0$: \textbf{Under-Weights Likelihood} (too little trust in evidence)
+    \item $\varepsilon_{\text{like}} \approx 0$: Appropriate evidence weighting
+\end{itemize}
+
+\paragraph{Example:} Using the same scenario as before.
+
+\textbf{Setup:}
+\begin{align*}
+\text{Prior:} \quad &p(\theta) = \{A: 0.6, B: 0.2, C: 0.1, D: 0.1\} \\
+\text{Likelihood:} \quad &f(y|\theta) = \{A: 0.1, B: 0.7, C: 0.1, D: 0.1\} \\
+\text{Bayes:} \quad &p(\theta|y) = \{A: 0.27, B: 0.63, C: 0.05, D: 0.05\}
+\end{align*}
+
+Using $\log_2$ (bits):
+\begin{align*}
+\mathcal{E}_p &= 0.27 \times \log_2(0.1) + 0.63 \times \log_2(0.7) + 0.05 \times \log_2(0.1) + 0.05 \times \log_2(0.1) \\
+&\approx 0.27 \times (-3.32) + 0.63 \times (-0.51) + 0.05 \times (-3.32) + 0.05 \times (-3.32) \\
+&\approx -1.55 \text{ bits}
+\end{align*}
+
+\textbf{Over-Weights Evidence (follows likelihood closely):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.01, B: 0.97, C: 0.01, D: 0.01\}
+\end{equation*}
+\begin{align*}
+\mathcal{E}_q &\approx 0.01 \times (-3.32) + 0.97 \times (-0.51) + 0.01 \times (-3.32) + 0.01 \times (-3.32) \\
+&\approx -0.59 \text{ bits}
+\end{align*}
+\begin{equation*}
+\varepsilon_{\text{like}} = -0.59 - (-1.55) = 0.96 > 0 \quad \Rightarrow \quad \text{Over-Weights Evidence}
+\end{equation*}
+The model concentrates almost all mass on the high-likelihood option B (0.97 vs Bayes' 0.63), ignoring the prior preference for A. This indicates \emph{excessive trust in the evidence}.
+
+\textbf{Under-Weights Evidence (ignores likelihood, follows prior):}
+\begin{equation*}
+q(\theta|y) = \{A: 0.95, B: 0.03, C: 0.01, D: 0.01\}
+\end{equation*}
+\begin{align*}
+\mathcal{E}_q &\approx 0.95 \times (-3.32) + 0.03 \times (-0.51) + 0.01 \times (-3.32) + 0.01 \times (-3.32) \\
+&\approx -3.23 \text{ bits}
+\end{align*}
+\begin{equation*}
+\varepsilon_{\text{like}} = -3.23 - (-1.55) = -1.68 < 0 \quad \Rightarrow \quad \text{Under-Weights Evidence}
+\end{equation*}
+The model keeps almost all mass on option A (the prior favorite) despite B having 7× higher likelihood. This is \emph{prior dominance} - the model is stubborn and insufficiently responsive to new evidence.
+
+\subsubsection{Support Violation (Contradictory Updates)}
+
+\begin{definition}[Support Violation]
+A support violation occurs when the approximate posterior assigns positive probability mass to hypotheses where the likelihood is zero:
+\begin{equation}
+\text{Support Violation} \iff \exists \theta: q(\theta|y) > 0 \text{ and } f(y|\theta) = 0
+\end{equation}
+\end{definition}
+
+\textbf{Consequence:} Support violations cause $\text{LLR}_{\text{approx}} = -\infty$, indicating the model believes in hypotheses that make the observed data impossible. This is a \textbf{contradictory update}.
+
+\paragraph{Example:} Consider a scenario where evidence conclusively rules out certain hypotheses.
+
+\textbf{Setup:}
+A classification task where evidence $y$ consists of observing "the animal has feathers."
+\begin{align*}
+\text{Prior:} \quad &p(\theta) = \{A\text{(bird)}: 0.3, B\text{(mammal)}: 0.4, C\text{(reptile)}: 0.2, D\text{(fish)}: 0.1\} \\
+\text{Likelihood:} \quad &f(y|\theta) = \{A: 1.0, B: 0.0, C: 0.0, D: 0.0\}
+\end{align*}
+The evidence ``has feathers'' makes options B, C, D impossible ($f(y|\theta) = 0$).
+
+\textbf{Bayes' rule posterior:}
+\begin{equation*}
+p(\theta|y) = \{A: 1.0, B: 0.0, C: 0.0, D: 0.0\}
+\end{equation*}
+All probability mass must go to A since it's the only hypothesis consistent with the evidence.
+
+\textbf{Model with support violation:}
+\begin{equation*}
+q(\theta|y) = \{A: 0.7, B: 0.2, C: 0.05, D: 0.05\}
+\end{equation*}
+The model assigns positive probability to B, C, D despite them being logically impossible given the evidence.
+
+\textbf{Consequence:}
+\begin{align*}
+\text{LLR}_{\text{approx}} &= \mathbb{E}_{q}[\log f(y|\theta)] - \log p(y) \\
+&= 0.7 \times \log(1.0) + 0.2 \times \log(0.0) + 0.05 \times \log(0.0) + 0.05 \times \log(0.0) \\
+&= 0 + (-\infty) + (-\infty) + (-\infty) = -\infty
+\end{align*}
+
+This is a \emph{fatal logical error}: the model believes in hypotheses (mammals, reptiles, fish with feathers) that violate the constraints of the evidence. This indicates the model failed to process the logical implications of the observation and is producing incoherent beliefs.
+
+
+\subsection{Internal vs External Consistency in Sequential Updating}
+
+Before defining failure patterns, we clarify the distinction between internal and external consistency, particularly important for sequential belief updating.
+
+\paragraph{Internal Consistency (Self-Coherence):} Measures whether the model follows Bayes' rule given its \emph{own measured components}.
+
+\textbf{Reference:} Analytical posterior $p(\theta|y) = \frac{p(\theta) f(y|\theta)}{p(y)}$ computed from empirically measured $p(\theta)$ and $f(y|\theta)$.
+
+\textbf{Question:} "Does the model update coherently according to Bayes' rule?"
+
+\textbf{Applicable to:} Any dataset (AWA, GPQA, MedIQ) - no ground truth required.
+
+\paragraph{External Consistency (Correctness):} Measures whether the model's final belief matches the true ground truth posterior.
+
+\textbf{Reference:} True posterior $p^*(\theta|y)$ from the dataset's known generative process.
+
+\textbf{Question:} "Is the model's answer actually correct?"
+
+\textbf{Applicable to:} Only synthetic datasets with known ground truth (e.g., BumbleGrumble).
+
+\paragraph{Sequential Updating:} For sequential evidence $y_1, y_2, \ldots, y_T$:
+
+\textbf{Internal consistency at step $t$:}
+\begin{equation}
+\Delta_t = D_{KL}(q(\theta|y_{1:t}) \,\|\, p(\theta|y_{1:t}))
+\end{equation}
+where $p(\theta|y_{1:t})$ is computed from measured $p(\theta|y_{1:t-1})$ (previous posterior) and $f(y_t|\theta)$ (current likelihood).
+
+\textbf{External consistency at step $t$:}
+\begin{equation}
+E_{\text{ext}, t} = D_{KL}(p^*(\theta|y_{1:t}) \,\|\, q(\theta|y_{1:t}))
+\end{equation}
+where $p^*(\theta|y_{1:t})$ is the true cumulative ground truth posterior.
+
+\textbf{Note:} The failure patterns defined below focus on \emph{internal consistency} since it applies universally. External consistency metrics (when available) provide an additional validation layer.
+
+\subsection{Unified Failure Taxonomy}
+
+\subsubsection{Full Classification (9 Patterns)}
+
+The complete taxonomy characterizes all regions in the 3D error space (certainty $\times$ direction $\times$ evidence weighting):
+
+\begin{definition}[Failure Pattern Classification - Complete]
+Given approximation error $\Delta$, certainty error $\varepsilon_{\text{cert}}$, directional error $\varepsilon_{\text{dir}}$, likelihood error $\varepsilon_{\text{like}}$, and thresholds $\{\tau_{\Delta}, \tau_{\text{cert}}, \tau_{\text{dir}}, \tau_{\text{like}}\}$:
+
+\textbf{Level 1: Global Assessment}
+\begin{enumerate}
+    \item If $\Delta < \tau_{\Delta}$: \textsc{Perfect Bayes} (optimal)
+    \item If support violation: \textsc{Contradictory} (fatal error)
+    \item Otherwise: Proceed to Level 2
+\end{enumerate}
+
+\textbf{Level 2: Component-Based Classification}
+
+\begin{itemize}
+    \item \textbf{Reversed:} $\text{sign}(\Delta m_{\text{model}}) \neq \text{sign}(\Delta m_{\text{Bayes}})$
+
+    \item \textbf{Over-Confident Correct:} $\varepsilon_{\text{cert}} > \tau_{\text{cert}}$ and $\varepsilon_{\text{dir}} > 0$
+
+    \item \textbf{Over-Confident Wrong:} $\varepsilon_{\text{cert}} > \tau_{\text{cert}}$ and $\varepsilon_{\text{dir}} < 0$
+
+    \item \textbf{Under-Confident:} $\varepsilon_{\text{cert}} < -\tau_{\text{cert}}$
+
+    \item \textbf{Under-Shift:} $|\varepsilon_{\text{dir}}| > \tau_{\text{dir}}$ and $\varepsilon_{\text{dir}} < 0$ and $|\varepsilon_{\text{cert}}| < \tau_{\text{cert}}$
+
+    \item \textbf{Over-Shift:} $|\varepsilon_{\text{dir}}| > \tau_{\text{dir}}$ and $\varepsilon_{\text{dir}} > 0$ and $|\varepsilon_{\text{cert}}| < \tau_{\text{cert}}$
+
+    \item \textbf{Over-Weights Evidence:} $\varepsilon_{\text{like}} > \tau_{\text{like}}$
+
+    \item \textbf{Under-Weights Evidence:} $\varepsilon_{\text{like}} < -\tau_{\text{like}}$
+
+    \item \textbf{Mixed Error:} $\Delta > \tau_{\Delta}$ but all component errors below thresholds
+\end{itemize}
+\end{definition}
+
+\subsubsection{Simplified Classification (5 Primary Patterns - Internal Consistency)}
+
+For practical applications without ground truth access, we recommend focusing on 5 primary patterns based on internal consistency:
+
+\begin{definition}[Failure Pattern Classification - Simplified (No Ground Truth)]
+\textbf{Primary Patterns (Internal Consistency):}
+\begin{enumerate}
+    \item \textbf{Perfect Bayes:} $\Delta < \tau_{\Delta}$
+    \begin{itemize}
+        \item Model achieves near-optimal Bayesian updating
+        \item Rare in practice
+    \end{itemize}
+
+    \item \textbf{Contradictory:} Support violation ($\exists \theta: q(\theta|y) > 0 \text{ and } f(y|\theta) = 0$)
+    \begin{itemize}
+        \item \emph{Fatal logical error}: Model believes in hypotheses that make data impossible
+        \item LLR = $-\infty$
+    \end{itemize}
+
+    \item \textbf{Over-Confident:} $\varepsilon_{\text{cert}} > \tau_{\text{cert}}$
+    \begin{itemize}
+        \item Model is too certain (posterior entropy too low)
+        \item Calibration failure - poor uncertainty quantification
+        \item Example: Claims 99\% confidence when Bayes says 60\%
+    \end{itemize}
+
+    \item \textbf{Under-Confident:} $\varepsilon_{\text{cert}} < -\tau_{\text{cert}}$
+    \begin{itemize}
+        \item Model is too uncertain (posterior entropy too high)
+        \item Fails to commit despite informative evidence
+        \item Example: Stays at 30\% when Bayes says 90\%
+    \end{itemize}
+
+    \item \textbf{Peak Disagreement:} $\argmax_{\theta} q(\theta|y) \neq \argmax_{\theta} p(\theta|y)$
+    \begin{itemize}
+        \item Model and Bayes favor different hypotheses
+        \item Serious coherence failure
+        \item May have appropriate certainty level but wrong target
+    \end{itemize}
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Extended Classification with Ground Truth]
+When ground truth $\theta^*$ is available, add these external consistency patterns:
+
+\begin{enumerate}
+    \setcounter{enumi}{5}
+    \item \textbf{Reversed:} $\text{sign}(\Delta m_{\text{model}}) \neq \text{sign}(\Delta m_{\text{Bayes}})$ toward $\theta^*$
+    \begin{itemize}
+        \item \emph{Fatal directional error}: Model moved AWAY from objectively correct answer
+        \item Example: Evidence favors "bird", model shifts toward "mammal"
+    \end{itemize}
+
+    \item \textbf{Misallocated:} $\Delta > \tau_{\Delta}$ but $|\varepsilon_{\text{cert}}| < \tau_{\text{cert}}$ and no reversal/disagreement
+    \begin{itemize}
+        \item Non-trivial approximation error
+        \item Certainty level appropriate but mass on wrong hypotheses
+        \item Subtle error - often masked in aggregate metrics
+    \end{itemize}
+\end{enumerate}
+\end{definition}
+
+\paragraph{Mental Model:}
+\begin{itemize}
+    \item \textbf{Without ground truth (internal):} We have a 3D error space with dimensions:
+    \begin{enumerate}
+        \item Certainty (over/under-confident)
+        \item Peak agreement (agree with Bayes on most likely?)
+        \item Likelihood weighting (over/under-trust evidence)
+    \end{enumerate}
+
+    \item \textbf{With ground truth (external):} We add a 4th dimension:
+    \begin{enumerate}
+        \setcounter{enumi}{3}
+        \item Directional correctness (toward objectively correct answer?)
+    \end{enumerate}
+\end{itemize}
+
+The 5 internal patterns focus on coherence with Bayes' rule. The 2 external patterns add objective correctness assessment.
+
+\paragraph{Practical Recommendation:}
+\begin{itemize}
+    \item For datasets without ground truth (AWA, GPQA, MedIQ): Use the 5 internal consistency patterns
+    \item For synthetic datasets with ground truth (BumbleGrumble): Use all 7 patterns
+    \item Use simplified taxonomy for screening; deploy full 9-pattern taxonomy only for detailed diagnosis
+\end{itemize}
+
+\subsection{Relationship to Existing Metrics}
+
+\textbf{Why not use $I_{\text{out}}$ vs $I_{\text{in}}$ directly?}
+
+While Theorem 1 establishes $I_{\text{out}} \geq I_{\text{in}}$, the magnitude of $I_{\text{out}} - I_{\text{in}}$ alone does not distinguish between:
+\begin{itemize}
+    \item A model that is over-confident in the \emph{correct} direction
+    \item A model that is over-confident in the \emph{wrong} direction
+    \item A model that has the right certainty level but misallocated mass
+\end{itemize}
+
+All three cases can produce the same $\Delta = D_{KL}(q \,\|\, p)$ value but represent qualitatively different failures.
+
+\textbf{Why not use KL vs LLR slope?}
+
+While Theorem 2 establishes $D_{KL}(q \,\|\, p) \geq \text{LLR}_{\text{approx}}$, the regression slope of KL vs LLR:
+\begin{itemize}
+    \item Cannot distinguish "over-update" from "under-update" since all points must lie above the diagonal
+    \item The slope reflects the \emph{average relationship} across many data points but obscures individual failure modes
+    \item A slope near 1.0 can occur even if individual points exhibit diverse error patterns
+\end{itemize}
+
+Therefore, component-level decomposition (certainty, direction, likelihood weighting) provides the necessary resolution to rigorously classify failure patterns.
+
+
+\section{Computational Implementation Notes}
+
+\subsection{Threshold Selection}
+
+Thresholds $\{\tau_{\Delta}, \tau_{\text{cert}}, \tau_{\text{dir}}, \tau_{\text{like}}\}$ should be chosen based on:
+\begin{enumerate}
+    \item \textbf{Numerical Precision:} $\tau_{\Delta}$ should account for floating-point errors in KL computation (typically $\tau_{\Delta} \approx 10^{-6}$ to $10^{-4}$ bits)
+    \item \textbf{Domain Significance:} For multiple-choice questions with 4 options:
+    \begin{itemize}
+        \item Uniform distribution has entropy $H = 2$ bits
+        \item $\tau_{\text{cert}} \approx 0.1$ bits (5\% of maximum entropy)
+        \item $\tau_{\text{dir}} \approx 0.05$ (5\% probability mass shift on a single option)
+    \end{itemize}
+    \item \textbf{Empirical Calibration:} Analyze distribution of component errors on validation set to set thresholds that achieve desired precision/recall trade-offs
+\end{enumerate}
+
+\subsection{Validation Checks}
+
+Before classifying, validate that observed quantities satisfy mathematical constraints:
+\begin{enumerate}
+    \item \textbf{Probability Distributions:}
+    \begin{itemize}
+        \item $\sum_{\theta} p(\theta) = \sum_{\theta} q(\theta|y) = \sum_{\theta} p(\theta|y) = 1$ (within tolerance)
+        \item $p(\theta), q(\theta|y), f(y|\theta) \in [0, 1]$ for all $\theta$
+    \end{itemize}
+
+    \item \textbf{Information Conservation Inequality:}
+    \begin{itemize}
+        \item Verify $I_{\text{out}} \geq I_{\text{in}} - \epsilon$ (allow small numerical tolerance)
+        \item If violated: Flag as numerical error, do not classify
+    \end{itemize}
+
+    \item \textbf{KL-LLR Inequality:}
+    \begin{itemize}
+        \item Verify $D_{KL}(q \,\|\, p) \geq \text{LLR}_{\text{approx}} - \epsilon$
+        \item If violated: Flag as numerical error, do not classify
+    \end{itemize}
+
+    \item \textbf{Non-Negativity:}
+    \begin{itemize}
+        \item Verify $\Delta = D_{KL}(q \,\|\, p(\theta|y)) \geq -\epsilon$
+        \item If negative beyond tolerance: Numerical error in KL computation
+    \end{itemize}
+\end{enumerate}
+
+
+\end{document}
