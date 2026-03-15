@@ -2453,13 +2453,13 @@
 
                 <!-- Method 2: SFT -->
                 <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">SFT + Synthetic Data</div>
-                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Generate Bayesian-optimal reasoning traces, fine-tune on them:</p>
-                    <div style="font-family: var(--font-mono); font-size: clamp(0.65rem, 0.9vw, 0.8rem); background: rgba(45,138,78,0.08); padding: 0.3em 0.5em; border-radius: 4px; margin-bottom: 0.6em; text-align: center;">data &rarr; optimal trace &rarr; SFT</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Distill + Rejection Sampling</div>
+                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Sample traces from a strong model, filter by |&Delta;|, fine-tune a small model:</p>
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.65rem, 0.9vw, 0.8rem); background: rgba(45,138,78,0.08); padding: 0.3em 0.5em; border-radius: 4px; margin-bottom: 0.6em; text-align: center;">strong LLM &rarr; sample N &rarr; rank by |&Delta;| &rarr; SFT</div>
                     <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;"><strong>Pro:</strong> Scalable with synthetic generation</li>
+                        <li style="margin-bottom: 0.3em;"><strong>Pro:</strong> Works on real-world benchmarks &mdash; no oracle needed</li>
                         <li style="margin-bottom: 0.3em;"><strong>Pro:</strong> Standard fine-tuning pipeline</li>
-                        <li><strong>Con:</strong> Quality depends on synthetic data fidelity</li>
+                        <li><strong>Con:</strong> Quality bounded by the strong model&rsquo;s best traces</li>
                     </ul>
                 </div>
 
@@ -2467,7 +2467,7 @@
                 <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
                     <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">RL + Reward Modeling</div>
                     <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Reward = accuracy + low |&Delta;|:</p>
-                    <div class="math-block" style="font-size: clamp(0.7rem, 1vw, 0.85rem); margin-bottom: 0.6em;" data-math-block="R = \alpha \cdot \text{Acc} + \beta \cdot (1 - |\Delta|)"></div>
+                    <div class="math-block" style="font-size: clamp(0.7rem, 1vw, 0.85rem); margin-bottom: 0.6em;" data-math-block="R = \alpha \cdot \mathbb{1}[\text{correct}] - \beta \cdot |\Delta|"></div>
                     <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
                         <li style="margin-bottom: 0.3em;"><strong>Pro:</strong> Optimizes both accuracy and reasoning jointly</li>
                         <li style="margin-bottom: 0.3em;"><strong>Pro:</strong> Explores beyond supervised distribution</li>
