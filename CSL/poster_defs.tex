@@ -1,0 +1,131 @@
+
+\usepackage{graphicx}  % Please import figures that are *high resolution* PDFs
+\usepackage{caption}
+\usepackage{subfigure}  % Useful for subfigures
+\usepackage{booktabs}  % Useful for high quality tables (e.g., you can replace \hrule with \toprule, \midrule, and \bottomrule).
+\usepackage{multicol}
+\usepackage{multirow}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MATH PACKAGES (Comment out this section if unnecessary for your dissertation)
+%
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsthm}
+
+\usepackage{xcolor}         % colors
+\usepackage[capitalize]{cleveref}
+%\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{breqn}
+\usepackage{bbm}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{xspace}
+% \usepackage{enumitem}
+\usepackage[hang,flushmargin]{footmisc}
+%\usepackage{algpseudocode}
+\usepackage{wrapfig}
+% \setlist{leftmargin=*}
+% \setlist[itemize]{noitemsep}
+% \setlist[enumerate]{noitemsep}
+
+\usepackage{listings}
+\usepackage{framed}
+
+
+
+\newcommand{\predSeq}{\mathbf{s}}
+%===============================
+\newcommand{\methodname}{CSL\xspace}
+\newcommand{\methodnamePrompt}{\texttt{CSL}\xspace}
+\newcommand{\methodnameNext}{\texttt{CSL-Next}\xspace}
+% CSL : Contextualized Sequence Likelihood
+
+%\newcommand{\methodSampled}{Ours(Sampled)\xspace}
+%\newcommand{\methodMLE}{Ours(MostLikely)\xspace}
+
+\newcommand{\baselinePTrue}{\texttt{P(true)}\xspace}
+\newcommand{\baselineSAR}{\texttt{TokenSAR}\xspace}
+\newcommand{\baselineNLLNorm}{\texttt{SL}(norm)\xspace}
+\newcommand{\baselineNLL}{\texttt{SL}\xspace}
+
+\newcommand{\baselineSE}{\texttt{SE}\xspace}
+\newcommand{\baselineSENorm}{\texttt{SE(norm)}\xspace}
+\newcommand{\methodSEAttn}{\texttt{SE+CSL}\xspace}
+
+\newcommand{\datasetcoqa}{\texttt{coqa}\xspace}
+\newcommand{\datasetnqopen}{\texttt{nq}\xspace}
+\newcommand{\datasettrivia}{\texttt{trivia}\xspace}
+
+%\newcommand{\baselineEcc}{\texttt{Ecc}\xspace}
+\newcommand{\baselineDegree}{\texttt{Deg}\xspace}
+
+\newcommand{\ConfMethod}{\text{C}_{CSL}\xspace}
+\newcommand{\Conf}{\text{C}\xspace}
+\newcommand{\Acc}{acc\xspace}
+
+\newcommand{\LLaMATwoName}{LLaMA2-70B\xspace}
+\newcommand{\GPTName}{\texttt{gpt-3.5-turbo-0125}\xspace}
+
+
+
+
+%\definecolor{falured}{rgb}{0.7, 0.15, 0.15}
+%\newcommand\covfail[1]{{\color{falured}#1}}
+
+%==========
+% \newcommand{\defeq}{\vcentcolon=}
+% \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+% \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+% \newcommand\fontred[1]{{\color{red}#1}}
+% \newcommand\reminder[1]{{\color{green}#1}}
+% \DeclareMathOperator*{\argmax}{arg\,max}
+% \DeclareMathOperator*{\argmin}{arg\,min}
+
+% \newcommand{\todo}{\fontred{TODO:}}
+
+
+\newcommand\attnplus[1]{{\color{red}#1}}
+% %\newcommand\attnplus[1]{\textbf{#1}}
+
+
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{proposition}{Proposition}
+
+% %\usepackage{floatrow}%floatrow causes caption to be on bottom
+% %\floatsetup[table]{capposition=top}
+
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    % numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+commentstyle=\color{blue},
+morecomment=[l]{$},
+}
+\lstset{style=mystyle}
+
+
+% \usepackage{tcolorbox}
+% \usepackage{adjustbox}
+% \newsavebox\listingboxname

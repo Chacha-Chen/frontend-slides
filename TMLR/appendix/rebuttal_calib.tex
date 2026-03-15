@@ -1,0 +1,44 @@
+As suggested in \cref{sec:related}, model calibration is an orthogonal research direction.
+Once the confidence measures are given, a calibration method could then be applied to calibrate the confidence scores into something close to the probability of correct answer.
+We applied the classical histogram binning method~\cite{KDD_HistogramBinning} on all methods, and compute the adaptive calibration error (ACE)~\cite{Nixon_2019_CVPR_Workshops}.
+The number of bins is set to 15 following the standard practice~\cite{Nixon_2019_CVPR_Workshops}, and the confidence measures are calibrated on the 1st generation of 1000 calibration samples and evaluated on the rest.
+Confidence measures are estimated using 20 generations.
+The results are in \cref{table:appendix:exp:calib}.
+After calibration, the confidence scores can faithfully reflect the accuracy.
+For example, for \methodEcc(E) on \texttt{trivia(llama)}, the gap between calibrated probability and the actual accuracy is only 0.026.
+%We do, however, note that 
+
+\def \TabRebuttalCalibration{
+\begin{table}[!ht]
+\caption{
+Adaptive Calibration Error after applying Histogram Binning~\cite{KDD_HistogramBinning}.
+Lower is better.
+}
+\label{table:appendix:exp:calib}
+\centering
+\begin{small}
+   \resizebox{1\columnwidth}{!}{
+\begin{tabular}{l|cc|ccc|ccc|ccc|cc}
+\toprule
+  & \multicolumn{2}{c}{Baselines}& \multicolumn{9}{|c|}{Ours}& \multicolumn{2}{c}{White-box}\\
+  ACE (in $10^{-2}$) & \baselineNumSets & \baselineLexiSim & \methodEigvClip(C) & \methodEcc(C) & \methodDegree(C) & \methodEigvClip(E) & \methodEcc(E) & \methodDegree(E) & \methodEigvClip(J) & \methodEcc(J) & \methodDegree(J) & \baselineGal  & \baselinePTrue\\
+\midrule
+trivia(llama) & 3.68$\pm$0.54 & 3.68$\pm$0.88 & 3.24$\pm$0.67 & 2.54$\pm$0.63 & 2.49$\pm$0.53 & 3.00$\pm$0.52 & 2.60$\pm$0.51 & 2.37$\pm$0.60 & 3.49$\pm$0.73 & 2.93$\pm$0.56 & 2.72$\pm$0.83 & 4.56$\pm$1.10 & 4.30$\pm$1.01\\
+trivia(llama2) & 3.06$\pm$0.49 & 3.05$\pm$0.71 & 2.65$\pm$0.53 & 2.82$\pm$0.69 & 2.75$\pm$0.63 & 2.76$\pm$0.39 & 2.73$\pm$0.64 & 2.67$\pm$0.65 & 2.93$\pm$0.60 & 3.11$\pm$0.68 & 3.01$\pm$0.49 & 2.58$\pm$0.59 & 4.43$\pm$0.71\\
+trivia(opt) & 3.20$\pm$0.70 & 3.34$\pm$0.65 & 3.16$\pm$0.62 & 2.38$\pm$0.58 & 2.84$\pm$0.86 & 3.11$\pm$0.51 & 2.15$\pm$0.50 & 2.64$\pm$0.51 & 2.83$\pm$0.44 & 2.62$\pm$0.60 & 2.59$\pm$0.53 & 3.16$\pm$0.62 & 4.19$\pm$0.79\\
+trivia(gpt) & 3.02$\pm$0.54 & 2.93$\pm$0.54 & 2.78$\pm$0.74 & 2.68$\pm$0.51 & 2.83$\pm$0.62 & 2.54$\pm$0.54 & 2.89$\pm$0.72 & 2.82$\pm$0.59 & 2.59$\pm$0.52 & 2.47$\pm$0.71 & 2.75$\pm$0.76 & \textendash & \textendash\\
+coqa(llama) & 4.78$\pm$1.01 & 4.30$\pm$0.66 & 3.78$\pm$0.86 & 3.92$\pm$0.54 & 3.54$\pm$0.63 & 4.08$\pm$1.17 & 3.05$\pm$0.51 & 3.33$\pm$0.67 & 3.70$\pm$0.59 & 3.32$\pm$0.77 & 3.27$\pm$0.78 & 3.85$\pm$0.69 & 4.91$\pm$1.37\\
+coqa(llama2) & 3.68$\pm$0.40 & 3.67$\pm$0.38 & 3.87$\pm$0.63 & 3.32$\pm$0.44 & 3.62$\pm$0.80 & 3.58$\pm$0.60 & 3.07$\pm$0.85 & 3.07$\pm$0.64 & 3.38$\pm$0.36 & 3.58$\pm$0.78 & 3.27$\pm$0.72 & 3.62$\pm$0.54 & 4.16$\pm$0.73\\
+coqa(opt) & 4.79$\pm$0.86 & 4.10$\pm$0.76 & 4.04$\pm$0.78 & 4.73$\pm$0.89 & 3.61$\pm$0.53 & 4.04$\pm$0.58 & 3.69$\pm$0.97 & 3.39$\pm$0.60 & 4.59$\pm$0.73 & 3.74$\pm$0.90 & 3.79$\pm$0.68 & 4.06$\pm$0.67 & 4.48$\pm$0.51\\
+coqa(gpt) & 4.32$\pm$0.91 & 3.46$\pm$0.62 & 3.80$\pm$0.43 & 3.73$\pm$0.96 & 3.28$\pm$0.75 & 3.59$\pm$0.74 & 3.62$\pm$0.64 & 3.80$\pm$0.69 & 3.90$\pm$0.54 & 3.71$\pm$0.85 & 3.81$\pm$0.62 & \textendash & \textendash\\
+nq(llama) & 4.71$\pm$0.96 & 3.54$\pm$0.72 & 4.07$\pm$0.92 & 4.51$\pm$1.05 & 4.23$\pm$0.78 & 4.20$\pm$0.66 & 3.82$\pm$0.94 & 3.86$\pm$0.57 & 4.12$\pm$0.73 & 3.80$\pm$0.57 & 3.57$\pm$0.86 & 4.45$\pm$1.03 & 4.66$\pm$1.08\\
+nq(llama2) & 5.02$\pm$0.72 & 4.68$\pm$0.69 & 5.01$\pm$0.94 & 5.52$\pm$1.33 & 5.23$\pm$1.03 & 4.99$\pm$1.24 & 4.69$\pm$0.89 & 4.87$\pm$1.10 & 5.17$\pm$0.92 & 5.22$\pm$1.11 & 5.25$\pm$1.40 & 5.38$\pm$0.96 & 5.89$\pm$1.16\\
+nq(opt) & 3.20$\pm$0.77 & 3.32$\pm$0.34 & 3.01$\pm$0.31 & 2.87$\pm$0.46 & 3.12$\pm$0.71 & 2.67$\pm$0.67 & 2.64$\pm$0.62 & 2.40$\pm$0.73 & 2.87$\pm$0.66 & 2.57$\pm$0.52 & 2.54$\pm$0.56 & 2.96$\pm$0.82 & 4.09$\pm$0.54\\
+nq(gpt) & 5.09$\pm$0.54 & 5.06$\pm$0.62 & 5.64$\pm$0.99 & 5.00$\pm$0.94 & 4.71$\pm$0.58 & 5.09$\pm$0.63 & 5.72$\pm$0.73 & 5.67$\pm$1.06 & 4.79$\pm$1.10 & 5.05$\pm$1.12 & 4.71$\pm$1.22 & \textendash & \textendash\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+\end{table}
+}
+\TabRebuttalCalibration

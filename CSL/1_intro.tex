@@ -1,0 +1,38 @@
+The development of large language models (LLMs) has afforded tremendous advancements in natural language generation (NLG). 
+Recently, LLMs have been widely applied across various natural language domains \citep{zhang2023sentiment,wang2023gpt,alves-etal-2023-steering,zhang-etal-2024-la-ucl}, even extending to tasks and domains traditionally dominated by other machine learning algorithms, such as graph data~\citep{fatemi2024talk}, tabular data~\citep{borisov2023language, hegselmann2023tabllm}, time series~\citep{gruver2023llmtime, rasul2024lagllama}, predictive chemistry~\citep{Jablonka2024LeveragingLL, shi2023relm}, computer vision~\citep{wang2023visionllm}, amongst others.
+As LLMs continue to demonstrate outstanding performance, their reliability is increasingly scrutinized. 
+Uncertainty quantification, an area of research that can provide some guidance on reliability, has recently gained much attention. 
+Despite its long history in other machine learning tasks \citep{gawlikowski2023survey}, our understanding of uncertainty quantification in NLG remains relatively limited. %, largely due to several challenges unique to NLG.
+
+During pre-training, (autoregressive) LLMs are optimized to predict high logits for the target token to minimize (variants of) the negative log likelihood. 
+Consequently, one of the most natural and widely used confidence scores in selective NLG, conformal NLG, or uncertainty quantification is the (sometimes normalized) likelihood of the sequence, equivalent to the sum/mean of token logits. 
+At first glance, sequence likelihood appears to be the most faithful reflection of a model's confidence, as it represents the (log of) the predicted probability of the output sequence, or $\log{\hat{p}(\predSeq|x)}$. 
+However, this measure often lacks proper contextualization and disregards the specific nature of the task at hand. 
+$\hat{p}(\predSeq|x)$ conflates syntactic and semantic likelihoods, though we typically prioritize the semantic aspect, to a varying degree depending on the task. 
+For example, depending on whether the question is ``Which country won the World Cup in 2022'' or ``When did Messi win the World Cup,'' the answer ``Messi emerged victorious in the 2022 World Cup'' could be considered correct or incorrect. 
+Further, the somewhat unusual expression here could adversely impact $\hat{p}(\predSeq|x)$.
+
+Despite its limitations, relatively limited attention has been paid to improving the vanilla sequence likelihood. 
+A recent study by ~\citet{duan2023shifting} proposed assessing token relevance using an external natural language inference (NLI) model. 
+The relevance score of a token is negatively proportional to the similarity between the original sequence and the sequence with this token removed, which is then applied to weight the token logits.
+%This token relevance score is calculated by removing each token from the original generated sequence to create a new sequence, measuring the similarity between the new sequence and the original, and normalizing these similarity weights so that they sum to one. 
+%The normalized weight is then applied to the token logits.
+However, since modern LMs rely on sub-word tokenizers, removing one sub-word token at a time results in non-words, is computationally expensive for longer texts, and remains context-unaware.
+
+
+%while the sequence logits reflect the likelihood of $\predSeq$ given prompt $x$, it ignores the nature of the prompt
+
+In this paper, we investigate the potential of utilizing the LLM's own attention mechanism to develop a weighted sequence likelihood as an enhanced confidence score. 
+Specifically, the LLM is prompted to concentrate on the relevant tokens in its own generation. 
+The most appropriate attention heads are then employed to re-weight the original token logits. The main contributions of this paper are summarized as thus:
+\begin{itemize}
+
+\item We introduce a straightforward yet effective method to reweight token logits, resulting in \underline{C}ontextualized \underline{S}equence \underline{L}ikelihood (\methodname), a more reliable confidence measure.
+        
+\item We improve current automatic evaluation methods for confidence measures on Question-Answering (QA) datasets and manually verify their effectiveness.
+
+\item In popular free-form QA datasets, and on a variety of LLMs, we verify that \methodname significantly outperforms baselines.
+Case studies suggest the attention weights are meaningful.
+\end{itemize}
+
+

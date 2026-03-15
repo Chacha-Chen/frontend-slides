@@ -1,0 +1,43 @@
+%Uncertainty quantification for natural language generation is a fast-growing area of research (see~\citet{baan2023uncertainty} and references therein). 
+%With the rapid proliferation of LLMs and their swift adoption across various domains, uncertainty quantification for LLMs has garnered increasing attention. 
+With the rapid proliferation of LLMs and their swift adoption across various domains, uncertainty quantification (UQ) for natural language generation (NLG) is a fast-growing area of research (see~\citet{baan2023uncertainty} and references therein). 
+Adopting the language used by \citet{lin2023generating}, uncertainty measures the predictive distribution, while confidence (our focus) further depends on the specific generation.
+A common approach involves reducing NLG to a de facto classification problem and utilizing or enhancing classical UQ methods for classification \citep{desai-durrett-2020-calibration,jiang-etal-2021-know,kamath-etal-2020-selective,wang-etal-2022-uncertainty,xiong2023llms}.
+Recognizing the unique challenges posed by the inherently high (potentially infinite) dimensionality of NLG, recent research increasingly considers UQ for NLG from a sequence perspective~\citep{hou2023decomposing,kuhn2023semantic,malinin2021uncertainty,lin2023generating}.
+
+Relatively less attention has been devoted to confidence measures. Sequence likelihood, or the log-probability of the generated sequence, remains one of the most popular proxies for assessing the quality of individual answers \citep{quach2023conformal,kuhn2023semantic,cole2023selectively}. Another natural approach, given the versatility and strong performance of LLMs, involves using prompts to elicit the LLM's own confidence level \cite{kadavath2022language,Lin2022TeachingMT,DBLP:journals/corr/abs-2012-14983,chen2023quantifying,he2023investigating,li2024think,wightman2023strength,tian-etal-2023-just}.
+For free-form generation datasets, this is typically done by arranging answers as options and extracting the model's logits for each option. % \citep{he2023investigating}. 
+While our method also employs prompts, they primarily guide the model to focus on tokens relevant to the context of the question. %, which we consider easier than directly asking the model for confidence. 
+Another approach involves sampling additional generations and comparing their similarities~\citep{lin2023generating,cole2023selectively}, which demonstrates good discriminative capability but can be rather expensive. Although this approach has the advantage that it can work for black-box LLMs.
+Ensemble methods have also been proposed~\citep{chen2023quantifying}.
+
+Recently, \citet{duan2023shifting} proposed an improvement to sequence likelihood by weighting the tokens using their importance, which is computed by removing one token at a time from the original sequence and computing the NLI dissimilarity between the new and original sequences.
+The removal of sub-word tokens, however, introduces drastically grammatically incorrect sentences, which could confuse the NLI model.
+%Recently, \cite{duan2023shifting} proposed an approach to weight the logits of tokens differently. 
+%It removes one token at a time from the original sequence, and use the dis-similarity between the new and original sequences as the importance weight for this token.
+%This, however, introduces artificial non-words by removing sub-word tokens, resulting in sentences that can be drastically grammatically incorrect.
+%Such out-of-distribution inputs could confuse the NLI model.
+In addition, such a method could incur high computation overhead by making $n$ NLI comparisons, where $n$ is the length of the generation. 
+In contrast, our method incurs no artificial grammatical errors and miniscule overhead. 
+%In contrast, our method requires only one additional call to the base LLM. 
+%Further, the soft attention it relies on is derived from the original generation, avoiding artificial grammatical errors.
+
+An important downstream application of confidence measures is \textbf{abstention in LLMs}.
+Classification with rejection~\cite{Corbiere2019AddressingConfidence,Fumera2000RejectThresholds,Geifman2017SelectiveNetworks,Jiang2018ToClassifier,lin2022scrib} could be considered the direct antecedent of selective NLG---both aiming to determine when to trust a model. % focus on finding conf score
+Naturally, approaches similar to those in the classification with rejection literature have been applied to NLP applications~\cite{varshney-etal-2022-investigating,varshney-etal-2022-towards}.
+More recently, \citet{cole2023selectively,yadkori2024mitigating,lin2023generating,quach2023conformal} started investigating NLG with abstention from UQ or risk control perspectives.
+
+%\cite{yadkori2024mitigating}
+
+Calibration is another crucial and relevant topic that has been extensively studied \cite{mielke-etal-2022-reducing,si-etal-2022-examining,xiong2023llms,zhu2023on}.
+Although calibration is not directly related to our primary focus---our main interest lies in ranking the confidence of different measures---we include results on the calibrated performance in the Appendix.
+Conformal prediction~\cite{vovk2005algorithmic} could also be considered a form of calibration at the distribution level, and has been extended to NLG to bound variants of error rates~\cite{quach2023conformal,yadkori2024mitigating}.
+%\citet{yadkori2024mitigating} uses conformal prediction to bound the error rate (or ``hallucination rate'') of LLMs.
+
+% From https://arxiv.org/pdf/2310.11732: Kadavath et al. (2022) show that advanced large pre-trained LMs are wellcalibrated while aligned LMs are mis-calibrated due to overconfidence on MCQs with logit-based UQ. Liang et al. (2023) suggests that the performance logit-based calibration of LMs depends on specific tasks and is orthogonal to other metrics such as accuracy and robustness.
+
+% deng2024gotcha: needs fine-tuning
+% he2023investigating: multiplace choice evlauation (https://arxiv.org/pdf/2310.11732)
+% chen2024inside: eigenscore
+
+% MC eval only: https://arxiv.org/pdf/2401.08694

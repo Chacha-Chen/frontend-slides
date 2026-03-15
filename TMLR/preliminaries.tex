@@ -1,0 +1,64 @@
+
+In this section, we describe the specific type of uncertainty under examination in the context of Natural Language Generation (NLG), while introducing terminologies  used in the rest of the paper. 
+
+\subsection{Predictive Uncertainty in NLG}\label{sec:background:u}
+%Although we do not adopt a specific Bayesian approach, predictive uncertainty is a prevalent subject within Bayesian statistical analysis~\citep{NEURIPS2018_3ea2db50,mcdp}. 
+%Consequently, we will utilize their terminology and language in our presentation. 
+%Recall that the predictive uncertainty quantifies the degree of dispersion present in the posterior distribution of $Y$, conditioned on the input $X=x$. 
+%As it is generally a characteristic of the posterior distribution, we denote it as $U(x)$. 
+%For example, when $Y|X=x$ adheres to a Gaussian distribution, the variance serves as an indicator of the uncertainty.
+Predictive uncertainty is a prevalent subject in probabilistic modeling, especially Bayesian literature~\citep{NEURIPS2018_3ea2db50,mcdp}.
+It quantifies the degree of dispersion in the predicted distribution of $Y$, conditioned on the input $X=x$. 
+As it is generally a characteristic of the predicted \textit{distribution}, we denote it as $U(x)$, dependent only on $x$. 
+For example, when $Y|X=x$ adheres to a Gaussian distribution, the variance serves as an indicator of the uncertainty.
+
+NLG can be viewed as a classification problem characterized by an exceedingly high dimension. 
+In classification, the uncertainty is frequently measured by the entropy of the prediction (e.g.~\cite{abdar2021review,kuhn2023semantic,sun2019feature,wellmann2012uncertainties}). 
+The predictive entropy is formally defined as $H(Y|x) = -\int p(y|x) \log{(p(y|x))} dy$, which becomes the following {\bf uncertainty score} in NLG:
+%Drawing a parallel, we could define the {\bf uncertainty score} in NLG as:
+{%\small
+\begin{align}
+    U(x) = H(\mathbf{S}|x) = 
+    -\sum_{\mathbf{s}} p(\mathbf{s}|x) \log{(p(\mathbf{s}|x))}. \label{eq:entropy:nlg}
+\end{align}
+}Here, $x$ represents the input, 
+%$\mathbf{S}$ represents the random sequence of generated tokens, 
+and the summation is taken over all potential sequences (responses). 
+
+
+Predictive uncertainty is occasionally characterized as total uncertainty, encompassing both epistemic and aleatoric uncertainty. 
+Epistemic uncertainty (model uncertainty) can potentially be reduced with additional information, such as the use of a better model and/or additional training data~\citep{hullermeier2021aleatoric,lahlou2023deup}. 
+For example, an enhanced LLM trained on more math problems could potentially generate better proofs with lower epistemic uncertainty.
+In contrast, aleatoric uncertainty (data uncertainty) pertains to the irreducible component of uncertainty inherently associated with the data generation process~\citep{10.1016/j.ins.2013.07.030}. 
+In a sense, this is related to the ``open-endedness'' in NLG.
+For instance, for the question ``when did the Philadelphia Eagles win their latest Super Bowl'' (as of 2023), the answer could be either 2017 or 2018, as the game took place in February 2018 but belongs to the 2017 season. 
+Some questions ($x$) intrinsically allow for markedly different answers ($\mathbf{s}$). 
+Decomposing aleatoric vs epistemic uncertainty is, however, often complex and typically not required for learning algorithms in real-world predictive applications~\citep{hullermeier2021aleatoric}.
+%Although differentiating aleatoric vs epistemic uncertainty is interesting, such decomposition is often complex and typically not required for learning algorithms in real-world predictive applications~\citep{hullermeier2021aleatoric}.
+
+Like most existing literature, we focus on quantifying the total uncertainty\footnote{In fact, when the level of ``open-endedness'' of an input distribution is similar, the ranking of total uncertainty should still be indicative of that of the epistemic uncertainty.}.
+We would like to emphasize again that like~\cite{kuhn2023semantic}, we adopt QA datasets due to the simplicity of evaluation.
+Methods proposed in this paper could still potentially be applied to more open-ended tasks with no reference answers, but the question then becomes: First, can we evaluate the quality of the UQ in a scalable fashion,  given that extensive human evaluation might be necessitated? 
+Second, how do we formulate the task and what does uncertainty entail in practice, when the questions are intrinsically open-ended?
+These are interesting but arguably much harder and less well-defined questions that could be explored in future work. 
+%Second, do we still care about the level of uncertainty when these questions are intrinsically open-ended?
+
+\subsection{Uncertainty vs. Confidence}\label{sec:background:uvsc}
+Uncertainty and confidence are sometimes deemed antonyms. 
+However, confidence scores typically bear a slightly different meaning, especially outside the Bayesian literature. 
+Specifically, while $U$, as discussed in~\cref{sec:background:u}, only depends on $x$ and is a property of the predicted \textit{distribution}, the confidence scores are generally associated with both the input and the prediction and can be expressed as $C(x, y)$~\citep{Chow1970OnTradeoff,Corbiere2019AddressingConfidence,Jiang2018ToClassifier,lin2022scrib}.
+As a concrete example, for $P(Y|x) = \mathcal{N}(\mu, \sigma^2)$, the variance $\sigma^2$ is an uncertainty measure.
+For a particular prediction $Y=y$, the negative z-score $-\frac{|y-\mu|}{\sigma}$ could be a confidence measure.
+Notice the use of a lower-case $y$ in the notation, instead of a upper-case $Y$ that represents a random variable.
+In the context of classification, one of the simplest and most used confidence measures is just the predicted probability $\hat{p}(Y=y|x)$~\citep{Geifman2017SelectiveNetworks, hendrycks2017a}.
+The corresponding {\bf confidence score} in NLG is the joint probability:
+\vspace{-1mm}
+\begin{align}
+    C(x,\mathbf{s}) = \hat{p}(\mathbf{s}|x) &= \prod_{i} \hat{p}(s_i | s_{<i}, x). \label{eq:jointproba}
+\end{align}
+%\vspace{-1mm}
+Obviously, \cref{eq:jointproba} requires access to the original LLM\footnote{Here, we assume a auto-regressive LLM. For other models, computing such a quantify might require a different approach, if possible.}.
+In \cref{sec:methods}, we will elaborate some alternatives that do not require such white-box access.
+
+Existing literature sometimes uses uncertainty estimate $U(x)$ to predict the correctness of a particular response $\mathbf{s}$~\citep{kuhn2023semantic,malinin2021uncertainty}, ignoring the distinction between uncertainty and confidence. 
+\cref{sec:exp} shows that this is problematic, and confidence is a more reliable indicator of the correctness of a given response. 

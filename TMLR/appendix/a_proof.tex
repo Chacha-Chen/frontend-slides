@@ -1,0 +1,33 @@
+\cref{thm:connectedcomponent} is the same as Proposition 4 in~\cite{von2007tutorial} (Note the $L$ defined in \cref{thm:connectedcomponent} is equivalent to $L_{sym}$ in~\cite{von2007tutorial}).
+We briefly recover the proof below, beginning with a proposition:
+\begin{proposition}\cite{von2007tutorial}\label{proposition:expandL}
+For every $f\in\mathbb{R}^m$ 
+\begin{align}
+    f^\top L f &= \frac{1}{2}\sum_{i,j=1}^m w_{i,j}\Big(\frac{f_i}{\sqrt{d_i}} - \frac{f_j}{\sqrt{d_j}}\Big)^2
+\end{align}
+\end{proposition}
+\cref{proposition:expandL} can be verified by simple algebra. 
+Now, suppose the graph has $k$ connected components.
+We first find $k$ orthonormal eigenvectors.
+This can be done by letting $v_1, \ldots, v_k$ be $k$ vectors such that 
+\begin{align}
+    v_l(j) = \begin{cases} \frac{\sqrt{d_j}}{\sqrt{\sum_{j'\in S_l} d_{j'}}} & j \in S_l \\ 0 & j \not\in S_l \end{cases}
+\end{align}
+It is easy to verify that $\forall l=1,\ldots,k$, $\|v_l\| = 1$.
+For ${l_1}\neq {l_2}$, $\langle v_{l_1}, v_{l_2} \rangle=0$ because $S_{l_2}$ and $S_{l_1}$ are disjoint.
+Finally, the $i$-th entry of $\sqrt{\sum_{j'\in S_l} d_{j'}} Lv_l$ is 0 if $i\not\in S_l$, and 
+\begin{align}
+    \sqrt{d_i} - \frac{1}{\sqrt{d_i}} \sum_{j}w_{ij} \frac{1}{\sqrt{d_i}}\sqrt{d_i} = 0
+\end{align}
+if $i\in S_l$ (because $L = I - D^{-\frac{1}{2}} W D^{-\frac{1}{2}}$).
+
+Now, we argue that we cannot find another vector $v$ that is a zero eigenvector.
+By \cref{proposition:expandL} $v$ must be be a scaled version of $v_l$ on component $S_l$.
+w.l.o.g., assume $v(j)\neq 0$, with $j\in S_l$.
+Then, by \cref{proposition:expandL}, $\exists c$ such that $\forall {j'}\in S_l, v(j') = c v_l(j')$.
+This means $\langle v, v_l\rangle \neq 0$.
+Thus, we cannot find another zero eigenvector. 
+\qed
+
+
+% Reference https://timroughgarden.org/s17/l/l11.pdf Section 2.1

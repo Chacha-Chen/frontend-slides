@@ -1,0 +1,88 @@
+\section{Prompts}\label{appendix:prompt}
+In this section, we present the full prompts used in various aspects of our experiments.
+
+\subsection{Question-Answering Generation Prompts}
+We use the following prompts when generating responses for the question-answering datasets.
+%To generate responses for the question-answering datasets, we largely follow the prompts used in~\citet{kuhn2023semantic,lin2023generating}. 
+%However, we made improvements to reduce the amount of necessary post-processing. 
+
+
+\textbf{CoQA}:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+Read the context and answer the questions below.
+
+*Context*: [$context]
+[additional question-answer pairs]
+*Question*: [$question]
+*Answer*:
+\end{lstlisting}
+where additional question-answer pairs are preceding turns of the conversation about the paragraph consisting of questions and reference answers.
+
+
+\textbf{TriviaQA}:
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+Answer these questions:
+
+*Question*: In Scotland a bothy/bothie is a?
+*Answer*: House
+*Question*: [$question]
+*Answer*:
+\end{lstlisting}
+
+
+\textbf{Natural Questions} is a much harder dataset than TriviaQA, so we use the same 5-shot prompt version of the prompt in~\cite{touvron2023llama} (with 5 questions randomly picked from the training set).
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+Answer these questions:
+
+*Question*: who makes up the state council in russia
+*Answer*: governors and presidents
+*Question*: when does real time with bill maher come back
+*Answer*: November 9, 2018
+*Question*: where did the phrase american dream come from
+*Answer*: the mystique regarding frontier life
+*Question*: what do you call a group of eels
+*Answer*: bed
+*Question*: who wrote the score for mission impossible fallout
+*Answer*: Lorne Balfe
+*Question*: [$question]
+*Answer*:
+\end{lstlisting}
+
+\subsection{Attention-eliciting Prompt}
+In the following, we provide the full prompt previewed in \cref{fig:prompt_short}.
+\begin{lstlisting}[basicstyle=\footnotesize\ttfamily]
+Read the following question with optional context and decide if the answer correctly answer the question. Focus on the answer, and reply Y or N.
+
+
+Context: Luxor International Airport is a airport near Luxor in Egypt (EG). It is 353km away from the nearest seaport (Duba). The offical IATA for this airport is LXR.
+Question: Luxor international airport is in which country?
+Answer: It is in the United States, and its IATA is LXR.
+ Decision: N. (The airport is in Egypt, not the United States.)
+
+
+Context: Harry is a good witcher.
+Question: How old is Harry?
+Answer: Harry practices witchcraft.
+ Decision: N. (The answer does not mention Harry's age.)
+
+
+Question: What is the capital of Kenya?
+Answer: Nairobi is the capital of Kenya.
+ Decision: Y.
+
+
+Question: Who has won the most Premier League titles since 2015?
+Answer: Manchester City have win the most Premier League title after 2015.
+ Decision: Y. (Grammar errors are ignored.)
+
+
+[$optional_context]
+Question: [$question]
+Answer: [$response]
+ Decision:
+\end{lstlisting}
+
+\subsection{Automatic Accuracy Evaluation}%\label{appendix:check_judgement}
+For the prompts used to elicit judgment from \GPTName and \LLaMATwoName, we use the same ones from the Appendix of~\citet{lin2023generating}.
+
+

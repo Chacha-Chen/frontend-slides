@@ -1,0 +1,46 @@
+\appendix
+\newpage
+
+\section{Proof for \cref{thm:connectedcomponent}}
+\input{appendix/a_proof}
+
+\section{Additional Experiment Details and Ablations}
+\input{appendix/a_experiment_details}
+
+
+\subsection{Computational Requirements}
+We perform all experiments on a machine with 2x AMD EPYC Milan 7513 CPU, 512 GB RAM, 8x A6000 GPUs. 
+Generating 20 responses with OPT/LLaMA for \datasetcoqa, \datasetnqopen, \datasettrivia takes from 2.5 to 15 hours, or from 2 to 11 seconds per question. 
+CoQA takes the longest due to the story input.
+Running the NLI model for 20 responses (assuming the worst case that no two responses are exactly the same, which means 380 comparisons) takes about 0.8 seconds. 
+
+% We used the unnormalized SE as it's much better than normalized
+
+\subsection{Full Experiment Results}\label{appendix:fullresults}
+\include{appendix/a_allsims}
+
+
+
+
+\section{Additional Results}
+
+\subsection{Number of Generations}\label{appendix:numgen}
+\input{appendix/a_numgens}
+
+\subsection{Uncertainty + Individual Accuracy}
+\input{appendix/a_UwIA}
+
+\subsection{Effects of Sampling Temperature of LLM}
+\input{appendix/a_temps}
+
+
+%\subsection{Uncertainty with Greedy Decoding}
+\subsection{Generation without Rejection}
+\input{appendix/a_pickmax}
+
+
+
+\subsection{Confidence vs Calibration}\label{appendix:calib}
+\input{appendix/rebuttal_calib}
+
+

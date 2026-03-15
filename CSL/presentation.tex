@@ -1,0 +1,88 @@
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[final]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+\input{defs}
+
+\title{Contextualized Sequence Likelihood: Enhanced Confidence Scores for Natural Language Generation}
+\author{Zhen Lin$^{1}$, Shubhendu Trivedi, Jimeng Sun$^{1,2}$\\
+  \texttt{\{zhenlin4,jimeng\}@illinois.edu} \\
+  \texttt{shubhendu@csail.mit.edu}\\
+  ${^1}$ University of Illinois at Urbana-Champaign\\
+${^2}$ Carle’s Illinois College of Medicine, University of Illinois at Urbana-Champaign\\
+%${^3}$ Jump Trading\\
+}
+
+  
+
+
+\begin{document}
+
+\def \FigAttentionCase{
+\begin{figure*}[ht]
+% \textbf{Answer:} \\
+% \[
+% \underbrace{\text{\colorbox{red!40}{On July 20, 1969}}}_{\text{when}} \text{, Armstrong and} \underbrace{\colorbox{blue!40}{\text{Buzz Aldrin}}}_{\text{who}} \underbrace{\text{\colorbox{yellow!40}{landed on the Moon}}}_{\text{what}} \\ \text{for the first time in human history.}
+% \]
+\begin{minipage}{0.99\textwidth}
+{\small
+\begin{align*}
+\textbf{Q:} &\text{\colorbox{red!40}{When did Neil Armstrong land on the Moon?}}\\
+&\text{\colorbox{blue!40}{Who landed on the Moon with Neil Armstrong on July 20, 1969?}}\\
+&\text{\colorbox{yellow!40}{What did Neil Armstrong and Buzz Aldrin do on July 20, 1969?}}\\
+\textbf{A:} &\underbrace{\text{\colorbox{red!40}{On July 20, 1969}}}_{\text{when}} \text{, Armstrong and} \underbrace{\colorbox{blue!40}{\text{Buzz Aldrin}}}_{\text{who}} \underbrace{\text{\colorbox{yellow!40}{landed on the Moon}}}_{\text{what}} \text{ for the first time in human history.}&&
+\end{align*}
+}
+\end{minipage}
+\begin{minipage}{0.99\textwidth}
+\includegraphics[width=0.95\textwidth]{Figures/attn_illustration_mistral.pdf} 
+\end{minipage}
+\caption{Depending on the question, the attention-eliciting prompt introduced in \cref{fig:prompt_short} induces attention focusing on different parts of the same response (``when'', ``who'' and ``what'').
+In the plot on the right, we show the CDF of $\Delta_{attn}$, the change of attention weight on the corresponding concept when asked the relevant question, on all 1,024 heads of Mistral-7B.
+For example, for ``when'', we compute $\Delta_{attn}$ as the attention weight on ``On July 20, 1969'' when asked the ``when'' question minus the average of the cases where the other two questions were asked.
+%We then plot the CDF of such $\Delta_{attn}$ on all 1,024 heads of Mistral-7B.
+In all cases, the attention significantly increases on the relevant tokens (p-value from one-sided t-test is at most 9e-90).
+}
+\label{fig:attnillustration}
+\end{figure*}
+}
+\FigAttentionCase
+\end{document}

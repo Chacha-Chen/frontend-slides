@@ -1,0 +1,136 @@
+% This must be in the first 5 lines to tell arXiv to use pdfLaTeX, which is strongly recommended.
+\pdfoutput=1
+% In particular, the hyperref package requires pdfLaTeX in order to break URLs across lines.
+
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[final]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+\input{defs}
+
+\title{Contextualized Sequence Likelihood: Enhanced Confidence Scores for Natural Language Generation}
+\author{Zhen Lin$^{1}$, Shubhendu Trivedi, Jimeng Sun$^{1,2}$\\
+  \texttt{\{zhenlin4,jimeng\}@illinois.edu} \\
+  \texttt{shubhendu@csail.mit.edu}\\
+  ${^1}$ University of Illinois at Urbana-Champaign\\
+${^2}$ Carle’s Illinois College of Medicine, University of Illinois at Urbana-Champaign\\
+%${^3}$ Jump Trading\\
+}
+
+  
+
+
+\begin{document}
+\maketitle
+\begin{abstract}
+The advent of large language models (LLMs) has dramatically advanced the state-of-the-art in numerous natural language generation tasks.
+For LLMs to be applied reliably, it is essential to have an accurate measure of their confidence.
+Currently, the most commonly used confidence score function is the likelihood of the generated sequence, which, however, conflates semantic and syntactic components.
+For instance, in question-answering (QA) tasks, an awkward phrasing of the correct answer might result in a lower probability prediction. 
+Additionally, different tokens should be weighted differently depending on the context.
+In this work, we propose enhancing the predicted sequence probability by assigning different weights to various tokens using attention values elicited from the base LLM.
+By employing a validation set, we can identify the relevant attention heads, thereby significantly improving the reliability of the vanilla sequence probability confidence measure.
+We refer to this new score as the Contextualized Sequence Likelihood (\methodname).
+\methodname is easy to implement, fast to compute, and offers considerable potential for further improvement with task-specific prompts.
+Across several QA datasets and a diverse array of LLMs, \methodname has demonstrated significantly higher reliability than state-of-the-art baselines in predicting generation quality, as measured by the AUROC or AUARC.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+\input{1_intro}
+
+
+\section{Related Works}\label{sec:related}
+\input{2_related}
+
+
+\section{Contextualized Sequence Likelihood}\label{sec:method}
+\input{3_method}
+
+\section{Experiments}\label{sec:exp}
+\input{4_experiment}
+
+
+
+\section{Conclusion}\label{sec:conclusion}
+In this paper, we explore enhancements to the widely used confidence measure, sequence likelihood, which serves as a quality metric for model generations in selective generation and risk control for natural language generation. 
+We introduce Contextualized Sequence Likelihood, or \methodname, a novel approach that utilizes attention weights on generated tokens to re-weight the logits in sequence likelihood computation. 
+This new confidence measure surpasses existing methods across several popular datasets and large language models by more accurately predicting the accuracy of each response.
+
+
+\section{Limitations}\label{sec:limitations}
+Despite these improvements, there are limitations to the current approach. 
+First, the interpretability of attention weights is often obscured by the nature of the self-attention mechanism. 
+While attention re-weighting generally enhances the confidence measure, there are individual cases where selected heads do not align with tokens that humans would typically consider important in the context of the question. 
+As discussed in \cref{sec:exp}, a possible solution involves identifying key tokens through a language model via natural language, though this introduces the additional challenge of matching these words to the original response.
+
+Another limitation is the applicability of the current prompt, which is tailored for question-answering and may require modifications for other tasks.
+%Different prompts may be required for other tasks. 
+Additionally, like many baseline methods, the current approach cannot leverage external information for ``fact-checking.'' 
+Integrating confidence from multiple models could potentially bridge the gap between a language model's perceived confidence and the actual correctness of a response.
+We hope that future research will address these issues and expand the toolkit available to practitioners for assessing the reliability of large language models.
+
+
+\section*{Acknowledgements}
+This work was supported by NSF award SCH-2205289, SCH-2014438, IIS-1838042, NIH award R01 1R01NS107291-01.
+
+
+%Another limitation is that currently the attention re-weighting requires running an additional inference with the attention-eliciting prompt.
+%While this is notably cheaper than sampling-based methods~\cite{lin2023generating}, and on par with another popular approach, self-evaluation, it is still more expensive than the vanilla sequence likelihood.
+
+
+
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+
+\clearpage 
+\bibliography{main}
+
+\clearpage 
+\appendix
+%\input{appendix}
+\input{appendices/prompt}
+%\input{appendices/exp_extra}
+\input{appendices/autoeval}
+%\input{appendices/attention}
+\input{appendices/temperature}
+%\input{appendices/uncertainty}
+\input{appendices/llama2_acc}
+\input{appendices/calib}
+\input{appendices/checklist}
+\end{document}

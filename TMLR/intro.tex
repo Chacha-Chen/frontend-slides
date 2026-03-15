@@ -1,0 +1,33 @@
+
+Large language models (LLMs) have recently gained significant attention in  natural language generation (NLG)~\citep{touvron2023llama,katz2023gpt,openai2023gpt4,chowdhery2022palm}.
+Trained on vast amounts of data, they exhibit impressive abilities in generating human-like responses.
+As such advances invariably lead to wider adoption of LLM for language generation tasks, such as question-answering (QA), it is crucial to quantify their uncertainty.
+
+Uncertainty quantification (UQ) is well-studied within machine learning. 
+A reliable measure of uncertainty is important to decide when to trust a model. 
+When a model shows high uncertainty or returns low-confidence predictions\footnote{See \cref{sec:background:uvsc} for a discussion of uncertainty vs. confidence.}, the input should either be rejected or yielded to further evaluation~\citep{mcdp}.
+This is an area of active research typically called selective classification~\citep{Chow1970OnTradeoff,lin2022scrib,Geifman2017SelectiveNetworks}. 
+Similarly, in NLG, one might refuse the generation $\mathbf{s}$ by the LLM to the input $x$ with high uncertainty/low confidence. 
+Selective generation basing on uncertainty estimates could potentially improve the decision making process, especially for high-stakes applications such as medical or legal question-answering.
+
+While UQ has been an important topic for classical machine learning tasks like classification or regression~\citep{Lakshminarayanan2017SimpleEnsembles,mcdp,DBLP:conf/icml/Hernandez-Lobato15b,ABDAR2021243}, it bears specific challenges for NLG and has attracted limited attention until recently~\citep{Lin2022TeachingMT,kuhn2023semantic,malinin2021uncertainty}. 
+Numerous challenges hinder the direct application of UQ methods from classification or regression. 
+First, the output space has forbiddingly high dimensionality, rendering most measures, such as the exact entropy of predicted probabilities, unfeasible. 
+Furthermore, distinct token sequences may convey identical meanings, necessitating an effective uncertainty measure to operate in the semantic meaning space~\citep{kuhn2023semantic}. 
+Lastly, many existing LLMs are black-boxes served via APIs, implying that end-users typically lack white-box access. 
+Even when such access is available, many LLMs are too large to run for most. 
+Note that such considerations are orthogonal to the problem of overconfidence: We need a ranking-wise informative confidence/uncertainty measure before the problem of overconfidence even appears (see discussion in \cref{sec:related}).
+
+
+In this study, we explore the problem of uncertainty quantification in NLG with black-box LLMs. 
+Unlike some prior research~\citep{DBLP:journals/corr/abs-2012-14983,Lin2022TeachingMT,kadavath2022language,kuhn2023semantic}, we focus on the more realistic scenario where we only possess access to the generated text, rather than the numerical outputs such as token-level logits. 
+We first introduce a set of measures designed to assess the uncertainty of the input and the confidence of each generation -  
+The main idea entails estimating the uncertainty/confidence from multiple generations from the LLM. 
+Then, we demonstrate the application of these uncertainty estimates in the context of free-form QA.
+QA datasets are used for the simplicity of evaluation, as completely open-ended NLG tasks require expensive human evaluation.
+The main contributions of this paper are summarized as follows:
+\begin{itemize}
+    \item We investigate uncertainty quantification for black-box LLMs, a previously under-explored topic, and assess its value in the downstream task of selective natural language generation. 
+    \item We put forward several simple yet effective techniques for estimating uncertainty associated with input data and determining the confidence level of each individual generated response.
+    \item Through extensive experiments on several popular LLMs and question-answering datasets, we observe that proposed measures demonstrate a high level of effectiveness in pinpointing challenging (uncertain) questions and predicting the quality of their corresponding answers.
+\end{itemize}

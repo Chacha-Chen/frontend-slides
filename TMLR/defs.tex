@@ -1,0 +1,85 @@
+
+\usepackage{graphicx}  % Please import figures that are *high resolution* PDFs
+\usepackage{caption}
+\usepackage{subfigure}  % Useful for subfigures
+\usepackage{booktabs}  % Useful for high quality tables (e.g., you can replace \hrule with \toprule, \midrule, and \bottomrule).
+\usepackage{multicol}
+\usepackage{multirow}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MATH PACKAGES (Comment out this section if unnecessary for your dissertation)
+%
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+\usepackage{amsthm}
+
+\usepackage{xcolor}         % colors
+\usepackage[capitalize]{cleveref}
+%\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{breqn}
+\usepackage{bbm}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{xspace}
+\usepackage{enumitem}
+\usepackage[hang,flushmargin]{footmisc}
+%\usepackage{algpseudocode}
+\usepackage{wrapfig}
+\setlist{leftmargin=*}
+\setlist[itemize]{noitemsep}
+\setlist[enumerate]{noitemsep}
+
+
+%===============================
+\newcommand{\TS}{\mathbf{S}}
+\newcommand{\methodSplit}{Ours\xps}
+\newcommand{\methodname}{Ours\xspace}
+\newcommand{\methodSampled}{Ours(Sampled)\xspace}
+\newcommand{\methodMLE}{Ours(MostLikely)\xspace}
+
+\newcommand{\baselineGal}{\texttt{SE}\xspace}
+\newcommand{\baselineGalNorm}{\texttt{SE(norm)}\xspace}
+\newcommand{\baselinePTrue}{\texttt{P(true)}\xspace}
+\newcommand{\baselineNumSets}{\texttt{NumSet}\xspace}
+\newcommand{\baselineLexiSim}{\texttt{LexiSim}\xspace}
+
+\newcommand{\datasetcoqa}{\texttt{coqa}\xspace}
+\newcommand{\datasetnqopen}{\texttt{nq}\xspace}
+\newcommand{\datasettrivia}{\texttt{trivia}\xspace}
+
+\newcommand{\methodEigvClip}{\texttt{EigV}\xspace}
+\newcommand{\methodEcc}{\texttt{Ecc}\xspace}
+\newcommand{\methodDegree}{\texttt{Deg}\xspace}
+
+\newcommand{\affinityJaccard}{a_{Jaccard}\xspace}
+\newcommand{\affinityEntail}{a_{NLI,entail}\xspace}
+\newcommand{\affinityContradict}{a_{NLI,contra}\xspace}
+
+
+%\definecolor{falured}{rgb}{0.7, 0.15, 0.15}
+%\newcommand\covfail[1]{{\color{falured}#1}}
+
+%==========
+\newcommand{\defeq}{\vcentcolon=}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+%\newcommand\fontred[1]{{\color{red}#1}}
+%\newcommand\zl[1]{{\color{orange}Zhen: #1}}
+%\newcommand\reminder[1]{{\color{green}#1}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%\newcommand{\todo}{\fontred{TODO:}}
+%\newcommand\iclrrebuttalupdates[1]{{\color{blue}#1}}
+%\newcommand\iclrrebuttalupdates[1]{{#1}}
+%\newcommand\tmlrrebuttalupdates[1]{{\color{blue}#1}}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\usepackage{floatrow}%floatrow causes caption to be on bottom
+\floatsetup[table]{capposition=top}

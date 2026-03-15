@@ -1,0 +1,80 @@
+
+\begin{alertblock}{Highlights}
+
+\begin{itemize}
+\item We propose confidence and uncertainty estimators, via only \textbf{black-box} LM 
+ access.
+
+\item 
+We construct semantic similarity matrices from sampled responses to derive uncertainty and confidence estimates.
+
+\item %On popular free-form QA tasks, our black-box uncertainty and confidence measures often outperform white-box baselines
+Our black-box uncertainty and confidence measures often outperform white-box baselines on free-form QA tasks.
+
+\end{itemize}
+
+\end{alertblock}
+
+%----------------------------------------------------------------------------------------
+%	INTRODUCTION
+%----------------------------------------------------------------------------------------
+% \begin{block}{\color{mydarkgreen}{Motivation}}
+% \begin{itemize}
+
+% \item LLMs often generate high-quality responses—but how confident should we be?
+
+% \item Existing UQ approaches often assume white-box access (e.g., logits), which is unrealistic for closed-source APIs.
+
+% \item We aim to develop simple, effective UQ techniques for black-box LLMs, especially for QA tasks.
+
+% \end{itemize}
+% \end{block}
+
+
+\begin{block}{\color{mydarkgreen}{Uncertainty vs Confidence}}
+
+\begin{itemize}
+    \item 
+    Given input (prompt) $\mathbf{x}$, the LM $\mathcal{M}$ generate a random response  $\mathbf{s}_j$ with tokens $[s_{j,1},\ldots,s_{j,n_i}]$.
+    
+    \item \textbf{Confidence} is a property of both the predictive distribution and a particular generation, taking the form of $C(\mathbf{x},\mathbf{s}|\mathcal{M})$.
+    Think ``probability'', e.g. sequence probability % $\hat{p}(\mathbf{s}|\mathbf{x}) = \prod_{i} \hat{p}(s_i | s_{<i}, \mathbf{x})$
+    %  Example: sequence probability
+    \begin{align}
+        %C(\mathbf{x},\mathbf{s}) = 
+        \hat{p}(\mathbf{s}|\mathbf{x}) &= \prod_{i} \hat{p}(s_i | s_{<i}, \mathbf{x}) \label{eq:jointproba}
+    \end{align}
+    
+    \item \textbf{Uncertainty} is a property of the predictive \textit{distribution}, taking the form of $U(x|\mathcal{M})$. 
+    Think  ``dispersion'', e.g. predictive entropy
+    \begin{align}
+        %U(\mathbf{x}) = 
+        \hat{H}(\mathbf{S}|\mathbf{x}) = 
+    -\sum_{\mathbf{s}} \hat{p}(\mathbf{s}|\mathbf{x}) \log{(\hat{p}(\mathbf{s}|\mathbf{x}))} \label{eq:entropy:nlg}
+    \end{align}
+
+    
+\end{itemize}
+% Uncertainty and confidence are sometimes deemed antonyms, but they 
+% However, confidence scores typically bear a slightly different meaning, especially outside the Bayesian literature. 
+% Specifically $U$ only depends on $x$ and is a property of the predictive \textit{distribution}, the confidence scores are generally associated with both the input and the prediction and can be expressed as $C(x, y)$.
+% As a concrete example, for $P(Y|x) = \mathcal{N}(\mu, \sigma^2)$, the variance $\sigma^2$ is an uncertainty measure.
+% For a particular prediction $Y=y$, the negative z-score $-\frac{|y-\mu|}{\sigma}$ could be a confidence measure.
+% Notice the use of a lower-case $y$ in the notation, instead of a upper-case $Y$ that represents a random variable.
+% In the context of classification, one of the simplest and most used confidence measures is just the predicted probability $\hat{p}(Y=y|x)$.
+% The corresponding {\bf confidence score} in NLG is the joint probability:
+% \begin{align}
+%     C(x,\mathbf{s}) = \hat{p}(\mathbf{s}|x) &= \prod_{i} \hat{p}(s_i | s_{<i}, x). \label{eq:jointproba}
+% \end{align}
+\end{block}
+
+
+
+\begin{block}{\color{mydarkgreen}{Method Overview}}
+
+\begin{enumerate}
+    \item For a given input $\mathbf{x}$, generate $m$ response samples $\mathbf{s}_1, \ldots, \mathbf{s}_m$.
+    \item Calculate the pairwise similarity scores $a(\mathbf{s}_{j_1}, \mathbf{s}_{j_2})$ for these $m$ responses.
+    \item Compute an uncertainty estimate $U(\mathbf{x})$ or a confidence score $C(\mathbf{x},\mathbf{s}_j)$ using the similarity values.
+\end{enumerate}
+\end{block}

@@ -1,0 +1,28 @@
+The quantification of uncertainty has emerged as a significant area of research across various machine learning domains, including natural language processing (NLP). 
+However, previous NLP studies have predominantly addressed the associated UQ challenges similarly to classification or regression methodologies~\citep{desai-durrett-2020-calibration,jiang-etal-2021-know,kamath-etal-2020-selective,wang-etal-2022-uncertainty,xiong2023llms}. 
+For instance, \citet{kamath-etal-2020-selective} examines the selective question-answering task as a multiple-choice problem, reducing it to a de facto classification task rather than directly engaging with free-form generation. 
+As recently argued in \cite{kuhn2023semantic}, such approaches enable the application of UQ measures akin to those employed in more extensively researched classification or regression contexts, but overlook the generative aspects and distinct challenges of NLG.
+
+Recently, some research started to study uncertainty quantification for NLG.
+One line of research involves asking the LLM itself for its confidence, with or without additional fine-tuning~\citep{kadavath2022language,Lin2022TeachingMT, DBLP:journals/corr/abs-2012-14983,chen2023quantifying}.
+Apart from being expensive, such approaches can be hard to generalize due to opaque training details or differences between LLMs~\citep{kuhn2023semantic}. 
+The work most relevant to ours is~\cite{kuhn2023semantic}, which proposes to compute the ``semantic entropy'' by considering the equivalence relationships amongst generated answers, and requires no training.
+Nonetheless, it still requires access to the token-level numerical output of the LLM, which is not always available.
+
+As discussed, one of the most pertinent applications of uncertainty quantification in NLG involves the development of methods for selective NLG (or, NLG with rejection). 
+This emerging field has limited research to date, but shares close ties with \textit{classification with rejection}.
+Both tasks can be viewed as determining when to trust a model, whether it is a classifier or an LLM. 
+Numerous classification with rejection methods emphasize the identification of a reliable confidence score (some of which are jointly trained with the classifier)~\citep{Corbiere2019AddressingConfidence,Fumera2000RejectThresholds,Geifman2017SelectiveNetworks,Jiang2018ToClassifier}, which is often not only dependent on the input but also on the prediction. 
+As existing uncertainty quantification research for NLG primarily focuses on input uncertainty~\citep{kuhn2023semantic,malinin2021uncertainty}, it overlooks the crucial aspect of confidence, which is essential in deciding when to trust an LLM's response (see \cref{sec:background:uvsc} for more discussion). 
+Recent works have explored selective classification in NLP tasks~\citep{varshney-etal-2022-investigating,varshney-etal-2022-towards}.
+However, the distinct generative nature of NLG precludes the direct adaptation of confidence measures from the classification with rejection literature. 
+This paper serves as a step to bridge this gap and enhance the effectiveness of uncertainty quantification in NLG. 
+
+
+It is worth noting that the issue of LLMs being overconfident \citep{mielke-etal-2022-reducing,si-etal-2022-examining,xiong2023llms} is orthogonal to our work, as we evaluate measures basing how they \textit{rank} different samples - such measures may then be calibrated by distribution-free uncertainty quantification methods like in \citet{schuster2022confident}\footnote{
+See Appendix for results on calibrated confidence measures.
+}.
+\citet{giulianelli2023comes} also provides an interesting exploration of the inherent uncertainty in human responses for many NLG tasks, in a black-box manner.
+Finally, carefully designed prompts have been proposed to improve the quality of the generated responses in general~\citep{Zhou2023NavigatingTG,si2023prompting,wei2022chain}.
+Orthogonal to UQ but related to selective NLG, \cite{varshney-baral-2023-post} focuses on reattempting rejected samples, with the help of an auxiliary model trained on an additional dataset that predicts the correctness of the generation.
+This paper focuses on providing quantitative uncertainty/confidence measures, which can be used to identify high-quality generations. 

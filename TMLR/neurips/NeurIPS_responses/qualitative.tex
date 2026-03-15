@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\input{defs}
+\begin{document}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1.3\linewidth]{pics/umap_coqa_56.png}
+    \caption{This is an UMAP visualization of the embeddings used for eccentricity.
+    The question is ``Where do Quinton and Kendra travel to and from every day?'' and the answer is ``school''.
+    As we can see, the answers about bus stops are clustered on the right.
+    On the other hand, the answers closest to the reference answers are clustered on the bottom left.
+    }
+    \label{fig:example}
+\end{figure}
+
+
+\def \TablePickAnswer{
+\begin{table}[!ht]
+\caption{
+AUARC for the picked response from 10 responses (for one seed).
+\vspace{-5mm}
+}
+\label{table:main:exp:pick}
+\centering
+\begin{small}
+   \resizebox{0.85\columnwidth}{!}{
+\begin{tabular}{l|cc|cc|cc|cc}
+\toprule
+& \methodEcc(E) & \methodDegree(E) & \baselinePTrue\\
+\midrule
+trivia(llama) & 85.33 & 90.53 & 52.77 \\
+trivia(opt) & 55.49 & 64.49 & 14.21\\
+trivia(gpt) & 92.11 & 92.39 & \textendash\\
+coqa(llama) & 87.35 & 92.58 & 62.62\\
+coqa(opt) & 81.07 & 87.75 & 44.71\\
+coqa(gpt) & 87.95 & 88.49 & \textendash\\
+nq(llama) & 38.84 & 46.13 & 23.41\\
+nq(opt) & 19.84 & 28.81 & 6.50 \\
+nq(gpt) & 60.80 & 62.36 & \textendash\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+\end{table}
+}
+\TablePickAnswer
+\end{document}

@@ -1,0 +1,180 @@
+\subsection{Prompts for Response Generation}
+\textbf{TriviaQA}:
+We use the exact prompt in~\cite{touvron2023llama} for TriviaQA, which is reproduced below:
+{\scriptsize
+\begin{verbatim}
+Answer these questions:
+Q: In Scotland a bothy/bothie is a?
+A: House
+Q: [Provided question]
+A: 
+\end{verbatim}
+}
+
+\textbf{Natural Questions} is a much harder dataset than TriviaQA, so we use the same 5-shot prompt version of the prompt in~\cite{touvron2023llama} (with 5 questions randomly picked from the training set).
+
+%Q: who makes up the state council in russia
+%A: governors and presidents
+%Q: when does real time with bill maher come back
+%A: November 9, 2018
+%Q: where did the phrase american dream come from
+%A: the mystique regarding frontier life
+%Q: what do you call a group of eels
+%A: bed
+%Q: who wrote the score for mission impossible fallout
+%A: Lorne Balfe
+
+\textbf{CoQA}:
+For CoQA, we use the code provided by~\cite{kuhn2023semantic} to prepare the data\footnote{https://github.com/lorenzkuhn/semantic\_uncertainty/blob/main/code/parse\_coqa.py}.
+We provide the prompts below for convenience:
+{\scriptsize
+\begin{verbatim}
+[The provided context paragraph]
+[additional question-answer pairs]
+Q: [Provided question]
+A:
+\end{verbatim}
+}
+where additional question-answer pairs are preceding turns of the conversation about
+the paragraph consisting of questions and reference answers.
+
+\subsection{Prompts for NLI similarity}
+Similar to \citet{kuhn2023semantic}, we feed both the question and answer to DeBERTa-large\footnote{\url{https://huggingface.co/microsoft/deberta-large-mnli}} with the following prompt for any pair of answers to the same question in order to get the entailment/contradiction scores:
+{\scriptsize
+\begin{verbatim}
+[question] [answer_1] [SEP] [question] [answer_2]
+\end{verbatim}
+}
+
+
+\subsection{Automatic accuracy evaluation}%\label{appendix:check_judgement}
+We use \texttt{gpt-3.5-turbo} to evaluate the similarity between each response and the reference answer.
+The prompts for \datasetcoqa, \datasettrivia and \datasetnqopen are shown below. The few-shot examples are chosen from the training split.
+
+\textbf{CoQA}:
+%
+{\scriptsize
+%\begin{lstlisting}[breaklines]
+\begin{verbatim}
+Rate the level of consistency between the answer to the question and the reference answer, from 0 to 100.
+Question: When was the Vat formally opened?
+Reference: It was formally established in 1475
+Answer: In 1475
+Rating: 100.
+
+Question: what is the library for?
+Reference: research
+Answer: tourism
+Rating: 0.
+
+Question: [question]
+Reference: [reference answer]
+Answer: [generated response]
+Rating:
+\end{verbatim}
+%\end{lstlisting}
+}
+
+\textbf{TriviaQA}:
+%\begin{lstlisting}[breaklines]
+{\scriptsize
+\begin{verbatim}
+Rate the level of consistency between the answer to the question and the reference answer, from 0 to 100.
+Question: In Scotland a bothy/bothie is a?
+Reference: House
+Answer: House
+Rating: 100.
+
+Question: Where in England was Dame Judi Dench born?
+Reference: York
+Answer: London
+Rating: 0.
+
+Question: [question]
+Reference: [reference answer]
+Answer: [generated response]
+Rating:
+\end{verbatim}
+}
+%\end{lstlisting}
+
+\textbf{Natural Questions}:
+
+%\begin{lstlisting}[breaklines]
+{\scriptsize
+\begin{verbatim}
+Rate the level of consistency between the answer to the question and the reference answer, from 0 to 100.
+Question: who makes up the state council in russia
+Reference: governors and presidents
+Answer: governors and presidents
+Rating: 100.
+
+Question: when does real time with bill maher come back
+Reference: November 9, 2018
+Answer: September 8, 2000
+Rating: 0.
+
+Question: [question]
+Reference: [reference answer]
+Answer: [generated response]
+Rating:
+\end{verbatim}
+}
+%\end{lstlisting}
+
+99.34\% of the judgements by GPT can be parsed as an integer between 0 and 100 in the first attempt with a simple \texttt{str.split} in Python. 
+We skipped the remaining samples for the experiments in this paper, but if necessary one could devise a better parsing algorithm as well as improved prompts to elicit judgement with higher coverage.
+
+
+
+\textbf{Verifying the correctness of GPT evaluations}
+We sample 33 samples per dataset and model (OPT, LLaMA, GPT) and perform a human evaluation of the quality of the GPT judgement. 
+That is, we compare the human judgement on whether a generated response is correct or not with the GPT's judgement, like in \citet{kuhn2023semantic}.
+In \cref{table:appendix:gpt_eval}, we show the breakdown of the accuracy by datasets.
+
+\begin{table}[ht]
+
+\caption{
+The accuracy of the GPT evaluation on the correctness of the responses, measured by the authors. 
+For example, for \datasettrivia, the human evaluations and the GPT evaluations are aligned on 97 out of the 99 question/answer pairs, leading to an accuracy of 98.0. 
+}
+\label{table:appendix:gpt_eval}
+%\begin{center}
+\centering
+\begin{small}
+% \scalebox{0.8}{
+   \resizebox{0.6\columnwidth}{!}{
+\begin{tabular}{l|ccc}
+\toprule
+ & \datasetcoqa & \datasettrivia & \datasetnqopen\\
+\midrule
+Accuracy of GPT evaluation & 90.9 & 98.0 & 95.9\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+%\end{center}
+\end{table}
+
+We also include a few typical examples where the GPT evaluation is more reliable than the rougeL evaluation used in \citet{kuhn2023semantic}
+\begin{itemize}
+    \item ``Q: Were they nice to the other critters? A: no''. GPT correctly identifies that ``They were mean to the other animals'' is a correct answer, but the rougeL metric does not capture this logic.
+    
+    \item ``Q: Who created the immunity plan? A: the Gulf Cooperation Council''. 
+    GPT correctly identities that ``GCC'' is a correct answer (an abbreviation of the Gulf Coorperation Councol'', but rougeL cannot identify this mechanically).
+
+    \item ``Q: when was the last bear killed in the uk A: c. 1000 AD''.
+    GPT classifies the response ``The last bear in the UK was killed over a thousand years ago, in the 9th century, so there is no specific date available'' as correct, but rougeL fails to do so.
+    
+\end{itemize}
+The GPT evaluation also introduces its own problems, though. 
+For example, when it is used to evaluate its own response to the question ``when did it become law to stand for the national anthem'' with reference answer ``6/22/1942'', it rates ``There is no federal law that mandates standing for the national anthem in the United States'' as 100.
+However, we believe it is using its own knowledge here and largely ignores the reference answer. 
+Such problems could potentially be improved with better prompts.
+
+
+\subsection{Hyper-parameters for Uncertainty/Confidence Measures}
+For all $U$ and $C$ measures involving $\affinityEntail$ and $\affinityContradict$, we need to choose a temperature for the NLI model.
+The temperature is chosen from 0.1, 0.25, 0.5, 1, 3, 5, and 7.
+For $U_\methodEcc$ and $C_\methodEcc$, we also need to choose a cutoff for eigenvalues.
+For simplicity we use the same threshold for each experiment/dataset, and the threshold is chosen from 0.4, 0.5, 0.6, 0.7, 0.8, and 0.9.

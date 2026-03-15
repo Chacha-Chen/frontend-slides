@@ -1,0 +1,194 @@
+
+In the main text, we present only results for $\affinityEntail$.
+We show results for $\affinityJaccard$ and $\affinityContradict$ in \cref{table:appendix:exp:arc:u+ea:allsim,table:appendix:exp:arc:c+ia:allsim,table:appendix:exp:roc:c+ia:allsim}.
+We observe that with the default generation configs, the choice of similarity measure ($\affinityContradict, \affinityEntail, \affinityJaccard$) seems to play a bigger role than the construction of $U$ and $C$ measures. 
+$\affinityEntail$ consistently performs the best, especially on \datasetnqopen.
+This is likely due to the nature of the questions.
+For example, for questions starting with ``why'', for a collection of low-quality random answers, $\affinityContradict$ does not consider them as high-uncertainty because they don't actually contradict each other, but $\affinityEntail$ captures such high-uncertainty case, as illustrated by \cref{example:lowcontra:main}.
+On the other hand, for the more factual questions like in \cref{example:highcontra}, both all similarity measures agree on high-uncertainty cases, as there are few other ways to state the correct answer.
+It will be interesting to see more future research on the choice of the appropriate similarity for different tasks (which could involve different types of questions).
+\cref{example:lexicalbad} also provides an example showing why semantic-based similarities are preferred over lexical-based ones.
+%which is likely due to the nature of the datasets: For questions like ``who sang i ran all the way home'', the answer probably has little room for lexical variation.
+%As a result, only entailment to the correct answer matters.
+%This is not the case for the more complicated dataset like \datasetcoqa where the correct answer could be stated in numerous forms and $\affinityContradict$ also conveys much information.
+
+\def \TabAppendixAUARCwUEASims{
+\begin{table}[!ht]
+\caption{
+AUARC, $U(x)$ + Expected Accuracy, with $m=20$ (similar to \cref{table:main:exp:arc:u+ea}).
+The best black-box methods are in \textbf{bold} and the best overall is \underline{underscored}.
+}
+\label{table:appendix:exp:arc:u+ea:allsim}
+\centering
+\begin{small}
+   \resizebox{1\columnwidth}{!}{
+\begin{tabular}{l|cc|cc|ccc|ccc|ccc|cc}
+\toprule
+  & \multicolumn{4}{c}{Baselines}& \multicolumn{9}{|c|}{Ours}& \multicolumn{2}{c}{White-box}\\
+  & Random & Oracle & \baselineNumSets & \baselineLexiSim & \methodEigvClip(C) & \methodEcc(C) & \methodDegree(C) & \methodEigvClip(E) & \methodEcc(E) & \methodDegree(E) & \methodEigvClip(J) & \methodEcc(J) & \methodDegree(J) & \baselineGal  & \baselinePTrue\\
+\midrule
+$m=20$\\
+\midrule
+trivia(llama) & 61.18$\pm$0.07 & 87.03$\pm$0.05 & 78.78$\pm$0.17 & 80.32$\pm$0.06 & 84.97$\pm$0.06 & 84.48$\pm$0.07 & 85.04$\pm$0.06 & 85.01$\pm$0.08 & 84.66$\pm$0.06 & \underline{\textbf{85.27$\pm$0.06}} & 83.94$\pm$0.07 & 83.74$\pm$0.07 & 84.29$\pm$0.06 & 79.15$\pm$0.08 & 64.98$\pm$0.10\\
+trivia(llama2) & 76.24$\pm$0.11 & 96.50$\pm$0.03 & 91.37$\pm$0.12 & 91.73$\pm$0.13 & 93.07$\pm$0.16 & 93.12$\pm$0.06 & \textbf{93.23$\pm$0.08} & 93.07$\pm$0.17 & 93.12$\pm$0.12 & 93.05$\pm$0.14 & 92.74$\pm$0.06 & 92.62$\pm$0.09 & 92.60$\pm$0.10 & \underline{93.99$\pm$0.06} & 82.53$\pm$0.09\\
+trivia(opt) & 25.75$\pm$0.12 & 54.72$\pm$0.19 & 39.46$\pm$0.29 & 45.68$\pm$0.24 & 50.16$\pm$0.23 & 50.37$\pm$0.24 & 50.52$\pm$0.22 & 51.54$\pm$0.21 & 51.42$\pm$0.22 & \underline{\textbf{52.06$\pm$0.21}} & 50.60$\pm$0.21 & 50.85$\pm$0.20 & 51.49$\pm$0.20 & 51.11$\pm$0.20 & 20.25$\pm$0.11\\
+trivia(gpt) & 87.42$\pm$0.08 & 99.09$\pm$0.01 & 93.18$\pm$0.11 & 94.69$\pm$0.15 & 94.82$\pm$0.23 & 94.82$\pm$0.19 & 94.92$\pm$0.13 & \underline{\textbf{95.16$\pm$0.21}} & \underline{\textbf{95.21$\pm$0.22}} & \underline{\textbf{95.00$\pm$0.23}} & 94.83$\pm$0.15 & 94.70$\pm$0.17 & 94.62$\pm$0.21 & \textendash & \textendash\\
+coqa(llama) & 62.46$\pm$0.11 & 86.29$\pm$0.06 & 67.58$\pm$0.17 & 78.17$\pm$0.15 & 80.85$\pm$0.11 & 78.81$\pm$0.12 & 80.86$\pm$0.12 & 81.27$\pm$0.12 & 80.55$\pm$0.14 & \underline{\textbf{81.50$\pm$0.15}} & 79.38$\pm$0.13 & 79.60$\pm$0.13 & 80.39$\pm$0.15 & 78.83$\pm$0.16 & 64.04$\pm$0.18\\
+coqa(llama2) & 78.71$\pm$0.13 & 96.92$\pm$0.03 & 83.66$\pm$0.17 & 89.29$\pm$0.16 & 89.73$\pm$0.31 & 89.67$\pm$0.55 & 89.71$\pm$0.38 & \underline{\textbf{90.21$\pm$0.24}} & \underline{\textbf{90.02$\pm$0.22}} & \underline{\textbf{90.18$\pm$0.22}} & 89.28$\pm$0.24 & 89.12$\pm$0.16 & 89.25$\pm$0.22 & 89.29$\pm$0.17 & 79.92$\pm$0.17\\
+coqa(opt) & 53.81$\pm$0.18 & 79.41$\pm$0.14 & 60.41$\pm$0.27 & 71.46$\pm$0.21 & 72.87$\pm$0.20 & 70.77$\pm$0.22 & 72.92$\pm$0.20 & 73.46$\pm$0.20 & 72.73$\pm$0.20 & \underline{\textbf{73.91$\pm$0.19}} & 71.60$\pm$0.22 & 71.43$\pm$0.22 & 72.25$\pm$0.22 & 70.75$\pm$0.21 & 50.23$\pm$0.23\\
+coqa(gpt) & 79.76$\pm$0.14 & 97.45$\pm$0.03 & 80.69$\pm$0.22 & 86.60$\pm$0.13 & \underline{\textbf{88.72$\pm$0.13}} & 88.11$\pm$0.25 & \underline{\textbf{88.70$\pm$0.17}} & \underline{\textbf{88.80$\pm$0.10}} & 88.67$\pm$0.13 & 88.63$\pm$0.23 & 87.66$\pm$0.29 & 88.13$\pm$0.19 & 88.08$\pm$0.19 & \textendash & \textendash\\
+nq(llama) & 23.63$\pm$0.36 & 47.67$\pm$0.55 & 28.18$\pm$0.55 & 40.15$\pm$0.70 & 36.99$\pm$0.64 & 34.29$\pm$0.60 & 37.27$\pm$0.64 & \underline{\textbf{40.42$\pm$0.67}} & 40.38$\pm$0.68 & \underline{\textbf{41.07$\pm$0.69}} & 40.07$\pm$0.70 & 39.78$\pm$0.67 & 40.17$\pm$0.64 & 36.03$\pm$0.54 & 24.72$\pm$0.42\\
+nq(llama2) & 44.13$\pm$0.68 & 77.62$\pm$0.63 & 57.55$\pm$0.98 & 61.88$\pm$1.14 & \underline{\textbf{62.89$\pm$1.13}} & \underline{\textbf{62.99$\pm$0.96}} & \underline{\textbf{63.07$\pm$1.13}} & \underline{\textbf{63.58$\pm$0.96}} & \underline{\textbf{63.41$\pm$0.92}} & \underline{\textbf{63.41$\pm$1.03}} & 62.21$\pm$0.94 & 61.65$\pm$0.96 & 61.97$\pm$0.90 & 62.40$\pm$0.98 & 44.25$\pm$0.65\\
+nq(opt) & 8.60$\pm$0.18 & 23.28$\pm$0.43 & 10.36$\pm$0.27 & 15.92$\pm$0.55 & 15.05$\pm$0.46 & 14.21$\pm$0.43 & 15.08$\pm$0.47 & 18.20$\pm$0.44 & \underline{\textbf{18.82$\pm$0.46}} & \underline{\textbf{18.43$\pm$0.48}} & 17.98$\pm$0.50 & \underline{\textbf{18.38$\pm$0.49}} & \underline{\textbf{18.56$\pm$0.48}} & \underline{18.40$\pm$0.44} & 7.63$\pm$0.22\\
+nq(gpt) & 62.72$\pm$0.39 & 90.65$\pm$0.21 & 68.92$\pm$0.74 & 73.40$\pm$0.74 & \underline{\textbf{75.49$\pm$0.66}} & \underline{\textbf{75.04$\pm$0.70}} & \underline{\textbf{75.21$\pm$0.76}} & \underline{\textbf{75.17$\pm$0.80}} & \underline{\textbf{75.40$\pm$0.49}} & 74.35$\pm$0.78 & 73.75$\pm$0.89 & 73.11$\pm$0.77 & 72.95$\pm$0.88 & \textendash & \textendash\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+\end{table}
+}
+\TabAppendixAUARCwUEASims
+
+
+
+\def \TabAppendixAUARCwCIASims{
+\begin{table}[!ht]
+\caption{
+AUARC, $C(x,\mathbf{s})$ + Individual Accuracy, with $m=20$ (similar to \cref{table:main:exp:arc:c+ia}).
+The best black-box methods are in \textbf{bold} and the best overall is \underline{underscored}.
+}
+\label{table:appendix:exp:arc:c+ia:allsim}
+\centering
+\begin{small}
+   \resizebox{1\columnwidth}{!}{
+\begin{tabular}{l|cc|cc|ccc|ccc|ccc|cc}
+\toprule
+  & \multicolumn{4}{c}{Baselines}& \multicolumn{9}{|c|}{Ours}& \multicolumn{2}{c}{White-box}\\
+ & Random & Oracle & \baselineNumSets & \baselineLexiSim & \methodEigvClip(C) & \methodEcc(C) & \methodDegree(C) & \methodEigvClip(E) & \methodEcc(E) & \methodDegree(E) & \methodEigvClip(J) & \methodEcc(J) & \methodDegree(J) & \baselineGal  & \baselinePTrue\\
+\midrule
+$m=20$\\
+\midrule
+trivia(llama) & 61.18$\pm$0.07 & 91.24$\pm$0.03 & 78.78$\pm$0.17 & 80.32$\pm$0.06 & 84.97$\pm$0.06 & 87.51$\pm$0.06 & 88.51$\pm$0.06 & 85.01$\pm$0.08 & 88.17$\pm$0.11 & \underline{\textbf{88.86$\pm$0.05}} & 83.94$\pm$0.07 & 86.88$\pm$0.09 & 87.65$\pm$0.06 & 79.15$\pm$0.08 & 67.27$\pm$0.11\\
+trivia(llama2) & 76.24$\pm$0.11 & 96.92$\pm$0.03 & 91.37$\pm$0.12 & 91.73$\pm$0.13 & 93.07$\pm$0.16 & 93.23$\pm$0.07 & \textbf{93.32$\pm$0.07} & 93.07$\pm$0.17 & 93.21$\pm$0.07 & 93.19$\pm$0.11 & 92.74$\pm$0.06 & 92.58$\pm$0.08 & 92.60$\pm$0.08 & \underline{93.99$\pm$0.06} & 82.18$\pm$0.08\\
+trivia(opt) & 25.75$\pm$0.12 & 60.68$\pm$0.16 & 39.46$\pm$0.29 & 45.68$\pm$0.24 & 50.16$\pm$0.23 & 54.36$\pm$0.20 & 54.31$\pm$0.21 & 51.54$\pm$0.21 & 55.82$\pm$0.21 & \underline{\textbf{56.11$\pm$0.19}} & 50.60$\pm$0.21 & 54.25$\pm$0.21 & 55.01$\pm$0.19 & 51.11$\pm$0.20 & 20.89$\pm$0.12\\
+trivia(gpt) & 87.42$\pm$0.08 & 99.17$\pm$0.01 & 93.18$\pm$0.11 & 94.69$\pm$0.15 & 94.82$\pm$0.23 & 94.79$\pm$0.20 & 94.82$\pm$0.19 & \underline{\textbf{95.16$\pm$0.21}} & \underline{\textbf{95.11$\pm$0.18}} & 94.94$\pm$0.16 & 94.83$\pm$0.15 & 94.58$\pm$0.13 & 94.52$\pm$0.16 & \textendash & \textendash\\
+coqa(llama) & 62.46$\pm$0.11 & 91.85$\pm$0.05 & 67.58$\pm$0.17 & 78.17$\pm$0.15 & 80.85$\pm$0.11 & 80.07$\pm$0.11 & \underline{\textbf{84.56$\pm$0.13}} & 81.27$\pm$0.12 & \underline{\textbf{84.62$\pm$0.13}} & \underline{\textbf{84.60$\pm$0.15}} & 79.38$\pm$0.13 & 83.18$\pm$0.14 & 84.03$\pm$0.13 & 78.83$\pm$0.16 & 66.23$\pm$0.19\\
+coqa(llama2) & 78.71$\pm$0.13 & 97.55$\pm$0.03 & 83.66$\pm$0.17 & 89.29$\pm$0.16 & 89.73$\pm$0.31 & 89.82$\pm$0.25 & 89.94$\pm$0.19 & \underline{\textbf{90.21$\pm$0.24}} & \underline{\textbf{90.21$\pm$0.25}} & 89.75$\pm$0.19 & 89.28$\pm$0.24 & 89.11$\pm$0.17 & 89.38$\pm$0.20 & 89.29$\pm$0.17 & 79.55$\pm$0.16\\
+coqa(opt) & 53.81$\pm$0.18 & 87.15$\pm$0.11 & 60.41$\pm$0.27 & 71.46$\pm$0.21 & 72.87$\pm$0.20 & 72.70$\pm$0.18 & 77.23$\pm$0.20 & 73.46$\pm$0.20 & \underline{\textbf{78.14$\pm$0.20}} & 77.83$\pm$0.20 & 71.60$\pm$0.22 & 75.96$\pm$0.22 & 76.98$\pm$0.21 & 70.75$\pm$0.21 & 49.84$\pm$0.23\\
+coqa(gpt) & 79.76$\pm$0.14 & 97.80$\pm$0.03 & 80.69$\pm$0.22 & 86.60$\pm$0.13 & \underline{\textbf{88.72$\pm$0.13}} & 87.83$\pm$0.12 & 88.37$\pm$0.14 & \underline{\textbf{88.80$\pm$0.10}} & 88.42$\pm$0.19 & 88.02$\pm$0.31 & 87.66$\pm$0.29 & 87.54$\pm$0.13 & 87.88$\pm$0.14 & \textendash & \textendash\\
+nq(llama) & 23.63$\pm$0.36 & 57.69$\pm$0.53 & 28.18$\pm$0.55 & 40.15$\pm$0.70 & 36.99$\pm$0.64 & 35.20$\pm$0.62 & 39.66$\pm$0.71 & 40.42$\pm$0.67 & 45.78$\pm$0.69 & \underline{\textbf{46.54$\pm$0.69}} & 40.07$\pm$0.70 & 44.41$\pm$0.68 & 45.24$\pm$0.69 & 36.03$\pm$0.54 & 27.62$\pm$0.46\\
+nq(llama2) & 44.13$\pm$0.68 & 80.22$\pm$0.56 & 57.55$\pm$0.98 & 61.88$\pm$1.14 & \underline{\textbf{62.89$\pm$1.13}} & \underline{\textbf{63.23$\pm$0.93}} & \underline{\textbf{63.17$\pm$1.06}} & \underline{\textbf{63.58$\pm$0.96}} & \underline{\textbf{63.89$\pm$1.08}} & \underline{\textbf{63.55$\pm$1.01}} & 62.21$\pm$0.94 & 61.92$\pm$1.01 & 62.16$\pm$1.09 & 62.40$\pm$0.98 & 44.34$\pm$0.64\\
+nq(opt) & 8.60$\pm$0.18 & 29.65$\pm$0.45 & 10.36$\pm$0.27 & 15.92$\pm$0.55 & 15.05$\pm$0.46 & 15.15$\pm$0.47 & 16.55$\pm$0.47 & 18.20$\pm$0.44 & \underline{\textbf{21.00$\pm$0.49}} & \underline{\textbf{21.30$\pm$0.50}} & 17.98$\pm$0.50 & 20.15$\pm$0.54 & \underline{\textbf{20.99$\pm$0.51}} & 18.40$\pm$0.44 & 8.07$\pm$0.21\\
+nq(gpt) & 62.72$\pm$0.39 & 91.97$\pm$0.18 & 68.92$\pm$0.74 & 73.40$\pm$0.74 & \underline{\textbf{75.49$\pm$0.66}} & \underline{\textbf{75.10$\pm$0.68}} & \underline{\textbf{74.99$\pm$0.60}} & \underline{\textbf{75.17$\pm$0.80}} & \underline{\textbf{75.43$\pm$0.67}} & 74.67$\pm$0.64 & 73.75$\pm$0.89 & 72.53$\pm$0.82 & 72.58$\pm$0.75 & \textendash & \textendash\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+\end{table}
+}
+\TabAppendixAUARCwCIASims
+
+
+% ====================================================================
+\def \TabAppendixAUROCwCIASims{
+\begin{table}[ht]
+\caption{
+AUROC, $C(x,\mathbf{s})$ + Individual Accuracy, with $m=20$.
+The best black-box methods are in \textbf{bold} and the best overall is \underline{underscored}.
+The conclusions are similar to~\cref{table:appendix:exp:arc:c+ia}, with confidence measures based on $\affinityEntail$ (E) performing the best.
+}
+\label{table:appendix:exp:roc:c+ia:allsim}
+\centering
+\begin{small}
+   \resizebox{1\columnwidth}{!}{
+\begin{tabular}{l|cc|ccc|ccc|ccc|cc}
+\toprule
+             & \multicolumn{2}{c}{Baselines}& \multicolumn{9}{|c|}{Ours}& \multicolumn{2}{c}{White-box}\\
+& \baselineNumSets & \baselineLexiSim & \methodEigvClip(C) & \methodEcc(C) & \methodDegree(C) & \methodEigvClip(E) & \methodEcc(E) & \methodDegree(E) & \methodEigvClip(J) & \methodEcc(J) & \methodDegree(J) & \baselineGal & \baselinePTrue\\
+\midrule
+$m=20$\\
+\midrule
+trivia(llama) & 78.79$\pm$0.13 & 75.92$\pm$0.04 & 86.29$\pm$0.07 & 92.61$\pm$0.06 & 93.69$\pm$0.06 & 86.47$\pm$0.14 & 93.51$\pm$0.35 & \underline{\textbf{94.60$\pm$0.05}} & 84.58$\pm$0.08 & 90.14$\pm$0.22 & 91.45$\pm$0.07 & 76.61$\pm$0.10 & 59.21$\pm$0.09\\
+trivia(llama2) & 86.02$\pm$0.11 & 82.77$\pm$0.10 & 89.28$\pm$0.16 & 89.79$\pm$0.14 & \underline{\textbf{89.97$\pm$0.09}} & 89.18$\pm$0.19 & 89.78$\pm$0.08 & 89.38$\pm$0.16 & 87.60$\pm$0.05 & 87.07$\pm$0.32 & 86.93$\pm$0.09 & 89.75$\pm$0.07 & 65.05$\pm$0.14\\
+trivia(opt) & 75.02$\pm$0.16 & 74.49$\pm$0.18 & 83.14$\pm$0.12 & 91.55$\pm$0.07 & 89.64$\pm$0.09 & 86.09$\pm$0.10 & 92.71$\pm$0.30 & \underline{\textbf{92.83$\pm$0.08}} & 85.16$\pm$0.10 & 89.38$\pm$0.07 & 90.60$\pm$0.06 & 86.19$\pm$0.09 & 41.76$\pm$0.11\\
+trivia(gpt) & 74.69$\pm$0.24 & 78.18$\pm$0.17 & 80.90$\pm$0.50 & 80.92$\pm$0.54 & 80.88$\pm$0.49 & \underline{\textbf{81.78$\pm$0.25}} & \underline{\textbf{81.80$\pm$0.22}} & 80.50$\pm$0.22 & 79.37$\pm$0.18 & 77.58$\pm$0.24 & 77.42$\pm$0.19 & \textendash & \textendash\\
+coqa(llama) & 59.34$\pm$0.14 & 71.09$\pm$0.17 & 76.78$\pm$0.11 & 76.24$\pm$0.17 & 84.47$\pm$0.11 & 77.65$\pm$0.09 & \underline{\textbf{85.07$\pm$0.12}} & 84.91$\pm$0.15 & 74.43$\pm$0.12 & 81.34$\pm$0.12 & 83.13$\pm$0.11 & 73.32$\pm$0.16 & 55.39$\pm$0.17\\
+coqa(llama2) & 63.56$\pm$0.25 & 73.69$\pm$0.28 & 76.88$\pm$0.43 & 77.19$\pm$0.25 & 77.41$\pm$0.32 & \underline{\textbf{77.94$\pm$0.31}} & \underline{\textbf{78.37$\pm$0.60}} & 76.76$\pm$0.33 & 74.49$\pm$0.29 & 73.86$\pm$0.26 & 74.97$\pm$0.29 & 73.02$\pm$0.31 & 50.88$\pm$0.27\\
+coqa(opt) & 59.72$\pm$0.08 & 71.81$\pm$0.15 & 74.67$\pm$0.14 & 76.24$\pm$0.13 & 82.37$\pm$0.28 & 75.61$\pm$0.13 & \underline{\textbf{84.25$\pm$0.12}} & 84.06$\pm$0.09 & 73.16$\pm$0.13 & 80.70$\pm$0.12 & 82.02$\pm$0.10 & 71.68$\pm$0.13 & 45.82$\pm$0.15\\
+coqa(gpt) & 52.44$\pm$0.08 & 63.39$\pm$0.19 & \underline{\textbf{72.26$\pm$0.27}} & 69.29$\pm$0.17 & 70.64$\pm$0.25 & \underline{\textbf{72.17$\pm$0.17}} & 70.40$\pm$0.38 & 69.36$\pm$0.87 & 68.18$\pm$0.21 & 67.46$\pm$0.19 & 68.57$\pm$0.19 & \textendash & \textendash\\
+nq(llama) & 60.61$\pm$0.31 & 75.19$\pm$0.32 & 69.41$\pm$0.38 & 72.30$\pm$0.35 & 73.35$\pm$0.39 & 75.05$\pm$0.32 & 83.37$\pm$0.31 & \underline{\textbf{83.99$\pm$0.29}} & 75.40$\pm$0.36 & 81.27$\pm$0.28 & 82.34$\pm$0.34 & 69.79$\pm$0.26 & 56.35$\pm$0.40\\
+nq(llama2) & 71.02$\pm$0.41 & 72.41$\pm$0.44 & 75.26$\pm$0.87 & 76.07$\pm$0.46 & 76.27$\pm$0.52 & 76.50$\pm$0.41 & \underline{\textbf{77.13$\pm$0.48}} & 76.57$\pm$0.46 & 74.14$\pm$0.38 & 73.46$\pm$0.46 & 74.07$\pm$0.42 & 73.46$\pm$0.40 & 52.12$\pm$0.30\\
+nq(opt) & 60.45$\pm$0.47 & 70.66$\pm$0.69 & 68.01$\pm$0.58 & 74.78$\pm$0.43 & 71.77$\pm$0.47 & 77.03$\pm$0.32 & \underline{\textbf{83.61$\pm$0.29}} & \underline{\textbf{83.51$\pm$0.30}} & 77.55$\pm$0.45 & 79.23$\pm$0.75 & 82.25$\pm$0.41 & 79.16$\pm$0.26 & 46.74$\pm$0.51\\
+nq(gpt) & 62.88$\pm$0.51 & 65.32$\pm$0.62 & \underline{\textbf{69.99$\pm$0.66}} & \underline{\textbf{69.71$\pm$0.56}} & \underline{\textbf{69.34$\pm$0.46}} & 69.05$\pm$0.63 & \underline{\textbf{69.44$\pm$0.69}} & 67.81$\pm$0.60 & 66.40$\pm$0.69 & 63.38$\pm$0.97 & 63.68$\pm$0.71 & \textendash & \textendash\\
+\bottomrule
+\end{tabular}
+}
+\end{small}
+\end{table}
+}
+\TabAppendixAUROCwCIASims
+
+
+
+\begin{figure}[htb]
+  \centering
+  \begin{minipage}{\textwidth}
+  {\small
+        \begin{verbatim}
+Q: Who was the lead singer with Stylistics
+A: Russell Thompkins
+
+10 Generations:
+David McKee
+Darius Rucker
+Bruce Watson
+Billy Jer osteen
+Paul Michael McMurray
+Jermaine Rogers
+Billy Davis
+Steve Winwood
+Stacy Lattisaw
+David Bennett - yeah it was a 60’s,
+        \end{verbatim}
+}
+  \end{minipage}
+  \caption{An example where contradiction-based $U_{\methodEigvClip}$ indicates high uncertainty. % (100\% percentile). 
+  In this case, the entailment-based and Jaccard-based similarity also indicates high uncertainty. % with 99.8\% and 89.4\% percentiles, respectively.
+  }
+  \label{example:highcontra}
+\end{figure}
+% bt_1, iloc 7927
+
+
+
+
+
+
+\begin{figure}[htb]
+  \centering
+  \begin{minipage}{\textwidth}
+  {\small
+        \begin{verbatim}
+Q: How was he traveling then?
+A: he was walking
+
+by foot
+by foot
+on foot
+walking
+walked
+Walking
+walking
+on foot
+with his legs
+with his own feet
+        \end{verbatim}
+}
+  \end{minipage}
+  \caption{An example where purely lexical similarity performs worse than semantic-based ones. 
+  Although the generations are phrased differently, they all convey the exact same meaning.
+  }
+  \label{example:lexicalbad}
+\end{figure}
+% 3kjyx6qcm9bk0t44npsesoa4e4mvjb_8, coqa_cat, llama
+% EigV(E): 15%, lexical_sim 83.2%, EigV(J): 57.8%

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uncertainty Quantification for Trustworthy LLM Systems</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex.min.js"></script>
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES
+           Deep navy + warm coral accent — "research lab" feel
+           =========================================== */
+        :root {
+            --bg-primary: #fafaf8;
+            --bg-slide-alt: #f3f1ed;
+            --bg-dark: #0f172a;
+            --bg-dark-mid: #1e293b;
+            --text-primary: #1a1a2e;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --text-on-dark: #e2e8f0;
+            --accent: #e63946;
+            --accent-light: rgba(230, 57, 70, 0.08);
+            --accent-border: rgba(230, 57, 70, 0.2);
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --rule-color: rgba(26, 26, 46, 0.1);
+
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+            --title-size: clamp(2rem, 5vw, 3.8rem);
+            --h2-size: clamp(1.6rem, 3.8vw, 2.8rem);
+            --h3-size: clamp(1.3rem, 2.6vw, 2rem);
+            --body-size: clamp(1rem, 1.8vw, 1.45rem);
+            --small-size: clamp(0.85rem, 1.3vw, 1.15rem);
+            --mono-size: clamp(0.8rem, 1.2vw, 1rem);
+
+            --slide-padding-left: clamp(3rem, 8vw, 10rem);
+            --slide-padding-right: clamp(2rem, 5vw, 6rem);
+            --slide-padding-y: clamp(2rem, 5vh, 4rem);
+            --content-gap: clamp(0.6rem, 1.8vw, 1.3rem);
+            --element-gap: clamp(0.35rem, 1vh, 0.8rem);
+
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration: 0.7s;
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            height: 100%;
+        }
+
+        /* ===========================================
+           SLIDE CONTAINER
+           =========================================== */
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            padding: var(--slide-padding-y) var(--slide-padding-right) var(--slide-padding-y) var(--slide-padding-left);
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            width: 4px; height: 100%;
+            background: linear-gradient(180deg, var(--bg-dark), var(--accent), var(--bg-dark));
+            opacity: 0.5;
+        }
+
+        .slide.dark {
+            background: var(--bg-dark);
+            color: var(--text-on-dark);
+        }
+        .slide.dark::before {
+            background: linear-gradient(180deg, var(--accent), #fff, var(--accent));
+            opacity: 0.3;
+        }
+        .slide.dark h1, .slide.dark h2, .slide.dark h3 { color: #fff; }
+        .slide.dark p, .slide.dark li { color: var(--text-on-dark); }
+        .slide.dark .section-tag { color: var(--accent); border-color: var(--accent); }
+        .slide.dark .bottom-rule { background: rgba(255,255,255,0.1); }
+        .slide.dark .slide-number { color: rgba(255,255,255,0.3); }
+
+        .slide.alt-bg { background: var(--bg-slide-alt); }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 100%;
+            overflow: hidden;
+        }
+
+        .slide .bottom-rule {
+            position: absolute;
+            bottom: var(--slide-padding-y);
+            left: var(--slide-padding-left);
+            right: var(--slide-padding-right);
+            height: 1px;
+            background: var(--rule-color);
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: var(--slide-padding-y);
+            right: var(--slide-padding-right);
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            transform: translateY(calc(-0.5em - 1px));
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        .section-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: var(--mono-size);
+            color: var(--accent);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: clamp(0.4rem, 1.2vh, 1rem);
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        .slide h1 {
+            font-size: var(--title-size);
+            font-weight: 700;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+        }
+
+        .slide h2 {
+            font-size: var(--h2-size);
+            font-weight: 700;
+            line-height: 1.12;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: var(--content-gap);
+        }
+
+        .slide h3 {
+            font-size: var(--h3-size);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-primary);
+            margin-bottom: var(--element-gap);
+        }
+
+        .slide p {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.55;
+            max-width: none;
+        }
+
+        .highlight { color: var(--accent); font-weight: 600; }
+        .hl-blue { color: var(--accent-blue); font-weight: 600; }
+        .hl-green { color: var(--accent-green); font-weight: 600; }
+        .hl-amber { color: var(--accent-amber); font-weight: 600; }
+        .hl-purple { color: var(--accent-purple); font-weight: 600; }
+
+        .subtitle {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-top: var(--element-gap);
+        }
+
+        .subtitle.on-dark { color: var(--text-on-dark); }
+
+        /* Bullet lists */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--element-gap);
+        }
+
+        .bullet-list li {
+            font-size: var(--body-size);
+            color: var(--text-secondary);
+            line-height: 1.5;
+            padding-left: 1.2em;
+            position: relative;
+        }
+
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0.55em;
+            width: 7px; height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        .bullet-list li strong { color: var(--text-primary); }
+        .slide.dark .bullet-list li strong { color: #fff; }
+        .slide.dark .bullet-list li::before { background: var(--accent); }
+
+        /* Highlight box */
+        .highlight-box {
+            padding: clamp(0.5rem, 1.2vw, 1rem) clamp(0.7rem, 1.5vw, 1.2rem);
+            background: rgba(255, 210, 50, 0.1);
+            border-left: 3px solid #f0c430;
+            border-radius: 0 6px 6px 0;
+            margin: var(--element-gap) 0;
+        }
+
+        .highlight-box p {
+            color: var(--text-primary);
+            font-weight: 500;
+            max-width: none;
+        }
+
+        .slide.dark .highlight-box {
+            background: rgba(255, 210, 50, 0.08);
+        }
+        .slide.dark .highlight-box p { color: #fff; }
+
+        /* Two-column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.5rem, 3vw, 3rem);
+            align-items: center;
+            max-height: 100%;
+        }
+
+        /* Three-column feature cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(0.8rem, 1.5vw, 1.5rem);
+            margin-top: var(--content-gap);
+        }
+
+        .card-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+        .card {
+            padding: clamp(0.8rem, 1.5vw, 1.5rem);
+            border-radius: 8px;
+            border: 1px solid var(--rule-color);
+            background: var(--bg-primary);
+        }
+
+        .slide.dark .card {
+            background: var(--bg-dark-mid);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        .card .card-icon {
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            margin-bottom: 0.3em;
+        }
+
+        .card h4 {
+            font-size: var(--small-size);
+            font-weight: 700;
+            margin-bottom: 0.25em;
+        }
+
+        .card p {
+            font-size: clamp(0.8rem, 1.1vw, 0.95rem);
+            line-height: 1.45;
+        }
+
+        /* Math block */
+        .math-block {
+            padding: clamp(0.6rem, 1.5vw, 1.2rem);
+            background: var(--bg-slide-alt);
+            border: 1px solid var(--rule-color);
+            border-radius: 6px;
+            margin: var(--element-gap) 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .math-block .katex { font-size: clamp(1rem, 1.6vw, 1.4rem); }
+        .math-inline .katex { font-size: inherit; }
+
+        .slide.dark .math-block {
+            background: var(--bg-dark-mid);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        /* Meta row */
+        .meta-row {
+            display: flex;
+            gap: clamp(1rem, 3vw, 2.5rem);
+            margin-top: clamp(0.8rem, 2vh, 1.5rem);
+        }
+
+        .meta-item {
+            font-size: var(--small-size);
+            color: var(--text-muted);
+        }
+
+        .meta-item strong {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: clamp(0.6rem, 0.85vw, 0.7rem);
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.2em;
+        }
+
+        /* Comparison table */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--small-size);
+            margin: var(--element-gap) 0;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: clamp(0.3rem, 0.8vw, 0.6rem) clamp(0.5rem, 1vw, 0.8rem);
+            text-align: left;
+            border-bottom: 1px solid var(--rule-color);
+        }
+
+        .compare-table th {
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem, 1vw, 0.85rem);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 500;
+        }
+
+        .compare-table td { color: var(--text-secondary); }
+        .compare-table td strong { color: var(--text-primary); }
+
+        .compare-table .winner {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .slide.dark .compare-table th { color: var(--text-muted); }
+        .slide.dark .compare-table td { color: var(--text-on-dark); border-color: rgba(255,255,255,0.08); }
+        .slide.dark .compare-table td strong { color: #fff; }
+
+        /* Pipeline / flow diagram */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.3rem, 0.8vw, 0.6rem);
+            margin: var(--content-gap) 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pipe-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2em;
+            padding: clamp(0.5rem, 1vw, 0.8rem) clamp(0.6rem, 1.2vw, 1rem);
+            border-radius: 8px;
+            border: 1px solid var(--rule-color);
+            background: var(--bg-primary);
+            text-align: center;
+            min-width: clamp(80px, 10vw, 120px);
+        }
+
+        .slide.dark .pipe-step {
+            background: var(--bg-dark-mid);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .pipe-step .step-icon { font-size: clamp(1rem, 1.8vw, 1.4rem); }
+        .pipe-step .step-label {
+            font-family: var(--font-mono);
+            font-size: clamp(0.65rem, 0.95vw, 0.8rem);
+            font-weight: 500;
+        }
+
+        .pipe-arrow {
+            font-size: clamp(0.8rem, 1.4vw, 1.2rem);
+            color: var(--text-muted);
+        }
+
+        .pipe-step.active-step {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .pipe-step.active-step .step-label { color: var(--accent); font-weight: 700; }
+
+        /* Placeholder slide styling */
+        .placeholder-notice {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            font-family: var(--font-mono);
+            font-size: var(--small-size);
+            color: var(--accent-amber);
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px dashed rgba(245, 158, 11, 0.3);
+            border-radius: 6px;
+            padding: 0.4em 0.8em;
+            margin-top: var(--element-gap);
+        }
+
+        /* Geometric decorations */
+        .geo-circle {
+            position: absolute;
+            border: 2px solid var(--accent-border);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .geo-circle.top-right {
+            top: clamp(1.5rem, 4vh, 3rem);
+            right: clamp(1.5rem, 4vw, 4rem);
+            width: clamp(50px, 8vw, 100px);
+            height: clamp(50px, 8vw, 100px);
+        }
+
+        .geo-circle.top-right::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 55%; height: 55%;
+            border: 2px solid rgba(26, 26, 46, 0.1);
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        .slide.dark .geo-circle { border-color: rgba(230,57,70,0.15); }
+        .slide.dark .geo-circle::after { border-color: rgba(255,255,255,0.05); }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateX(-25px);
+            transition: opacity var(--duration) var(--ease-out-expo),
+                        transform var(--duration) var(--ease-out-expo);
+        }
+
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--duration) var(--ease-out-expo),
+                        transform var(--duration) var(--ease-out-expo);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity var(--duration) var(--ease-out-expo),
+                        transform var(--duration) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal,
+        .slide.visible .reveal-up,
+        .slide.visible .reveal-scale {
+            opacity: 1;
+            transform: translateX(0) translateY(0) scale(1);
+        }
+
+        .stagger-1 { transition-delay: 0.1s !important; }
+        .stagger-2 { transition-delay: 0.2s !important; }
+        .stagger-3 { transition-delay: 0.3s !important; }
+        .stagger-4 { transition-delay: 0.4s !important; }
+        .stagger-5 { transition-delay: 0.5s !important; }
+        .stagger-6 { transition-delay: 0.6s !important; }
+        .stagger-7 { transition-delay: 0.7s !important; }
+
+        .geo-circle {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+            transition: opacity 1s var(--ease-out-expo), transform 1s var(--ease-out-expo);
+            transition-delay: 0.8s;
+        }
+        .slide.visible .geo-circle { opacity: 1; transform: rotate(0) scale(1); }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 1000;
+            transition: width 0.3s ease;
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: clamp(0.8rem, 2vw, 1.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            border: 1.5px solid var(--text-muted);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .nav-dot:hover { border-color: var(--accent); }
+
+        /* Section divider badge on nav */
+        .nav-section {
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-top: 6px;
+            text-align: center;
+            max-width: 50px;
+            line-height: 1.2;
+        }
+
+        /* ===========================================
+           ATTENTION VISUALIZATION
+           =========================================== */
+        .attn-demo {
+            font-family: var(--font-mono);
+            font-size: var(--body-size);
+            line-height: 1.8;
+            margin: var(--element-gap) 0;
+        }
+
+        .attn-demo .token {
+            display: inline;
+            padding: 0.05em 0.15em;
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .attn-demo .token.high {
+            background: rgba(230, 57, 70, 0.25);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .attn-demo .token.mid {
+            background: rgba(230, 57, 70, 0.10);
+        }
+
+        .attn-demo .token.low {
+            opacity: 0.5;
+        }
+
+        .attn-label {
+            font-family: var(--font-mono);
+            font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+            color: var(--text-muted);
+            margin-bottom: 0.3em;
+        }
+
+        /* Agentic flow diagram */
+        .agent-flow {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(0.5rem, 1vh, 0.8rem);
+            margin: var(--content-gap) 0;
+        }
+
+        .agent-row {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.4rem, 0.8vw, 0.6rem);
+        }
+
+        .agent-node {
+            padding: clamp(0.3rem, 0.7vw, 0.5rem) clamp(0.5rem, 1vw, 0.8rem);
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: clamp(0.7rem, 1vw, 0.85rem);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .agent-node.llm { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: var(--accent-blue); }
+        .agent-node.tool { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: var(--accent-green); }
+        .agent-node.uq { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.2); color: var(--accent); font-weight: 700; }
+        .agent-node.decide { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); color: var(--accent-amber); }
+
+        .agent-arrow {
+            font-size: clamp(0.7rem, 1vw, 0.9rem);
+            color: var(--text-muted);
+        }
+
+        .slide.dark .agent-node.llm { background: rgba(59,130,246,0.15); }
+        .slide.dark .agent-node.tool { background: rgba(16,185,129,0.15); }
+        .slide.dark .agent-node.uq { background: rgba(230,57,70,0.15); }
+        .slide.dark .agent-node.decide { background: rgba(245,158,11,0.15); }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Navigation Dots -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- =========================================================
+     SLIDE 1 — TITLE
+     ========================================================= -->
+<section class="slide dark" data-section="intro">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Research Presentation</div>
+        <h1 class="reveal stagger-2" style="max-width: 85%;">Uncertainty Quantification for<br>Trustworthy <span class="highlight">LLM Systems</span></h1>
+        <p class="subtitle on-dark reveal stagger-3" style="max-width: 70%; margin-top: clamp(0.8rem, 2vh, 1.5rem);">
+            From measuring confidence in language generation<br>to enabling reliable agentic workflows
+        </p>
+        <div class="meta-row reveal stagger-4">
+            <div class="meta-item">
+                <strong>Presenter</strong>
+                Zhen Lin
+            </div>
+            <div class="meta-item">
+                <strong>Background</strong>
+                PhD, UIUC (Jimeng Sun Lab)
+            </div>
+            <div class="meta-item">
+                <strong>Focus</strong>
+                UQ &times; LLMs &times; Agentic AI
+            </div>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">01</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 2 — AGENDA
+     ========================================================= -->
+<section class="slide" data-section="intro">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Overview</div>
+        <h2 class="reveal stagger-2">Talk Outline</h2>
+        <div class="card-grid cols-2 reveal-up stagger-3">
+            <div class="card">
+                <div class="card-icon">01</div>
+                <h4>UQ for Black-box LLMs</h4>
+                <p>Measuring uncertainty when you only see text output — no logits, no weights</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">02</div>
+                <h4>Contextualized Sequence Likelihood</h4>
+                <p>Using attention to build better confidence scores for white-box LLMs</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">03</div>
+                <h4>UQ in Agentic Workflows</h4>
+                <p>Why uncertainty matters when LLMs take actions, not just generate text</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">04</div>
+                <h4>Current Work: Artifact-Aware Agents</h4>
+                <p>Enabling agents to read PDFs, Excel, and Confluence for research &amp; monitoring</p>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">02</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 3 — THE CORE PROBLEM
+     ========================================================= -->
+<section class="slide dark" data-section="uq-blackbox">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Motivation</div>
+        <h2 class="reveal stagger-2">LLMs are powerful — but when should we <span class="highlight">trust</span> them?</h2>
+        <ul class="bullet-list reveal stagger-3">
+            <li><strong>High-stakes domains</strong> — medical QA, legal analysis, financial research</li>
+            <li><strong>No ground truth at inference</strong> — we need signals from the model itself</li>
+            <li><strong>Black-box reality</strong> — most frontier LLMs are API-only, no logit access</li>
+        </ul>
+        <div class="highlight-box reveal stagger-4" style="margin-top: var(--content-gap);">
+            <p>Key question: Can we quantify how uncertain an LLM is about its own response, <em>using only its text output</em>?</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">03</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 4 — UNCERTAINTY vs CONFIDENCE
+     ========================================================= -->
+<section class="slide" data-section="uq-blackbox">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Background</div>
+        <h2 class="reveal stagger-2">Uncertainty vs. Confidence</h2>
+        <div class="two-col reveal-up stagger-3">
+            <div>
+                <h3 style="color: var(--accent-blue);">Uncertainty <span class="math-inline" data-math="U(x)"></span></h3>
+                <p>Property of the input <em>distribution</em>. Measures dispersion of all possible responses to input <span class="math-inline" data-math="x"></span>.</p>
+                <div class="math-block" data-math="U(x) = H(\mathbf{S}|x) = -\sum_{\mathbf{s}} p(\mathbf{s}|x)\log p(\mathbf{s}|x)"></div>
+                <p style="font-size: var(--small-size); color: var(--text-muted);">
+                    "Is this a hard question?"
+                </p>
+            </div>
+            <div>
+                <h3 style="color: var(--accent-green);">Confidence <span class="math-inline" data-math="C(x, \mathbf{s})"></span></h3>
+                <p>Property of a <em>specific response</em>. Measures how likely this particular answer is correct.</p>
+                <div class="math-block" data-math="C(x, \mathbf{s}) = \hat{p}(\mathbf{s}|x) = \prod_{i}\hat{p}(s_i|s_{<i}, x)"></div>
+                <p style="font-size: var(--small-size); color: var(--text-muted);">
+                    "Is <em>this answer</em> trustworthy?"
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">04</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 5 — BLACK-BOX UQ METHOD
+     ========================================================= -->
+<section class="slide alt-bg" data-section="uq-blackbox">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">TMLR 2024</div>
+        <h2 class="reveal stagger-2">Generating with Confidence: UQ for Black-box LLMs</h2>
+        <p class="reveal stagger-3">Core idea: sample multiple responses, measure <strong>semantic dispersion</strong></p>
+        <div class="pipeline reveal-up stagger-4">
+            <div class="pipe-step">
+                <span class="step-icon">📝</span>
+                <span class="step-label">Input x</span>
+            </div>
+            <span class="pipe-arrow">→</span>
+            <div class="pipe-step">
+                <span class="step-icon">🔄</span>
+                <span class="step-label">Sample m responses</span>
+            </div>
+            <span class="pipe-arrow">→</span>
+            <div class="pipe-step">
+                <span class="step-icon">⚖️</span>
+                <span class="step-label">Pairwise similarity</span>
+            </div>
+            <span class="pipe-arrow">→</span>
+            <div class="pipe-step active-step">
+                <span class="step-icon">📊</span>
+                <span class="step-label">U(x) or C(x,s)</span>
+            </div>
+        </div>
+        <ul class="bullet-list reveal stagger-5">
+            <li><strong>Similarity</strong> — NLI model (DeBERTa) classifies entailment/contradiction between response pairs</li>
+            <li><strong>Key insight</strong> — semantic similarity catches what lexical metrics (ROUGE, BLEU) miss</li>
+        </ul>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">05</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 6 — SPECTRAL METHODS
+     ========================================================= -->
+<section class="slide" data-section="uq-blackbox">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Methods</div>
+        <h2 class="reveal stagger-2">From Similarities to Uncertainty Scores</h2>
+        <div class="card-grid reveal-up stagger-3">
+            <div class="card">
+                <h4><span class="hl-blue">Num. Semantic Sets</span></h4>
+                <p>Cluster responses by NLI entailment. More clusters = more uncertain. (Kuhn et al. 2023)</p>
+            </div>
+            <div class="card">
+                <h4><span class="hl-purple">Graph Laplacian Eigenvalues</span></h4>
+                <p>Build weighted similarity graph, compute <span class="math-inline" data-math="U = \sum_k \max(0, 1-\lambda_k)"></span>. Continuous version of cluster count.</p>
+            </div>
+            <div class="card">
+                <h4><span class="hl-green">Degree & Eccentricity</span></h4>
+                <p>Use node degree as confidence: well-connected responses are trustworthy. Spectral embedding gives per-response scores.</p>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4">
+            <p>All methods work with <strong>only text output</strong> — no logits needed. NLI model is small and task-agnostic.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">06</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 7 — BLACK-BOX RESULTS
+     ========================================================= -->
+<section class="slide dark" data-section="uq-blackbox">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Results</div>
+        <h2 class="reveal stagger-2">Black-box UQ: Key Findings</h2>
+        <ul class="bullet-list reveal stagger-3">
+            <li><strong>Semantic dispersion outperforms white-box baselines</strong> — NLI-based measures beat sequence likelihood on AUROC across multiple LLMs and QA datasets</li>
+            <li><strong>Confidence ≠ Uncertainty</strong> — per-response confidence (Degree) is more reliable than input-level uncertainty for predicting correctness</li>
+            <li><strong>Simple measures work</strong> — graph degree with NLI similarity is competitive with sophisticated spectral methods</li>
+        </ul>
+        <div class="highlight-box reveal stagger-4">
+            <p>Practical takeaway: Even without logit access, sampling + NLI similarity gives reliable UQ for selective generation.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">07</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 8 — TRANSITION TO CSL
+     ========================================================= -->
+<section class="slide" data-section="csl">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">ACL 2024</div>
+        <h2 class="reveal stagger-2">The Problem with Sequence Likelihood</h2>
+        <p class="reveal stagger-3">When we <em>do</em> have logit access, the standard confidence score is:</p>
+        <div class="math-block reveal-up stagger-4" data-math="C_{\text{SL}} = \sum_{i=1}^{n} l_i = \log \prod_{i=1}^{n} \hat{p}(s_i|\mathbf{s}_{<i}, x)"></div>
+        <p class="reveal stagger-5">But this <span class="highlight">conflates syntax and semantics</span>:</p>
+        <div class="attn-demo reveal stagger-6">
+            <div class="attn-label">Q: When did Neil Armstrong land on the Moon?</div>
+            <span class="token low">On</span>
+            <span class="token high">July 20, 1969</span><span class="token low">,</span>
+            <span class="token low">Armstrong and</span>
+            <span class="token low">Buzz Aldrin</span>
+            <span class="token mid">landed on the Moon</span>
+            <span class="token low">for the first time in human history.</span>
+        </div>
+        <p class="reveal stagger-7" style="font-size: var(--small-size); color: var(--text-muted);">
+            Not all tokens matter equally — the date is critical, "Buzz Aldrin" is irrelevant to the question.
+        </p>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">08</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 9 — CSL METHOD
+     ========================================================= -->
+<section class="slide alt-bg" data-section="csl">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Method</div>
+        <h2 class="reveal stagger-2">Contextualized Sequence Likelihood (CSL)</h2>
+        <p class="reveal stagger-3">Re-weight token logits using the LLM's own <strong>attention mechanism</strong>:</p>
+        <div class="math-block reveal-up stagger-4" data-math="C_{\text{CSL}} = \sum_{i=1}^{n} w_i \, l_i \quad\text{where}\quad w_i = \frac{a_i}{\sum_{i'} a_{i'}}"></div>
+        <div class="two-col reveal stagger-5">
+            <div>
+                <h3>How it works</h3>
+                <ul class="bullet-list">
+                    <li>Prompt LLM to evaluate its own response</li>
+                    <li>Extract attention on response tokens</li>
+                    <li>Select top-k heads via validation AUROC</li>
+                    <li>Use attention as weights on token logits</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Why it works</h3>
+                <ul class="bullet-list">
+                    <li>Attention focuses on <strong>semantically relevant</strong> tokens</li>
+                    <li>Head ranking is stable (Spearman &gt; 97%)</li>
+                    <li>Transfers across datasets</li>
+                    <li>Near-zero computational overhead</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">09</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 10 — CSL RESULTS
+     ========================================================= -->
+<section class="slide" data-section="csl">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Results</div>
+        <h2 class="reveal stagger-2">CSL Outperforms All Baselines</h2>
+        <p class="reveal stagger-3">AUROC for predicting response correctness (higher is better):</p>
+        <table class="compare-table reveal-up stagger-4">
+            <thead>
+                <tr>
+                    <th>Dataset (Model)</th>
+                    <th>SL(norm)</th>
+                    <th>TokenSAR</th>
+                    <th>Deg(E)</th>
+                    <th>CSL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>TriviaQA (Mistral)</strong></td>
+                    <td>88.64</td>
+                    <td>88.74</td>
+                    <td>81.85</td>
+                    <td class="winner">90.76</td>
+                </tr>
+                <tr>
+                    <td><strong>NQ (Mistral)</strong></td>
+                    <td>71.06</td>
+                    <td>72.61</td>
+                    <td>73.03</td>
+                    <td class="winner">76.65</td>
+                </tr>
+                <tr>
+                    <td><strong>CoQA (Gemma)</strong></td>
+                    <td>71.96</td>
+                    <td>72.38</td>
+                    <td>70.03</td>
+                    <td class="winner">73.30</td>
+                </tr>
+                <tr>
+                    <td><strong>NQ (LLaMA2)</strong></td>
+                    <td>69.48</td>
+                    <td>70.43</td>
+                    <td>71.61</td>
+                    <td class="winner">73.73</td>
+                </tr>
+            </tbody>
+        </table>
+        <ul class="bullet-list reveal stagger-5">
+            <li>Consistent gains across <strong>3 LLMs × 3 datasets</strong></li>
+            <li>Also improves Semantic Entropy when used as a drop-in replacement (SE+CSL)</li>
+        </ul>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">10</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 11 — RESEARCH SUMMARY BRIDGE
+     ========================================================= -->
+<section class="slide dark" data-section="csl">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Summary</div>
+        <h2 class="reveal stagger-2">Two Complementary Perspectives on LLM Reliability</h2>
+        <div class="two-col reveal-up stagger-3">
+            <div class="card">
+                <h4><span class="hl-blue">Black-box UQ (TMLR)</span></h4>
+                <p>Sample multiple responses, measure semantic dispersion via NLI</p>
+                <p style="margin-top: 0.3em; font-size: clamp(0.7rem, 1vw, 0.85rem); color: var(--text-muted);">Works with any API — GPT-4, Claude, Gemini</p>
+            </div>
+            <div class="card">
+                <h4><span class="highlight">White-box CSL (ACL)</span></h4>
+                <p>Re-weight logits with attention for context-aware confidence</p>
+                <p style="margin-top: 0.3em; font-size: clamp(0.7rem, 1vw, 0.85rem); color: var(--text-muted);">Fast, no extra sampling, improves existing metrics</p>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4" style="margin-top: var(--content-gap);">
+            <p>Both methods answer the same core question: <strong>"Should we trust this LLM output?"</strong><br>This question becomes critical when LLMs move from generation to <em>action</em>.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">11</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 12 — UQ IN AGENTIC WORKFLOWS: MOTIVATION
+     ========================================================= -->
+<section class="slide" data-section="agentic-uq">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Agentic UQ</div>
+        <h2 class="reveal stagger-2">Why UQ Matters More for <span class="highlight">Agents</span></h2>
+        <div class="two-col reveal-up stagger-3">
+            <div>
+                <h3>Text Generation</h3>
+                <ul class="bullet-list">
+                    <li>Wrong answer → user ignores it</li>
+                    <li>Cost of error: <strong>low</strong> (wasted time)</li>
+                    <li>Human in the loop by default</li>
+                    <li>Single-step, stateless</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Agentic Workflows</h3>
+                <ul class="bullet-list">
+                    <li>Wrong action → <strong>irreversible side effects</strong></li>
+                    <li>Cost of error: <strong>high</strong> (data corruption, wrong trades, bad decisions)</li>
+                    <li>Often autonomous / semi-supervised</li>
+                    <li>Multi-step: errors <strong>compound</strong></li>
+                </ul>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4">
+            <p>In agentic systems, UQ shifts from "nice to have" to <strong>mission-critical</strong>. An uncertain agent should ask for help, not guess.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">12</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 13 — WHERE UQ FITS IN AGENT LOOPS
+     ========================================================= -->
+<section class="slide alt-bg" data-section="agentic-uq">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Architecture</div>
+        <h2 class="reveal stagger-2">UQ as a First-Class Citizen in Agent Loops</h2>
+        <div class="agent-flow reveal-up stagger-3">
+            <div class="agent-row">
+                <div class="agent-node llm">LLM Reasoning</div>
+                <span class="agent-arrow">→</span>
+                <div class="agent-node tool">Tool Call (read PDF, query DB)</div>
+                <span class="agent-arrow">→</span>
+                <div class="agent-node llm">Interpret Result</div>
+                <span class="agent-arrow">→</span>
+                <div class="agent-node uq">UQ Check</div>
+            </div>
+            <div class="agent-row" style="padding-left: clamp(2rem, 8vw, 6rem);">
+                <span class="agent-arrow">↓</span>
+            </div>
+            <div class="agent-row" style="gap: clamp(0.6rem, 1.2vw, 1rem);">
+                <div class="agent-node decide">High confidence → Act</div>
+                <div class="agent-node decide">Medium → Seek more info</div>
+                <div class="agent-node decide">Low → Escalate to human</div>
+            </div>
+        </div>
+        <ul class="bullet-list reveal stagger-4">
+            <li><strong>Per-step UQ</strong> — Each tool call and interpretation gets a confidence score</li>
+            <li><strong>Adaptive routing</strong> — Uncertainty drives whether to proceed, retry, or escalate</li>
+            <li><strong>Cascading confidence</strong> — Pipeline reliability = product of step reliabilities</li>
+        </ul>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">13</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 14 — TYPES OF AGENTIC UQ
+     ========================================================= -->
+<section class="slide dark" data-section="agentic-uq">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Dimensions</div>
+        <h2 class="reveal stagger-2">Three Dimensions of Agentic Uncertainty</h2>
+        <div class="card-grid reveal-up stagger-3">
+            <div class="card">
+                <div class="card-icon">🧠</div>
+                <h4><span class="hl-blue">Epistemic</span></h4>
+                <p>"I don't know this" — model lacks knowledge. Can be reduced with RAG, tool use, or better models.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h4><span class="hl-green">Grounding</span></h4>
+                <p>"Did I read the document correctly?" — artifact parsing errors, OCR noise, ambiguous tables. Critical for document agents.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h4><span class="hl-amber">Planning</span></h4>
+                <p>"Is this the right action?" — multi-step reasoning uncertainty. Wrong plan = cascading failures.</p>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4">
+            <p>Existing UQ (my prior work) addresses epistemic uncertainty. Grounding and planning UQ are <strong>open research frontiers</strong> — and central to making artifact-understanding agents reliable.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">14</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 15 — CURRENT PROJECT: OVERVIEW
+     ========================================================= -->
+<section class="slide" data-section="current">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Current Work</div>
+        <h2 class="reveal stagger-2">Artifact-Aware Agents for Research & Production</h2>
+        <p class="subtitle reveal stagger-3">Enabling agents to "see" and reason over real-world documents</p>
+        <div class="pipeline reveal-up stagger-4" style="margin-top: var(--content-gap);">
+            <div class="pipe-step">
+                <span class="step-icon">📊</span>
+                <span class="step-label">Excel / CSV</span>
+            </div>
+            <div class="pipe-step">
+                <span class="step-icon">📑</span>
+                <span class="step-label">PDF Reports</span>
+            </div>
+            <div class="pipe-step">
+                <span class="step-icon">📝</span>
+                <span class="step-label">Confluence</span>
+            </div>
+            <span class="pipe-arrow">→</span>
+            <div class="pipe-step active-step">
+                <span class="step-icon">🤖</span>
+                <span class="step-label">Agent</span>
+            </div>
+            <span class="pipe-arrow">→</span>
+            <div class="pipe-step">
+                <span class="step-icon">💡</span>
+                <span class="step-label">Insight / Alert</span>
+            </div>
+        </div>
+        <div class="two-col reveal stagger-5" style="margin-top: var(--content-gap);">
+            <div>
+                <h3>Data Research Use Case</h3>
+                <ul class="bullet-list">
+                    <li>Vendor reports (PDF, Excel) parsed and cross-referenced</li>
+                    <li>Agent synthesizes findings across documents</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Production Monitoring</h3>
+                <ul class="bullet-list">
+                    <li>Internal Confluence pages for job documentation</li>
+                    <li>Agent monitors health, surfaces anomalies</li>
+                </ul>
+            </div>
+        </div>
+        <div class="placeholder-notice reveal stagger-6">⚠ Details under NDA — high-level overview only</div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">15</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 16 — CURRENT PROJECT: CHALLENGES
+     ========================================================= -->
+<section class="slide alt-bg" data-section="current">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Challenges</div>
+        <h2 class="reveal stagger-2">Making Document Agents Reliable</h2>
+        <div class="card-grid reveal-up stagger-3">
+            <div class="card">
+                <div class="card-icon">🔍</div>
+                <h4>Parsing Fidelity</h4>
+                <p>Tables, merged cells, charts — structured data in unstructured formats. Errors compound silently.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🔗</div>
+                <h4>Cross-Document Reasoning</h4>
+                <p>Vendor A's Excel + internal Confluence page + PDF report = coherent analysis?</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📐</div>
+                <h4>Confidence at Each Step</h4>
+                <p>Was the table parsed correctly? Is the join logic right? Is the conclusion supported?</p>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4">
+            <p>This is where <strong>UQ meets artifact understanding</strong>: each parsing and reasoning step needs a confidence signal to decide whether to proceed or escalate.</p>
+        </div>
+        <div class="placeholder-notice reveal stagger-5">⚠ Specific architecture details reserved for discussion</div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">16</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 17 — CURRENT PROJECT: PLACEHOLDER FOR DEMO/DETAILS
+     ========================================================= -->
+<section class="slide dark" data-section="current">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Demo / Details</div>
+        <h2 class="reveal stagger-2">[Your Demo or Architecture Deep-Dive Here]</h2>
+        <p class="subtitle on-dark reveal stagger-3">Reserved slide for live walkthrough or additional details you'd like to share.</p>
+        <div class="card-grid cols-2 reveal-up stagger-4" style="margin-top: var(--content-gap);">
+            <div class="card">
+                <div class="card-icon">💻</div>
+                <h4>Option A: Live Demo</h4>
+                <p>Show the agent parsing a vendor PDF + Excel, cross-referencing with Confluence, and surfacing insights</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🏗️</div>
+                <h4>Option B: Architecture</h4>
+                <p>Walk through the system design — parsing pipeline, agent loop, monitoring dashboard</p>
+            </div>
+        </div>
+        <div class="placeholder-notice reveal stagger-5" style="color: var(--accent-amber);">⚠ Fill in with content you're comfortable sharing</div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">17</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 18 — CURRENT PROJECT: ANOTHER PLACEHOLDER
+     ========================================================= -->
+<section class="slide" data-section="current">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Impact</div>
+        <h2 class="reveal stagger-2">[Results & Impact]</h2>
+        <p class="subtitle reveal stagger-3">Reserved slide for quantitative results or impact metrics you'd like to highlight.</p>
+        <div class="card-grid reveal-up stagger-4" style="margin-top: var(--content-gap);">
+            <div class="card">
+                <div class="card-icon">📈</div>
+                <h4>Efficiency Gains</h4>
+                <p>[e.g., hours saved per analyst per week, coverage improvement]</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h4>Accuracy / Reliability</h4>
+                <p>[e.g., parsing accuracy, false alert rate reduction]</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">👥</div>
+                <h4>Adoption</h4>
+                <p>[e.g., number of users, teams, workflows automated]</p>
+            </div>
+        </div>
+        <div class="placeholder-notice reveal stagger-5">⚠ Add metrics and examples as appropriate</div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">18</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+<!-- =========================================================
+     SLIDE 19 — VISION / ALIGNMENT
+     ========================================================= -->
+<section class="slide alt-bg" data-section="closing">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Looking Forward</div>
+        <h2 class="reveal stagger-2">Training LLMs to Understand Artifacts — <span class="highlight">What Excites Me</span></h2>
+        <div class="card-grid reveal-up stagger-3">
+            <div class="card">
+                <div class="card-icon">📄</div>
+                <h4>Native Artifact Understanding</h4>
+                <p>LLMs that truly "see" tables, layouts, and structured data — not just OCR'd text</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">✏️</div>
+                <h4>Editing, Not Just Reading</h4>
+                <p>From understanding to action — agents that can modify Excel formulas, update PDFs, draft reports</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🛡️</div>
+                <h4>Reliable by Design</h4>
+                <p>UQ built into the model, not bolted on — so every edit comes with a confidence signal</p>
+            </div>
+        </div>
+        <div class="highlight-box reveal stagger-4">
+            <p>My unique perspective: I've built <strong>both</strong> the UQ foundations (research) and the artifact-understanding systems (production). I understand where the gap is and how to close it.</p>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">19</div>
+</section>
+
+<!-- =========================================================
+     SLIDE 20 — CLOSING
+     ========================================================= -->
+<section class="slide dark" data-section="closing">
+    <div class="slide-content">
+        <div class="section-tag reveal stagger-1">Thank You</div>
+        <h1 class="reveal stagger-2" style="max-width: 80%;">Building LLMs that <span class="highlight">know what they know</span> — and act accordingly</h1>
+        <p class="subtitle on-dark reveal stagger-3" style="max-width: 65%; margin-top: clamp(0.8rem, 2vh, 1.5rem);">
+            Uncertainty quantification is the bridge between powerful language models and trustworthy AI systems.
+        </p>
+        <div class="meta-row reveal stagger-4">
+            <div class="meta-item">
+                <strong>Papers</strong>
+                TMLR 2024 &bull; ACL 2024
+            </div>
+            <div class="meta-item">
+                <strong>Code</strong>
+                github.com/zlin7
+            </div>
+            <div class="meta-item">
+                <strong>Contact</strong>
+                zhenlin4@illinois.edu
+            </div>
+        </div>
+    </div>
+    <div class="bottom-rule"></div>
+    <div class="slide-number">20</div>
+    <div class="geo-circle top-right"></div>
+</section>
+
+
+<!-- ===========================================
+     JAVASCRIPT
+     =========================================== -->
+<script>
+(function() {
+    'use strict';
+
+    // --- Intersection Observer for slide visibility ---
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const navDotsContainer = document.getElementById('navDots');
+
+    // Build nav dots
+    const sections = {};
+    let sectionOrder = [];
+    slides.forEach((slide, i) => {
+        const sec = slide.dataset.section || '';
+        if (sec && !sections[sec]) {
+            sections[sec] = true;
+            sectionOrder.push(sec);
+        }
+    });
+
+    slides.forEach((slide, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'nav-dot';
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        dot.addEventListener('click', () => {
+            slide.scrollIntoView({ behavior: 'smooth' });
+        });
+        navDotsContainer.appendChild(dot);
+    });
+
+    const navDots = navDotsContainer.querySelectorAll('.nav-dot');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                const idx = Array.from(slides).indexOf(entry.target);
+                navDots.forEach((d, j) => d.classList.toggle('active', j === idx));
+                const pct = ((idx + 1) / slides.length) * 100;
+                progressBar.style.width = pct + '%';
+            }
+        });
+    }, { threshold: 0.5 });
+
+    slides.forEach(s => observer.observe(s));
+
+    // --- KaTeX rendering ---
+    document.querySelectorAll('.math-block[data-math]').forEach(el => {
+        katex.render(el.dataset.math, el, { displayMode: true, throwOnError: false });
+    });
+    document.querySelectorAll('.math-inline[data-math]').forEach(el => {
+        katex.render(el.dataset.math, el, { displayMode: false, throwOnError: false });
+    });
+
+    // --- Keyboard navigation ---
+    document.addEventListener('keydown', (e) => {
+        const current = Array.from(slides).findIndex(s => s.classList.contains('visible'));
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') && current < slides.length - 1) {
+            e.preventDefault();
+            slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+        } else if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && current > 0) {
+            e.preventDefault();
+            slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

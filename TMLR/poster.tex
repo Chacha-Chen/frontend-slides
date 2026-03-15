@@ -1,0 +1,161 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jacobs Landscape Poster
+% LaTeX Template
+% Version 1.0 (29/03/13)
+%
+% Created by:
+% Computational Physics and Biophysics Group, Jacobs University
+% https://teamwork.jacobs-university.de:8443/confluence/display/CoPandBiG/LaTeX+Poster
+% 
+% Further modified by:
+% Nathaniel Johnston (nathaniel@njohnston.ca)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[final]{beamer}
+
+\usepackage{tikz}
+%\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage[scale=1.24]{beamerposter} % Use the beamerposter package for laying out the poster
+
+\usetheme{confposter} % Use the confposter theme supplied with this template
+
+\setbeamercolor{block title}{fg=ngreen,bg=white} % Colors of the block titles
+\setbeamercolor{block body}{fg=black,bg=white} % Colors of the body of blocks
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
+% Many more colors are available for use in beamerthemeconfposter.sty
+
+%-----------------------------------------------------------
+% Define the column widths and overall poster size
+% To set effective sepwid, onecolwid and twocolwid values, first choose how many columns you want and how much separation you want between columns
+% In this template, the separation width chosen is 0.024 of the paper width and a 4-column layout
+% onecolwid should therefore be (1-(# of columns+1)*sepwid)/# of columns e.g. (1-(4+1)*0.024)/4 = 0.22
+% Set twocolwid to be (2*onecolwid)+sepwid = 0.464
+% Set threecolwid to be (3*onecolwid)+2*sepwid = 0.708
+
+\newlength{\sepwid}
+\newlength{\onecolwid}
+\newlength{\twocolwid}
+\newlength{\threecolwid}
+\newlength{\leftcolwid}
+\newlength{\midcolwid}
+\newlength{\rightcolwid}
+\setlength{\paperwidth}{48in} % A0 width: 46.8in
+\setlength{\paperheight}{36in} % A0 height: 33.1in
+\setlength{\sepwid}{0.02\paperwidth} % Separation width (white space) between columns
+\setlength{\leftcolwid}{0.2\paperwidth} 
+\setlength{\midcolwid}{0.36\paperwidth} 
+\setlength{\rightcolwid}{0.36\paperwidth} 
+\setlength{\onecolwid}{0.22\paperwidth} % Width of one column
+\setlength{\twocolwid}{0.464\paperwidth} % Width of two columns
+\setlength{\threecolwid}{0.708\paperwidth} % Width of three columns
+\setlength{\topmargin}{-0.5in} % Reduce the top margin size
+%-----------------------------------------------------------
+
+\usepackage{graphicx}  % Required for including images
+
+\usepackage{booktabs} % Top and bottom rules for tables
+\usepackage{mathtools}
+\usepackage{exscale} % otherwise \sum etc are messed up
+\usepackage{tcolorbox}
+\usepackage{caption}
+\setbeamertemplate{caption}[numbered]
+\include{poster_defs}
+\definecolor{mydarkgreen}{RGB}{10,100,30}
+%\include{figure_and_table}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION 
+%----------------------------------------------------------------------------------------
+\title{\LARGE Generating with Confidence: Uncertainty Quantification for Black-box Large Language Models} % Poster title
+
+\author[zhenlin4@illinois.edu]{Zhen Lin$^1$ \hspace{4cm} Shubhendu Trivedi \hspace{4cm} Jimeng Sun$^{1,2}$}
+\institute[UIUC]
+{\hspace{4cm} $^1$ University of Illinois at Urbana-Champaign, $^2$ Carle Illinois College of Medicine}
+
+\input{poster_resources/defs_poster}
+
+%----------------------------------------------------------------------------------------
+
+
+\begin{document}
+
+%-----------LOGO ADDED TO NORTH EAST----------------%
+\addtobeamertemplate{headline}{} 
+{\begin{tikzpicture}[remember picture, overlay]
+     \node [anchor=north east, inner sep=9cm]  at (current page.north east)
+     {\includegraphics[height=3.5cm]{poster_resources/illinois_logo.png}};
+  \end{tikzpicture}}
+%-------END LOGO ADDED TO NORTH EAST----------------%
+
+%-----------LOGO ADDED TO NORTH WEST----------------%
+\addtobeamertemplate{headline}{} 
+{\begin{tikzpicture}[remember picture, overlay]
+     \node [anchor=north west, inner sep=7.5cm] (node_1) at (current page.north west)
+     {\includegraphics[height=6cm]{poster_resources/github_QR.png}
+     \includegraphics[height=6cm]{poster_resources/sunlab.png}};
+  % Add "code" text under the QR.png
+  \node [font=\Large,xshift=5cm] at (node_1.west) {github:};
+  \end{tikzpicture}}
+ %-------END LOGO ADDED TO NORTH WEST----------------%
+
+\addtobeamertemplate{block end}{}{\vspace*{2ex}} % White space under blocks
+\addtobeamertemplate{block alerted end}{}{\vspace*{2ex}} % White space under highlighted (alert) blocks
+
+\setlength{\belowcaptionskip}{2ex} % White space under figures
+\setlength\belowdisplayshortskip{2ex} % White space under equations
+
+\begin{frame}[containsverbatim,t] % The whole poster is enclosed in one beamer frame
+
+\begin{columns}[t] % The whole poster consists of three major columns, the second of which is split into two columns twice - the [t] option aligns each column's content to the top
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\leftcolwid} % The first column
+
+\input{poster_resources/column_1}
+
+\end{column} % End of the first column
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\midcolwid} % Begin a column which is two columns wide (column 2)
+
+%\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column
+
+\begin{column}{\midcolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
+\input{poster_resources/column_2}
+\end{column} % End of column 2.1
+
+%----------------------------------------------------------------------------------------
+
+\end{column} % End of column 2.2
+
+%\end{columns} % End of the split of column 2
+
+%\end{column} % End of the second column
+
+\begin{column}{\sepwid}\end{column} % Empty spacer column
+
+\begin{column}{\rightcolwid} % The third column
+
+\input{poster_resources/column_3}
+
+\end{column} % End of the third column
+
+\end{columns} % End of all the columns in the posterf
+
+\end{frame} % End of the enclosing frame
+
+\end{document}

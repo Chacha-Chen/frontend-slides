@@ -1,0 +1,150 @@
+
+\section{Temperature of Base Language Model}\label{appendix:temperature}
+
+We include results using a high temperature of 1.0 in \cref{table:appendix:exp:roc:mlg:t1,table:appendix:exp:arc:mlg:t1}.
+Higher temperature increases the sampling diversity of \baselineDegree and \baselinePTrue, which increases the performance of \baselineDegree significantly, but brings mixed results to \baselinePTrue.
+We also note that with 5 additional generations (6 in total) \baselineDegree is sometimes better than \methodnamePrompt or \methodnameNext.
+We repeat the uncertainty experiments with higher temperature as well, in \cref{table:appendix:exp:roc:uq:t1}, and found that \methodSEAttn is the most predictive of the generations' quality at this temperature.
+
+The experiments here suggest that sampling from an appropriate temperature really helps quantifying the reliability of the generations, but it should be noted that either sampling based confidence measures (\baselineDegree,\baselinePTrue) or sampling-based uncertainty measures (\baselineSENorm,\baselineSE,\methodSEAttn) bear a significantly higher computational overhead - $(m+1)\times$ the generation cost and up to $(m^2-m)$ pairwise NLI inference, with $m$ being the additional generations.
+On the other hand, \methodname requires one inference (not generation) call to the base LM which is only a fraction of the overhead.
+In practice, one might choose the best practice basing on cost and latency tolerance as well as difference in performance for the particular data distribution, and as shown in \methodSEAttn, \methodname could be combined with sampling to yield better results as well.
+
+
+\def \TabAppendixAUROCTemp{
+{
+\setlength{\tabcolsep}{3pt}
+\begin{table*}%[ht]
+%\vspace{-3mm}
+\caption{
+Similar to \cref{table:main:exp:roc:mlg}, but with different number of generations at temperature of 1.0.
+}
+\label{table:appendix:exp:roc:mlg:t1}
+\centering
+%\begin{small}
+   \resizebox{2\columnwidth}{!}{
+\begin{tabular}{c|ccccc|cc}
+\toprule
+ & \baselineDegree(E) & \baselinePTrue & \baselineNLL & \baselineNLLNorm & \baselineSAR & \methodnamePrompt & \methodnameNext\\
+\midrule
+3 generations \\ 
+\midrule
+\datasettrivia(llama2) & 86.49$\pm$0.14 & 61.63$\pm$0.27 & 88.16$\pm$0.13 & 87.84$\pm$0.13 & 87.89$\pm$0.13 & \textbf{89.65$\pm$0.20} & \textbf{89.58$\pm$0.17}\\
+\datasettrivia(gemma) & 87.00$\pm$0.12 & 77.87$\pm$0.17 & 88.83$\pm$0.11 & 88.10$\pm$0.09 & 88.07$\pm$0.09 & \textbf{89.73$\pm$0.16} & 89.43$\pm$0.10\\
+\datasettrivia(mistral) & 87.01$\pm$0.21 & 73.75$\pm$0.16 & 88.85$\pm$0.15 & 88.66$\pm$0.14 & 88.75$\pm$0.13 & \textbf{90.77$\pm$0.17} & \textbf{90.75$\pm$0.13}\\
+\datasetcoqa(llama2) & 72.51$\pm$0.29 & 53.83$\pm$0.40 & 69.48$\pm$0.39 & 72.67$\pm$0.43 & \textbf{72.88$\pm$0.46} & \textbf{73.46$\pm$0.69} & \textbf{73.45$\pm$0.56}\\
+\datasetcoqa(gemma) & \textbf{73.27$\pm$0.44} & 56.82$\pm$0.57 & 70.78$\pm$0.47 & 72.07$\pm$0.52 & 72.46$\pm$0.49 & 73.07$\pm$0.52 & \textbf{73.60$\pm$0.52}\\
+\datasetcoqa(mistral) & \textbf{71.86$\pm$0.57} & 55.04$\pm$0.47 & 68.98$\pm$0.38 & 70.61$\pm$0.38 & 70.89$\pm$0.41 & \textbf{71.79$\pm$0.74} & \textbf{71.91$\pm$0.63}\\
+\datasetnqopen(llama2) & 72.47$\pm$0.50 & 50.33$\pm$0.55 & 66.64$\pm$0.35 & 69.48$\pm$0.50 & 70.41$\pm$0.46 & \textbf{73.83$\pm$0.52} & \textbf{73.59$\pm$0.48}\\
+\datasetnqopen(gemma) & 75.78$\pm$0.68 & 62.57$\pm$0.41 & 72.09$\pm$0.65 & 75.81$\pm$0.65 & 75.88$\pm$0.68 & \textbf{77.96$\pm$0.57} & 77.19$\pm$0.63\\
+\datasetnqopen(mistral) & 73.76$\pm$0.70 & 58.65$\pm$0.51 & 69.22$\pm$0.53 & 71.06$\pm$0.54 & 72.61$\pm$0.48 & \textbf{76.65$\pm$0.43} & 75.73$\pm$0.68\\
+\midrule
+5 generations \\ 
+\midrule
+\datasettrivia(llama2) & 88.79$\pm$0.12 & 61.63$\pm$0.27 & 88.16$\pm$0.13 & 87.84$\pm$0.13 & 87.89$\pm$0.13 & \textbf{89.65$\pm$0.20} & \textbf{89.58$\pm$0.17}\\
+\datasettrivia(gemma) & 89.19$\pm$0.11 & 77.87$\pm$0.17 & 88.83$\pm$0.11 & 88.10$\pm$0.09 & 88.07$\pm$0.09 & \textbf{89.73$\pm$0.16} & 89.43$\pm$0.10\\
+\datasettrivia(mistral) & 89.39$\pm$0.21 & 73.75$\pm$0.16 & 88.85$\pm$0.15 & 88.66$\pm$0.14 & 88.75$\pm$0.13 & \textbf{90.77$\pm$0.17} & \textbf{90.75$\pm$0.13}\\
+\datasetcoqa(llama2) & \textbf{75.73$\pm$0.30} & 53.83$\pm$0.40 & 69.48$\pm$0.39 & 72.67$\pm$0.43 & 72.88$\pm$0.46 & 73.46$\pm$0.69 & 73.45$\pm$0.56\\
+\datasetcoqa(gemma) & \textbf{76.40$\pm$0.50} & 56.82$\pm$0.57 & 70.78$\pm$0.47 & 72.07$\pm$0.52 & 72.46$\pm$0.49 & 73.07$\pm$0.52 & 73.60$\pm$0.52\\
+\datasetcoqa(mistral) & \textbf{74.41$\pm$0.51} & 55.04$\pm$0.47 & 68.98$\pm$0.38 & 70.61$\pm$0.38 & 70.89$\pm$0.41 & 71.79$\pm$0.74 & 71.91$\pm$0.63\\
+\datasetnqopen(llama2) & \textbf{74.09$\pm$0.53} & 50.33$\pm$0.55 & 66.64$\pm$0.35 & 69.48$\pm$0.50 & 70.41$\pm$0.46 & \textbf{73.83$\pm$0.52} & 73.59$\pm$0.48\\
+\datasetnqopen(gemma) & 77.40$\pm$0.74 & 62.57$\pm$0.41 & 72.09$\pm$0.65 & 75.81$\pm$0.65 & 75.88$\pm$0.68 & \textbf{77.96$\pm$0.57} & 77.19$\pm$0.63\\
+\datasetnqopen(mistral) & \textbf{76.31$\pm$0.65} & 58.65$\pm$0.51 & 69.22$\pm$0.53 & 71.06$\pm$0.54 & 72.61$\pm$0.48 & \textbf{76.65$\pm$0.43} & 75.73$\pm$0.68\\
+\bottomrule
+\end{tabular}
+}
+%\end{small}
+\end{table*}
+}}
+\TabAppendixAUROCTemp
+
+\def \TabAppendixAUARCTemp{
+{
+\setlength{\tabcolsep}{3pt}
+\begin{table*}%[ht]
+%\vspace{-3mm}
+\caption{
+Similar to \cref{table:main:exp:arc:mlg}, but with different number of generations at temperature of 1.0.
+}
+\label{table:appendix:exp:arc:mlg:t1}
+\centering
+   \resizebox{2\columnwidth}{!}{
+\begin{tabular}{ccc|ccccc|cc}
+\toprule
+  & Random & Upper Bound & \baselineDegree(E) & \baselinePTrue & \baselineNLL & \baselineNLLNorm & \baselineSAR & \methodnamePrompt & \methodnameNext\\
+\midrule
+3 generations \\ 
+\midrule
+\datasettrivia(llama2) & 82.61$\pm$0.14 & 98.39$\pm$0.03 & 95.04$\pm$0.18 & 87.06$\pm$0.16 & 95.99$\pm$0.06 & 95.95$\pm$0.05 & 95.96$\pm$0.05 & \textbf{96.33$\pm$0.08} & \textbf{96.30$\pm$0.07}\\
+\datasettrivia(gemma) & 78.11$\pm$0.12 & 97.41$\pm$0.03 & 93.52$\pm$0.12 & 91.01$\pm$0.11 & 94.62$\pm$0.05 & 94.37$\pm$0.04 & 94.37$\pm$0.04 & \textbf{94.79$\pm$0.04} & 94.66$\pm$0.04\\
+\datasettrivia(mistral) & 79.90$\pm$0.12 & 97.83$\pm$0.03 & 94.12$\pm$0.16 & 90.17$\pm$0.10 & 95.27$\pm$0.06 & 95.20$\pm$0.05 & 95.21$\pm$0.05 & \textbf{95.67$\pm$0.09} & \textbf{95.67$\pm$0.07}\\
+\datasetcoqa(llama2) & 91.36$\pm$0.17 & 99.62$\pm$0.02 & 95.52$\pm$0.20 & 92.20$\pm$0.21 & 95.69$\pm$0.13 & 96.11$\pm$0.14 & \textbf{96.19$\pm$0.14} & \textbf{96.28$\pm$0.17} & \textbf{96.27$\pm$0.15}\\
+\datasetcoqa(gemma) & 92.63$\pm$0.14 & 99.72$\pm$0.01 & 96.14$\pm$0.19 & 94.33$\pm$0.17 & 96.53$\pm$0.11 & 96.66$\pm$0.10 & 96.70$\pm$0.10 & 96.82$\pm$0.09 & \textbf{96.90$\pm$0.11}\\
+\datasetcoqa(mistral) & 92.04$\pm$0.14 & 99.67$\pm$0.01 & 95.80$\pm$0.26 & 93.06$\pm$0.19 & 95.92$\pm$0.10 & 96.13$\pm$0.11 & 96.22$\pm$0.10 & \textbf{96.37$\pm$0.14} & \textbf{96.39$\pm$0.11}\\
+\datasetnqopen(llama2) & 56.48$\pm$0.68 & 88.74$\pm$0.39 & 72.37$\pm$0.89 & 56.84$\pm$0.70 & 70.50$\pm$0.77 & 71.00$\pm$0.81 & 71.95$\pm$0.80 & \textbf{73.49$\pm$0.67} & \textbf{73.28$\pm$0.86}\\
+\datasetnqopen(gemma) & 47.16$\pm$0.65 & 82.59$\pm$0.49 & 66.59$\pm$0.87 & 56.54$\pm$0.78 & 65.78$\pm$0.95 & 66.41$\pm$0.92 & 67.02$\pm$0.93 & \textbf{67.78$\pm$1.07} & 66.89$\pm$1.03\\
+\datasetnqopen(mistral) & 52.90$\pm$0.74 & 86.57$\pm$0.47 & 70.09$\pm$0.84 & 59.77$\pm$0.52 & 69.15$\pm$0.82 & 69.27$\pm$0.72 & 70.62$\pm$0.65 & \textbf{72.24$\pm$0.74} & 71.83$\pm$0.67\\
+\midrule
+5 generations \\ 
+\midrule
+\datasettrivia(llama2) & 82.61$\pm$0.14 & 98.39$\pm$0.03 & 95.80$\pm$0.09 & 87.06$\pm$0.16 & 95.99$\pm$0.06 & 95.95$\pm$0.05 & 95.96$\pm$0.05 & \textbf{96.33$\pm$0.08} & \textbf{96.30$\pm$0.07}\\
+\datasettrivia(gemma) & 78.11$\pm$0.12 & 97.41$\pm$0.03 & 94.51$\pm$0.08 & 91.01$\pm$0.11 & 94.62$\pm$0.05 & 94.37$\pm$0.04 & 94.37$\pm$0.04 & \textbf{94.79$\pm$0.04} & 94.66$\pm$0.04\\
+\datasettrivia(mistral) & 79.90$\pm$0.12 & 97.83$\pm$0.03 & 95.15$\pm$0.11 & 90.17$\pm$0.10 & 95.27$\pm$0.06 & 95.20$\pm$0.05 & 95.21$\pm$0.05 & \textbf{95.67$\pm$0.09} & \textbf{95.67$\pm$0.07}\\
+\datasetcoqa(llama2) & 91.36$\pm$0.17 & 99.62$\pm$0.02 & 96.13$\pm$0.15 & 92.20$\pm$0.21 & 95.69$\pm$0.13 & 96.11$\pm$0.14 & \textbf{96.19$\pm$0.14} & \textbf{96.28$\pm$0.17} & \textbf{96.27$\pm$0.15}\\
+\datasetcoqa(gemma) & 92.63$\pm$0.14 & 99.72$\pm$0.01 & 96.74$\pm$0.20 & 94.33$\pm$0.17 & 96.53$\pm$0.11 & 96.66$\pm$0.10 & 96.70$\pm$0.10 & 96.82$\pm$0.09 & \textbf{96.90$\pm$0.11}\\
+\datasetcoqa(mistral) & 92.04$\pm$0.14 & 99.67$\pm$0.01 & 96.22$\pm$0.16 & 93.06$\pm$0.19 & 95.92$\pm$0.10 & 96.13$\pm$0.11 & 96.22$\pm$0.10 & \textbf{96.37$\pm$0.14} & \textbf{96.39$\pm$0.11}\\
+\datasetnqopen(llama2) & 56.48$\pm$0.68 & 88.74$\pm$0.39 & \textbf{73.77$\pm$0.89} & 56.84$\pm$0.70 & 70.50$\pm$0.77 & 71.00$\pm$0.81 & 71.95$\pm$0.80 & \textbf{73.49$\pm$0.67} & 73.28$\pm$0.86\\
+\datasetnqopen(gemma) & 47.16$\pm$0.65 & 82.59$\pm$0.49 & \textbf{67.47$\pm$0.98} & 56.54$\pm$0.78 & 65.78$\pm$0.95 & 66.41$\pm$0.92 & 67.02$\pm$0.93 & \textbf{67.78$\pm$1.07} & 66.89$\pm$1.03\\
+\datasetnqopen(mistral) & 52.90$\pm$0.74 & 86.57$\pm$0.47 & \textbf{72.07$\pm$0.84} & 59.77$\pm$0.52 & 69.15$\pm$0.82 & 69.27$\pm$0.72 & 70.62$\pm$0.65 & \textbf{72.24$\pm$0.74} & 71.83$\pm$0.67\\
+\bottomrule
+\end{tabular}
+}
+\end{table*}
+}}
+\TabAppendixAUARCTemp
+% Results for mlg is mildly different due to precision issues. when argmax on cuda (logits tie)
+
+
+{
+\setlength{\tabcolsep}{3pt}
+\begin{table}%[ht]
+\caption{
+Similar to \cref{table:main:exp:roc:uq}, but with different number of generations at temperature of 1.0.
+}
+\label{table:appendix:exp:roc:uq:t1}
+\centering
+%\begin{small}
+   \resizebox{1\columnwidth}{!}{
+\begin{tabular}{c|cc|c}
+\toprule
+ & \baselineSENorm & \baselineSE & \methodSEAttn\\
+\midrule
+3 generations \\ 
+\midrule
+\datasettrivia(llama2) & 88.18$\pm$0.11 & 87.90$\pm$0.08 & \textbf{88.99$\pm$0.13}\\
+\datasettrivia(gemma) & 88.05$\pm$0.13 & 88.08$\pm$0.15 & \textbf{88.73$\pm$0.15}\\
+\datasettrivia(mistral) & 88.90$\pm$0.16 & 88.50$\pm$0.18 & \textbf{89.84$\pm$0.16}\\
+\datasetcoqa(llama2) & \textbf{75.26$\pm$0.46} & 72.11$\pm$0.32 & \textbf{75.27$\pm$0.57}\\
+\datasetcoqa(gemma) & \textbf{75.42$\pm$0.38} & 72.81$\pm$0.36 & \textbf{75.25$\pm$0.42}\\
+\datasetcoqa(mistral) & 73.53$\pm$0.35 & 70.49$\pm$0.37 & \textbf{73.89$\pm$0.50}\\
+\datasetnqopen(llama2) & 72.91$\pm$0.42 & 68.44$\pm$0.34 & \textbf{74.05$\pm$0.47}\\
+\datasetnqopen(gemma) & 77.36$\pm$0.73 & 72.73$\pm$0.80 & \textbf{78.33$\pm$0.69}\\
+\datasetnqopen(mistral) & 75.65$\pm$0.66 & 71.15$\pm$0.72 & \textbf{77.37$\pm$0.59}\\
+\midrule
+5 generations \\ 
+\midrule
+\datasettrivia(llama2) & 89.40$\pm$0.11 & 89.17$\pm$0.10 & \textbf{89.95$\pm$0.11}\\
+\datasettrivia(gemma) & 89.32$\pm$0.09 & 89.31$\pm$0.12 & \textbf{89.82$\pm$0.12}\\
+\datasettrivia(mistral) & 90.38$\pm$0.13 & 89.86$\pm$0.16 & \textbf{90.91$\pm$0.14}\\
+\datasetcoqa(llama2) & \textbf{77.08$\pm$0.40} & 73.87$\pm$0.33 & \textbf{77.25$\pm$0.47}\\
+\datasetcoqa(gemma) & \textbf{77.24$\pm$0.51} & 74.39$\pm$0.46 & \textbf{77.11$\pm$0.46}\\
+\datasetcoqa(mistral) & 75.65$\pm$0.31 & 72.58$\pm$0.29 & \textbf{76.04$\pm$0.50}\\
+\datasetnqopen(llama2) & 74.45$\pm$0.37 & 70.33$\pm$0.35 & \textbf{75.90$\pm$0.41}\\
+\datasetnqopen(gemma) & 78.31$\pm$0.54 & 74.17$\pm$0.69 & \textbf{79.33$\pm$0.57}\\
+\datasetnqopen(mistral) & 77.02$\pm$0.68 & 73.17$\pm$0.65 & \textbf{78.82$\pm$0.55}\\
+\bottomrule
+\end{tabular}
+}
+%\end{small}
+\end{table}
+}
