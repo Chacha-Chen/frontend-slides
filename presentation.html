@@ -1527,53 +1527,69 @@
             <h2 class="reveal stagger-2">What Current Evaluations <span class="highlight">Miss</span></h2>
 
             <!-- Visual: current benchmark pipeline -->
-            <div class="reveal stagger-3" style="margin-top: var(--content-gap);">
-                <div style="display: flex; align-items: center; justify-content: center; gap: clamp(0.3rem, 0.8vw, 0.6rem); flex-wrap: wrap;">
-                    <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
-                        <div style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.2em;">Evidence</div>
-                        <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">E<sub>1</sub> + E<sub>2</sub> + &hellip; + E<sub>n</sub></div>
-                        <div style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); color: var(--text-muted);">all at once</div>
+            <div class="seq-step" data-step="0" style="margin-top: var(--content-gap);">
+                <div style="display: flex; align-items: center; justify-content: center; gap: clamp(0.8rem, 2vw, 1.5rem); flex-wrap: wrap;">
+                    <!-- Prompt window with external annotations -->
+                    <div style="position: relative;">
+                        <!-- External E labels (our annotations) -->
+                        <div style="position: absolute; left: -2.8em; top: 0; bottom: 0; display: flex; flex-direction: column; pointer-events: none;">
+                            <!-- spacer for title bar + intro text -->
+                            <div style="flex: 0 0 4.2em;"></div>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--accent); height: 1.75em; display: flex; align-items: center;">E<sub>1</sub></div>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--accent); height: 1.75em; display: flex; align-items: center;">E<sub>2</sub></div>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--accent); height: 1.75em; display: flex; align-items: center;">E<sub>3</sub></div>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--accent); height: 1.75em; display: flex; align-items: center;">E<sub>4</sub></div>
+                        </div>
+                        <!-- Annotation bracket hint -->
+                        <div style="position: absolute; left: -1.2em; top: 4.2em; bottom: 2.8em; width: 6px; border-left: 1.5px dashed var(--accent); border-top: 1.5px dashed var(--accent); border-bottom: 1.5px dashed var(--accent); opacity: 0.5;"></div>
+
+                        <div style="background: #1a1a2e; border-radius: 10px; overflow: hidden; width: clamp(16rem, 40vw, 28rem); box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                            <!-- Title bar -->
+                            <div style="background: #2a2a3e; padding: 0.4em 0.8em; display: flex; align-items: center; gap: 0.4em;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ff5f57;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #febc2e;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #28c840;"></div>
+                                <span style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: #888; margin-left: 0.5em;">Prompt</span>
+                            </div>
+                            <!-- Prompt content — natural text, no E labels -->
+                            <div style="padding: 0.8em 1em; font-family: var(--font-mono); font-size: clamp(0.65rem, 1vw, 0.85rem); color: #ccc; line-height: 1.6;">
+                                <div style="color: #888; margin-bottom: 0.4em;">A patient presents with the following:</div>
+                                <div style="padding: 0.15em 0; color: #e8e8e8;">&bull; Patient reports chest pain</div>
+                                <div style="padding: 0.15em 0; color: #e8e8e8;">&bull; Troponin levels elevated</div>
+                                <div style="padding: 0.15em 0; color: #e8e8e8;">&bull; Shortness of breath</div>
+                                <div style="padding: 0.15em 0; color: #e8e8e8;">&bull; Left arm numbness</div>
+                                <div style="color: #888; margin-top: 0.4em;">What is the most likely diagnosis?</div>
+                            </div>
+                        </div>
                     </div>
+
                     <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
-                    <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
-                        <div style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.2em;">LLM</div>
-                        <div style="font-size: clamp(1.5rem, 2.5vw, 2rem);">&#129302;</div>
-                    </div>
-                    <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
-                    <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
-                        <div style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.2em;">Output</div>
-                        <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">Answer</div>
-                    </div>
-                    <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
-                    <div style="background: rgba(45,138,78,0.1); border: 1px solid rgba(45,138,78,0.25); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
-                        <div style="font-size: var(--small-size); color: #2d8a4e; margin-bottom: 0.2em;">Score</div>
-                        <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600; color: #2d8a4e;">&#10003; / &#10007;</div>
+
+                    <!-- LLM + Answer in one row -->
+                    <div style="display: flex; align-items: center; gap: clamp(0.3rem, 0.8vw, 0.6rem);">
+                        <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
+                            <div style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.2em;">LLM</div>
+                            <div style="font-size: clamp(1.5rem, 2.5vw, 2rem);">&#129302;</div>
+                        </div>
+                        <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
+                        <div style="background: rgba(45,138,78,0.1); border: 1px solid rgba(45,138,78,0.25); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
+                            <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">"Heart attack"</div>
+                            <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: #2d8a4e;">&#10003; Correct</div>
+                        </div>
                     </div>
                 </div>
+                <p style="font-size: var(--small-size); color: var(--text-muted); text-align: center; margin-top: 0.6em;">All evidence is given at once in a single prompt. The model answers. We score right/wrong.</p>
             </div>
 
-            <!-- Concrete example: doctor diagnosis -->
-            <div class="reveal stagger-4" style="margin-top: var(--element-gap);">
-                <div style="display: flex; align-items: center; justify-content: center; gap: clamp(0.3rem, 0.8vw, 0.6rem); flex-wrap: wrap; font-size: var(--small-size);">
-                    <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 6px; padding: 0.4em 0.7em; text-align: center;">
-                        <div style="color: var(--text-muted); font-size: clamp(0.55rem, 0.7vw, 0.65rem);">evidence</div>
-                        <div>chest pain<br>+ lab test 1<br>+ lab test 2<br>+ lab test 3</div>
-                    </div>
-                    <div style="color: var(--text-muted);">&rarr;</div>
-                    <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 6px; padding: 0.4em 0.7em; text-align: center;">
-                        <div style="font-size: clamp(1.2rem, 2vw, 1.5rem);">&#129302;</div>
-                    </div>
-                    <div style="color: var(--text-muted);">&rarr;</div>
-                    <div style="background: rgba(45,138,78,0.1); border: 1px solid rgba(45,138,78,0.25); border-radius: 6px; padding: 0.4em 0.7em; text-align: center;">
-                        <div style="font-weight: 600;">"Heart attack"</div>
-                        <div style="color: #2d8a4e; font-weight: 600;">&#10003; Correct</div>
-                    </div>
+            <div class="highlight-wrap seq-step" data-step="1" style="margin-top: var(--content-gap);">
+                <span class="highlight-icon">&#128161;</span>
+                <div class="highlight-box">
+                <p>In the real world, evidence is almost always incomplete. It is crucial to maintain <strong>calibrated confidence over all outcomes at every step</strong> &mdash; not just get the right answer at the end. <strong>Current evaluations hide this failure.</strong></p>
                 </div>
-                <p style="font-size: var(--small-size); color: var(--text-muted); text-align: center; margin-top: 0.4em;">e.g. A doctor receives all test results at once, gives a diagnosis, gets scored right/wrong.</p>
             </div>
 
             <!-- Visual: what's hidden -->
-            <div class="reveal stagger-5" style="margin-top: var(--content-gap);">
+            <div class="seq-step" data-step="2" style="margin-top: var(--content-gap);">
                 <div style="position: relative; background: rgba(230,57,70,0.04); border: 2px dashed rgba(230,57,70,0.25); border-radius: 12px; padding: clamp(0.8rem, 1.5vw, 1.2rem); text-align: center;">
                     <div style="position: absolute; top: -0.7em; left: 1.5em; background: var(--bg-slide); padding: 0 0.5em; font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em;">Hidden from evaluation</div>
                     <div style="display: flex; align-items: center; justify-content: center; gap: clamp(0.2rem, 0.5vw, 0.4rem); flex-wrap: wrap; margin-top: 0.3em;">
@@ -1604,13 +1620,6 @@
                         </div>
                     </div>
                     <p style="font-size: var(--small-size); color: var(--accent); margin-top: 0.6em;">How does the model update its beliefs over all hypotheses as evidence arrives?</p>
-                </div>
-            </div>
-
-            <div class="highlight-wrap reveal stagger-6" style="margin-top: var(--content-gap);">
-                <span class="highlight-icon">&#128161;</span>
-                <div class="highlight-box">
-                <p>In the real world, evidence is almost always incomplete. It is crucial to maintain <strong>calibrated confidence over all outcomes at every step</strong> &mdash; not just get the right answer at the end. <strong>Current evaluations hide this failure.</strong></p>
                 </div>
             </div>
         </div>
@@ -1646,6 +1655,12 @@
                     <p>Updates beliefs <strong>proportionally</strong> to each piece of evidence</p>
                 </div>
             </div>
+            <div class="highlight-wrap reveal stagger-6" style="margin-top: var(--content-gap);">
+                <span class="highlight-icon">&#128161;</span>
+                <div class="highlight-box">
+                <p><strong>Belief updates should be proportional to evidence strength</strong> &mdash; no more, no less.</p>
+                </div>
+            </div>
         </div>
         <div class="bottom-rule"></div>
         <div class="slide-number">03</div>
@@ -1679,7 +1694,7 @@
                 <div class="seq-header seq-step" data-step="4">Evidence 4<br><span class="clue-detail">+ lab test 3</span></div>
 
                 <!-- OPTIMAL REASONING group -->
-                <div class="seq-group-label group-pass">&#10003; Optimal Reasoning</div>
+                <div class="seq-group-label group-pass">&#10003; Optimal Reasoning (Bayes)</div>
 
                 <!-- LIKELIHOOD ROW — Optimal interpretation -->
                 <div class="seq-row-label"><span class="col-label pass">Likelihood</span></div>
@@ -1747,8 +1762,8 @@
                 <div class="seq-bars seq-step" data-step="0" style="min-height: auto; justify-content: center;"><span class="clue-detail" style="color: #bbb;">&mdash;</span></div>
                 <div class="seq-bars seq-step" data-step="1" style="min-height: auto; justify-content: center;"><span class="clue-detail" style="color: var(--accent);">strongly A!</span></div>
                 <div class="seq-bars seq-step" data-step="2" style="min-height: auto; justify-content: center;"><span class="clue-detail" style="color: var(--accent);">still A</span></div>
-                <div class="seq-bars seq-step missed" data-step="3" style="min-height: auto; justify-content: center;"><span class="missed-label">exited</span></div>
-                <div class="seq-bars seq-step missed" data-step="4" style="min-height: auto; justify-content: center;"><span class="missed-label">exited</span></div>
+                <div class="seq-bars seq-step" data-step="3" style="min-height: auto; justify-content: center;"><span class="clue-detail" style="color: var(--accent);">wait&hellip; B?</span></div>
+                <div class="seq-bars seq-step" data-step="4" style="min-height: auto; justify-content: center;"><span class="clue-detail" style="color: var(--accent);">flip to B</span></div>
 
                 <!-- FLAWED MODEL — Posterior -->
                 <div class="seq-row-label"><span class="col-label fail">Posterior</span></div>
@@ -1770,23 +1785,38 @@
                         <div class="bar c-panic dim" style="--h: 5%;" data-label="D"></div>
                     </div>
                 </div>
-                <!-- + shortness of breath: model locks in, exits with heartburn -->
+                <!-- + lab test 1: model doubles down on heartburn -->
                 <div class="seq-bars seq-step" data-step="2">
-                    <div class="bar-group exited">
+                    <div class="bar-group">
                         <div class="bar c-heartburn wrong" style="--h: 92%;" data-label="A"></div>
                         <div class="bar c-heart dim" style="--h: 4%;" data-label="B"></div>
                         <div class="bar c-muscle dim" style="--h: 3%;" data-label="C"></div>
                         <div class="bar c-panic dim" style="--h: 1%;" data-label="D"></div>
                     </div>
-                    <div class="exit-badge wrong-badge">&#10007; A) Heartburn (92%)</div>
                 </div>
-                <!-- Missed remaining tests -->
-                <div class="seq-bars seq-step missed" data-step="3"><span class="missed-label">exited</span></div>
-                <div class="seq-bars seq-step missed" data-step="4"><span class="missed-label">exited</span></div>
+                <!-- + lab test 2: overwhelming evidence forces abrupt reversal -->
+                <div class="seq-bars seq-step" data-step="3">
+                    <div class="bar-group">
+                        <div class="bar c-heartburn" style="--h: 30%;" data-label="A"></div>
+                        <div class="bar c-heart" style="--h: 55%;" data-label="B"></div>
+                        <div class="bar c-muscle dim" style="--h: 5%;" data-label="C"></div>
+                        <div class="bar c-panic dim" style="--h: 10%;" data-label="D"></div>
+                    </div>
+                </div>
+                <!-- + lab test 3: model finally lands on correct answer -->
+                <div class="seq-bars seq-step" data-step="4">
+                    <div class="bar-group">
+                        <div class="bar c-heartburn dim" style="--h: 8%;" data-label="A"></div>
+                        <div class="bar c-heart winner" style="--h: 82%;" data-label="B"></div>
+                        <div class="bar c-muscle dim" style="--h: 3%;" data-label="C"></div>
+                        <div class="bar c-panic dim" style="--h: 7%;" data-label="D"></div>
+                    </div>
+                    <div class="exit-badge correct">&#10003; B) Heart Attack (82%)</div>
+                </div>
             </div>
 
             <p class="reveal stagger-5 seq-step" data-step="5" style="margin-top: var(--content-gap); font-size: var(--small-size);">
-                At each step we estimate the <strong>likelihood</strong> (what does this evidence suggest?) then update the <strong>prediction</strong>. The model over-updates on "chest pain," locks onto <strong>A) Heartburn</strong> at 92% &mdash; missing the lab results that point to <strong>B) Heart Attack</strong>.
+                At each step we estimate the <strong>likelihood</strong> (what does this evidence suggest?) then update the <strong>prediction</strong>. The model over-updates on "chest pain," locks onto <strong>A) Heartburn</strong> at 92%, then abruptly reverses to <strong>B) Heart Attack</strong>. Both end up correct &mdash; but the model's <strong>path</strong> was erratic.
             </p>
         </div>
         <div class="bottom-rule"></div>
@@ -1834,7 +1864,7 @@
                     <div class="track-outcome correct">&#10003; B</div>
                 </div>
 
-                <!-- TRACK 2: Flawed Model -->
+                <!-- TRACK 2: Flawed Model — over-updates then self-corrects -->
                 <div class="track track-flawed">
                     <div class="track-label fail">Model</div>
                     <div class="track-steps">
@@ -1848,20 +1878,22 @@
                             <div class="track-conf">70%</div>
                         </div>
                         <div class="track-connector"><span class="delta-label" style="color: var(--accent);">&Delta;=0.22</span></div>
-                        <div class="track-step endpoint overcommit">
+                        <div class="track-step intermediate overcommit">
                             <div class="track-dot" style="--dot-size: clamp(30px, 4.5vw, 46px);"></div>
                             <div class="track-conf">92%</div>
                         </div>
-                        <div class="track-connector dashed"></div>
-                        <div class="track-step intermediate" style="opacity: 0.3;">
-                            <div class="track-missed">exited</div>
+                        <div class="track-connector"><span class="delta-label" style="color: var(--accent);">&Delta;=0.38</span></div>
+                        <div class="track-step intermediate">
+                            <div class="track-dot" style="--dot-size: clamp(18px, 2.8vw, 30px);"></div>
+                            <div class="track-conf">55%</div>
                         </div>
-                        <div class="track-connector dashed"></div>
-                        <div class="track-step intermediate" style="opacity: 0.3;">
-                            <div class="track-missed">exited</div>
+                        <div class="track-connector"><span class="delta-label" style="color: var(--accent);">&Delta;=0.15</span></div>
+                        <div class="track-step endpoint">
+                            <div class="track-dot" style="--dot-size: clamp(26px, 3.8vw, 40px);"></div>
+                            <div class="track-conf">82%</div>
                         </div>
                     </div>
-                    <div class="track-outcome wrong">&#10007; A</div>
+                    <div class="track-outcome correct">&#10003; B</div>
                 </div>
             </div>
 
@@ -1914,7 +1946,7 @@
             </div>
             <div class="math-block reveal stagger-6" style="margin-top: var(--element-gap);">
                 <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em; text-align: left;">Formally:</p>
-                <span data-math-block="\Delta(q) = \underbrace{D_{\mathrm{KL}}\!\left(q(\theta|X_{1:n\!+\!1})\;\|\;\pi(\theta|X_{1:n})\right)}_{\text{Info out: how much belief shifted}} \;-\; \underbrace{\mathbb{E}_{q}\!\left[\log \frac{\ell(X_{n+1}|\theta)}{m(X_{n+1})}\right]}_{\text{Info in: how informative the evidence was}}"></span>
+                <span data-math-block="\Delta(q) = \underbrace{D_{\mathrm{KL}}\!\left(q(\theta|X_{1:n\!+\!1})\;\|\;q(\theta|X_{1:n})\right)}_{\text{Info out: how much belief shifted}} \;-\; \underbrace{\mathbb{E}_{q}\!\left[\log \frac{\ell(X_{n+1}|\theta)}{m(X_{n+1})}\right]}_{\text{Info in: how informative the evidence was}} \;=\; D_{\mathrm{KL}}\!\left(q(\theta|X_{1:n\!+\!1})\;\|\;p(\theta|X_{1:n\!+\!1})\right) \;\geq\; 0"></span>
             </div>
             <ul class="bullet-list" style="margin-top: var(--element-gap);">
                 <li class="reveal stagger-7">&#128161; <span class="math-inline" data-math="\Delta = 0"></span> &rarr; update matched evidence strength exactly (optimal, recovers Bayes' rule)</li>
@@ -1923,6 +1955,143 @@
         </div>
         <div class="bottom-rule"></div>
         <div class="slide-number">06</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 6b: CONCRETE EXAMPLE — Computing Delta
+         ========================================== -->
+    <section class="slide" id="slide-6b">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Worked Example</div>
+            <h2 class="reveal stagger-2">&Delta; in Action: <span class="highlight">One Update Step</span></h2>
+
+            <div style="display: flex; gap: clamp(0.5rem, 1vw, 0.8rem); margin-top: var(--element-gap); flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 8rem; padding: 0.4em 0.6em; background: rgba(74,124,204,0.06); border: 1px solid rgba(74,124,204,0.2); border-radius: 6px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.7rem); font-weight: 600; color: #4a7ccc;">ASK MODEL</div>
+                    <p style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); margin-top: 0.2em;"><span class="math-inline" data-math="q(\theta|X_{1:n})"></span><br>beliefs <strong>before</strong> new clue</p>
+                </div>
+                <div style="flex: 1; min-width: 8rem; padding: 0.4em 0.6em; background: rgba(74,124,204,0.06); border: 1px solid rgba(74,124,204,0.2); border-radius: 6px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.7rem); font-weight: 600; color: #4a7ccc;">ASK MODEL</div>
+                    <p style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); margin-top: 0.2em;"><span class="math-inline" data-math="\ell(X_{n+1}|\theta)"></span><br>how likely is clue under each hypothesis</p>
+                </div>
+                <div style="flex: 1; min-width: 8rem; padding: 0.4em 0.6em; background: rgba(74,124,204,0.06); border: 1px solid rgba(74,124,204,0.2); border-radius: 6px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.7rem); font-weight: 600; color: #4a7ccc;">ASK MODEL</div>
+                    <p style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); margin-top: 0.2em;"><span class="math-inline" data-math="q(\theta|X_{1:n+1})"></span><br>beliefs <strong>after</strong> new clue</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: clamp(1rem, 3vw, 2.5rem); flex-wrap: wrap; margin-top: var(--content-gap);">
+
+                <!-- LEFT: Setup + Distributions -->
+                <div style="flex: 1; min-width: 14rem;">
+                    <!-- Prior -->
+                    <div class="seq-step" data-step="0">
+                        <p style="font-family: var(--font-mono); font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.3em;">Prior (after chest pain):</p>
+                        <div style="display: flex; gap: 0.4em; align-items: flex-end; height: 4em; margin-bottom: 0.3em;">
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.60</div>
+                                <div style="width: 100%; height: 2.4em; background: #7eaad4; border-radius: 3px 3px 0 0;"></div>
+                                <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">A</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.40</div>
+                                <div style="width: 100%; height: 1.6em; background: #c0392b; border-radius: 3px 3px 0 0;"></div>
+                                <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">B</div>
+                            </div>
+                        </div>
+                        <p style="font-size: clamp(0.6rem, 0.8vw, 0.75rem); color: var(--text-muted);">A = Heartburn&ensp;&ensp;B = Heart Attack</p>
+                    </div>
+
+                    <!-- Likelihood -->
+                    <div class="seq-step" data-step="1" style="margin-top: var(--element-gap);">
+                        <p style="font-family: var(--font-mono); font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.3em;">New evidence: <strong style="color: var(--text-primary);">elevated troponin</strong></p>
+                        <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 6px; padding: 0.5em 0.8em; font-family: var(--font-mono); font-size: clamp(0.65rem, 0.9vw, 0.8rem); line-height: 1.8;">
+                            <span data-math-block="P(\text{troponin} \mid A\!=\!\text{Heartburn}) = 0.10"></span>
+                            <span data-math-block="P(\text{troponin} \mid B\!=\!\text{Heart Attack}) = 0.90"></span>
+                            <span data-math-block="m = 0.6 \times 0.1 + 0.4 \times 0.9 = 0.42"></span>
+                        </div>
+                    </div>
+
+                    <!-- Posteriors side by side -->
+                    <div class="seq-step" data-step="2" style="margin-top: var(--element-gap);">
+                        <div style="display: flex; gap: clamp(0.5rem, 1.5vw, 1.2rem);">
+                            <!-- Bayesian posterior -->
+                            <div style="flex: 1;">
+                                <p style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.75rem); color: #2d8a4e; margin-bottom: 0.3em; font-weight: 600;">Bayesian posterior:</p>
+                                <div style="display: flex; gap: 0.4em; align-items: flex-end; height: 4em;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.14</div>
+                                        <div style="width: 100%; height: 0.56em; background: #7eaad4; border-radius: 3px 3px 0 0;"></div>
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">A</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.86</div>
+                                        <div style="width: 100%; height: 3.44em; background: #c0392b; border-radius: 3px 3px 0 0;"></div>
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">B</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Over-updating model -->
+                            <div style="flex: 1;">
+                                <p style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.75rem); color: var(--accent); margin-bottom: 0.3em; font-weight: 600;">Over-updating model:</p>
+                                <div style="display: flex; gap: 0.4em; align-items: flex-end; height: 4em;">
+                                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.02</div>
+                                        <div style="width: 100%; height: 0.08em; background: #7eaad4; border-radius: 3px 3px 0 0;"></div>
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">A</div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); color: var(--text-muted); margin-bottom: 0.2em;">0.98</div>
+                                        <div style="width: 100%; height: 3.92em; background: #c0392b; border-radius: 3px 3px 0 0;"></div>
+                                        <div style="font-family: var(--font-mono); font-size: clamp(0.55rem, 0.8vw, 0.7rem); margin-top: 0.15em;">B</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Calculations -->
+                <div style="flex: 1; min-width: 14rem;">
+                    <!-- Bayesian calculation -->
+                    <div class="seq-step" data-step="3">
+                        <div style="background: rgba(45,138,78,0.06); border: 1px solid rgba(45,138,78,0.2); border-radius: 8px; padding: 0.6em 0.8em;">
+                            <p style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.75rem); color: #2d8a4e; font-weight: 600; margin-bottom: 0.4em;">Bayesian (q = Bayes posterior):</p>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.85vw, 0.75rem); line-height: 2;">
+                                <div><strong>Info out</strong> = <span data-math="D_{\text{KL}}(q \| \pi)"></span></div>
+                                <div style="color: var(--text-secondary); padding-left: 1em;"><span data-math="= 0.14 \ln\!\tfrac{0.14}{0.60} + 0.86 \ln\!\tfrac{0.86}{0.40} = \textbf{0.45}"></span></div>
+                                <div style="margin-top: 0.2em;"><strong>Info in</strong> = <span data-math="\mathbb{E}_q\!\left[\ln \tfrac{\ell}{m}\right]"></span></div>
+                                <div style="color: var(--text-secondary); padding-left: 1em;"><span data-math="= 0.14 \ln\!\tfrac{0.10}{0.42} + 0.86 \ln\!\tfrac{0.90}{0.42} = \textbf{0.45}"></span></div>
+                                <div style="margin-top: 0.3em; padding: 0.3em 0.5em; background: rgba(45,138,78,0.1); border-radius: 4px; font-weight: 700; color: #2d8a4e; text-align: center;">&Delta; = 0.45 &minus; 0.45 = 0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Over-updating calculation -->
+                    <div class="seq-step" data-step="4" style="margin-top: var(--element-gap);">
+                        <div style="background: rgba(230,57,70,0.04); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px; padding: 0.6em 0.8em;">
+                            <p style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.8vw, 0.75rem); color: var(--accent); font-weight: 600; margin-bottom: 0.4em;">Over-updating model (q = model output):</p>
+                            <div style="font-family: var(--font-mono); font-size: clamp(0.6rem, 0.85vw, 0.75rem); line-height: 2;">
+                                <div><strong>Info out</strong> = <span data-math="D_{\text{KL}}(q \| \pi)"></span></div>
+                                <div style="color: var(--text-secondary); padding-left: 1em;"><span data-math="= 0.02 \ln\!\tfrac{0.02}{0.60} + 0.98 \ln\!\tfrac{0.98}{0.40} = \textbf{0.81}"></span></div>
+                                <div style="margin-top: 0.2em;"><strong>Info in</strong> = <span data-math="\mathbb{E}_q\!\left[\ln \tfrac{\ell}{m}\right]"></span></div>
+                                <div style="color: var(--text-secondary); padding-left: 1em;"><span data-math="= 0.02 \ln\!\tfrac{0.10}{0.42} + 0.98 \ln\!\tfrac{0.90}{0.42} = \textbf{0.72}"></span></div>
+                                <div style="margin-top: 0.3em; padding: 0.3em 0.5em; background: rgba(230,57,70,0.1); border-radius: 4px; font-weight: 700; color: var(--accent); text-align: center;">&Delta; = 0.81 &minus; 0.72 = 0.09 &gt; 0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Takeaway -->
+                    <div class="seq-step" data-step="5" style="margin-top: var(--element-gap);">
+                        <div class="highlight-box" style="font-size: var(--small-size);">
+                            <p>The model moved <strong>more</strong> than the evidence warranted &mdash; it shifted 0.81 nats but the evidence only justified 0.72. The excess <strong>&Delta; = 0.09</strong> is the over-reaction.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">07</div>
     </section>
 
     <!-- ==========================================
@@ -1949,7 +2118,7 @@
             </div>
         </div>
         <div class="bottom-rule"></div>
-        <div class="slide-number">07</div>
+        <div class="slide-number">08</div>
     </section>
 
     <!-- ==========================================
@@ -2030,7 +2199,7 @@
     <section class="slide" id="slide-9">
         <div class="slide-content">
             <div class="section-tag reveal stagger-1">Roadmap</div>
-            <h2 class="reveal stagger-2">Our <span class="highlight">Story</span></h2>
+            <h2 class="reveal stagger-2">Our <span class="highlight">Results</span></h2>
 
             <div class="story-arc reveal-up stagger-3">
                 <div class="arc-step done">
@@ -2057,13 +2226,6 @@
                     <div class="arc-dot"></div>
                     <div class="arc-label">Train for it</div>
                     <div class="arc-desc">|&Delta;| regularization improves reasoning without hurting accuracy</div>
-                </div>
-            </div>
-
-            <div class="highlight-wrap reveal stagger-4" style="margin-top: var(--content-gap);">
-                <span class="highlight-icon">&#128161;</span>
-                <div class="highlight-box">
-                <p>Accuracy tells you <em>where</em> a model ends up. Zellner's &Delta; tells you <em>how it got there</em> &mdash; and whether you can trust the journey.</p>
                 </div>
             </div>
         </div>
@@ -2313,11 +2475,28 @@
                 <span class="sb-item active">Train for it</span>
             </div>
             <h2 class="reveal stagger-2">Training for <span class="highlight">Optimal Updating</span></h2>
-            <p class="reveal stagger-3">Add a |&Delta;| regularizer to the standard language modeling objective:</p>
-            <div class="math-block reveal stagger-4" data-math-block="\mathcal{L} = \underbrace{-\sum_t \log P(x_t \mid x_{<t})}_{\mathcal{L}_{LM}} + \lambda \cdot |\Delta|"></div>
+            <p class="reveal stagger-3">Sample traces from GPT-5.1 reasoning, filter by mean |&Delta;|, fine-tune a smaller model:</p>
+            <div class="reveal stagger-4" style="display: flex; align-items: center; justify-content: center; gap: clamp(0.3rem, 0.8vw, 0.6rem); flex-wrap: wrap; margin-top: var(--content-gap);">
+                <div style="background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
+                    <div style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.2em;">GPT-5.1 reasoning</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">Sample kN traces</div>
+                    <div style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); color: var(--text-muted);">oversample k&times;</div>
+                </div>
+                <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
+                <div style="background: rgba(230,57,70,0.06); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
+                    <div style="font-size: var(--small-size); color: var(--accent); margin-bottom: 0.2em;">Filter</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">Rank by mean |&Delta;|</div>
+                    <div style="font-size: clamp(0.6rem, 0.8vw, 0.7rem); color: var(--text-muted);">keep top N traces</div>
+                </div>
+                <div style="font-size: var(--h3-size); color: var(--text-muted);">&rarr;</div>
+                <div style="background: rgba(45,138,78,0.06); border: 1px solid rgba(45,138,78,0.2); border-radius: 8px; padding: 0.6em 1em; text-align: center;">
+                    <div style="font-size: var(--small-size); color: #2d8a4e; margin-bottom: 0.2em;">Fine-tune</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--body-size); font-weight: 600;">SFT on best traces</div>
+                </div>
+            </div>
             <ul class="bullet-list" style="margin-top: var(--content-gap);">
-                <li class="reveal stagger-5"><span class="math-inline" data-math="\mathcal{L}_{LM}"></span> keeps the model a fluent language model (next-token prediction)</li>
-                <li class="reveal stagger-6"><span class="math-inline" data-math="\lambda \cdot |\Delta|"></span> penalizes non-optimal updates &mdash; pushes the model toward Bayesian coherence</li>
+                <li class="reveal stagger-5">Works on real-world benchmarks &mdash; no oracle needed</li>
+                <li class="reveal stagger-6">Standard fine-tuning pipeline &mdash; no differentiable |&Delta;| required</li>
             </ul>
             <div class="highlight-wrap reveal stagger-7" style="margin-top: var(--element-gap);">
                 <span class="highlight-icon">&#128161;</span>
@@ -2512,7 +2691,7 @@
                 <div class="reveal-scale stagger-6" style="text-align: center; padding: clamp(0.8rem, 1.5vw, 1.2rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
                     <div style="font-size: var(--h3-size); margin-bottom: 0.3em;">&#9989;</div>
                     <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em;">Fix</div>
-                    <p style="font-size: clamp(0.85rem, 1.3vw, 1.1rem); margin-top: 0.4em;">|&Delta;| regularization makes reasoning more optimal</p>
+                    <p style="font-size: clamp(0.85rem, 1.3vw, 1.1rem); margin-top: 0.4em;">Post-training with &Delta;-filtered traces improves reasoning quality</p>
                 </div>
             </div>
 
@@ -2526,6 +2705,217 @@
         </div>
         <div class="bottom-rule"></div>
         <div class="slide-number">18</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 19: TRANSITION — APPLIED RL
+         ========================================== -->
+    <section class="slide" id="slide-19">
+        <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="section-tag reveal stagger-1">Industry Experience</div>
+            <h1 class="reveal stagger-2" style="margin-top: var(--element-gap);">RL Post-Training for a <span class="highlight">High-Stakes</span> Domain</h1>
+            <p class="reveal stagger-3" style="margin-top: var(--content-gap); font-size: var(--body-size); max-width: 32em;">
+                General-purpose models underperform on specialized, safety-critical queries. I built a <strong>synthetic data generation pipeline</strong> to produce prompt&ndash;reward function pairs for RL post-training.
+            </p>
+            <div class="highlight-wrap reveal stagger-4" style="margin-top: var(--content-gap); max-width: 36em;">
+                <span class="highlight-icon">&#128161;</span>
+                <div class="highlight-box">
+                <p>The hard part wasn&rsquo;t the RL &mdash; it was <strong>designing the prompt mix</strong> and <strong>building reward functions</strong> for a domain where correctness is nuanced.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">19</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 20: PIPELINE OVERVIEW
+         ========================================== -->
+    <section class="slide" id="slide-20">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Pipeline</div>
+            <h2 class="reveal stagger-2">End-to-End <span class="highlight">Pipeline</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">A generalizable framework &mdash; designed for one domain, but the methodology transfers.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 0.5rem; margin-top: var(--content-gap);">
+                <!-- Step 1 -->
+                <div class="reveal-scale stagger-4" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#127793;</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Prompt Mixture Design</div>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;"><strong>Expert-curated</strong> + <strong>synthetic</strong> (taxonomy &amp; distribution from real user data) + <strong>vendor-provided</strong> + <strong>safety/stress-testing</strong> cases</p>
+                </div>
+                <div class="reveal stagger-4" style="font-size: 1.2em; color: var(--accent);">&rarr;</div>
+                <!-- Step 2 -->
+                <div class="reveal-scale stagger-5" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#9878;&#65039;</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Rubric-Based Reward Functions</div>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Reference-based (vetted gold answers) + multi-dimensional rubrics (completeness, groundedness, safety, empathy)</p>
+                </div>
+                <div class="reveal stagger-5" style="font-size: 1.2em; color: var(--accent);">&rarr;</div>
+                <!-- Step 3 -->
+                <div class="reveal-scale stagger-6" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#128300;</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Ablation &amp; Validation</div>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Test with smaller model before submitting to central post-training data mix</p>
+                </div>
+            </div>
+
+            <div class="highlight-wrap reveal stagger-7" style="margin-top: var(--content-gap);">
+                <span class="highlight-icon">&#128161;</span>
+                <div class="highlight-box">
+                <p><strong>Query filtering criteria:</strong> learnable (model doesn&rsquo;t already ace it), challenging (not trivially solvable), verifiable (reward signal is reliable).</p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">20</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 21: VERIFIER DESIGN (STAR SLIDE)
+         ========================================== -->
+    <section class="slide" id="slide-21">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Core Contribution</div>
+            <h2 class="reveal stagger-2">Reward Function <span class="highlight">Design</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">No verifiable rewards in this domain &mdash; answers aren&rsquo;t binary like math or code. We design <strong>rubric-based</strong> reward functions using previous-gen flagship instruct model as LLM-as-judge.</p>
+            <p class="reveal stagger-3" style="font-size: var(--small-size); color: var(--text-muted);">Why previous-gen? It&rsquo;s strong enough to follow rubrics reliably, and it&rsquo;s a <strong>different model</strong> from the one being trained &mdash; avoiding self-judging circularity.</p>
+            <p class="reveal stagger-3" style="font-size: var(--small-size); color: var(--text-muted);"><strong>Bootstrapping rubrics:</strong> We feed gold prompt&ndash;reference answer pairs to an LLM and ask it to <strong>reverse-engineer what criteria matter</strong> &mdash; which dimensions distinguish a good answer from a bad one. This seeds the initial rubric, then we refine with expert feedback.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--content-gap);">
+                <!-- Base layer: always on -->
+                <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Base Layer: Multi-Dimensional Rubric <span style="color: #2d8a4e;">(all prompts)</span></div>
+                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Every response scored on all dimensions:</p>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;"><strong>Completeness</strong> &mdash; covers all relevant aspects</li>
+                        <li style="margin-bottom: 0.3em;"><strong>Groundedness</strong> &mdash; claims supported by given context</li>
+                        <li style="margin-bottom: 0.3em;"><strong>Safety</strong> &mdash; hard gate, not a soft tradeoff</li>
+                        <li><strong>Empathy</strong> &mdash; tone appropriate for the domain</li>
+                    </ul>
+                </div>
+                <!-- Additional layer: conditional -->
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Additional Layer: Reference Match <span style="color: var(--text-muted);">(when available)</span></div>
+                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Prompts with <strong>vetted reference answers</strong> get an additional signal:</p>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">LLM judge scores response against reference (expert or strong-model, manually verified)</li>
+                        <li style="margin-bottom: 0.3em;">Rubric defines matching, partially matching, or missing</li>
+                        <li>Not all prompts have references &mdash; activates only when <span style="font-family: var(--font-mono);">reference_answer</span> exists</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--element-gap);">
+                <div class="reveal-scale stagger-6" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); margin-bottom: 0.3em;">Composite Reward</div>
+                    <p style="font-size: var(--small-size); margin: 0;">reward = rubric_score + (if ref exists) &lambda; &middot; reference_match. Weights ablated on held-out set. Safety gate on top of everything.</p>
+                </div>
+                <div class="reveal-scale stagger-7" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); margin-bottom: 0.3em;">Calibrating the Judge</div>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Human experts <strong>pointwise-score</strong> (1&ndash;5 per dimension) + <strong>pairwise-rank</strong> responses on held-out set</li>
+                        <li style="margin-bottom: 0.3em;">LLM judge scores the same set &mdash; measure <strong>pairwise agreement</strong> (ranking) &amp; <strong>Cohen&rsquo;s kappa</strong> (pointwise)</li>
+                        <li>Iterate on rubric prompt per dimension until agreement crosses threshold; periodic re-calibration to catch drift</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">21</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 21b: THREE-PHASE PROCESS
+         ========================================== -->
+    <section class="slide" id="slide-21b">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Process</div>
+            <h2 class="reveal stagger-2">Validation on <span class="highlight">Rubric Reward Functions</span></h2>
+
+            <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: start; gap: 0.5rem; margin-top: var(--content-gap);">
+                <!-- Phase 1 -->
+                <div class="reveal-scale stagger-3" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 1: Rubric Design</div>
+                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Offline, before any RL</p>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Generate rubrics for all prompts using LLM</li>
+                        <li style="margin-bottom: 0.3em;">Ablate rubric design variants (with/without reference, different weights, different generators, essential-only vs. all criteria)</li>
+                        <li>Produces a fixed dataset of <span style="font-family: var(--font-mono);">(prompt, rubric)</span> pairs</li>
+                    </ul>
+                </div>
+                <div class="reveal stagger-3" style="font-size: 1.2em; color: var(--accent); align-self: center;">&rarr;</div>
+                <!-- Phase 2 -->
+                <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 2: GRPO Training</div>
+                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Uses fixed rubrics from Phase 1</p>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Run GRPO with rubric-based rewards</li>
+                        <li style="margin-bottom: 0.3em;">Each rubric variant &rarr; separate training run</li>
+                        <li>Evaluate on held-out domain benchmarks</li>
+                    </ul>
+                </div>
+                <div class="reveal stagger-4" style="font-size: 1.2em; color: var(--accent); align-self: center;">&rarr;</div>
+                <!-- Phase 3 -->
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 3: Compare &amp; Select</div>
+                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Which rubric design wins?</p>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Compare policies across rubric variants</li>
+                        <li style="margin-bottom: 0.3em;">Human eval on best candidates</li>
+                        <li>Winning config submitted to central post-training mix</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">22</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 22: DESIGN DECISIONS & LESSONS
+         ========================================== -->
+    <section class="slide" id="slide-22">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Reflections</div>
+            <h2 class="reveal stagger-2">Key <span class="highlight">Ablations</span></h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--content-gap);">
+                <div class="reveal-scale stagger-3" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Dimension Conflicts &amp; Weight Ablation</div>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Completeness vs. empathy vs. safety can conflict &mdash; more complete may mean less empathetic</li>
+                        <li style="margin-bottom: 0.3em;">Ablated reward weights on held-out set; <strong>safety as hard gate</strong> (not a weight to tune)</li>
+                        <li>Discovered some weights were counter-intuitive &mdash; informed final reward design</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Small &rarr; Large Model Transfer</div>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Ablation on smaller model validates <strong>data quality &amp; reward signal</strong>, not model-specific behavior</li>
+                        <li style="margin-bottom: 0.3em;">Focus on filtering out bad prompts &amp; noisy rewards &mdash; these transfer across scales</li>
+                        <li>Final human eval on large model confirms gains hold</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Reward Hacking in Practice</div>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;">Observed: verbose hedging to maximize completeness score</li>
+                        <li style="margin-bottom: 0.3em;">Mitigated with length penalty + ensemble of reward functions</li>
+                        <li>Periodic manual audits of high-reward outputs to catch new patterns</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-6" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">What Makes a Query &ldquo;Good&rdquo; for RL?</div>
+                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.3em;"><strong>Learnable:</strong> model doesn&rsquo;t already ace it</li>
+                        <li><strong>Challenging:</strong> requires domain reasoning, not trivia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">23</div>
     </section>
 
     <!-- ==========================================
