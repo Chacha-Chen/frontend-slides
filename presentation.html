@@ -2713,14 +2713,14 @@
     <section class="slide" id="slide-19">
         <div class="slide-content" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="section-tag reveal stagger-1">Industry Experience</div>
-            <h1 class="reveal stagger-2" style="margin-top: var(--element-gap);">RL Post-Training for a <span class="highlight">High-Stakes</span> Domain</h1>
+            <h1 class="reveal stagger-2" style="margin-top: var(--element-gap);">RL Post-Training for <span class="highlight">Health &amp; Wellness</span></h1>
             <p class="reveal stagger-3" style="margin-top: var(--content-gap); font-size: var(--body-size); max-width: 32em;">
-                General-purpose models underperform on specialized, safety-critical queries. I built a <strong>synthetic data generation pipeline</strong> to produce prompt&ndash;reward function pairs for RL post-training.
+                General-purpose models underperform on specialized, safety-critical queries. I built a <strong>synthetic data generation pipeline</strong> for post-training &mdash; from prompt mixture design through reward function engineering to ablation-driven validation.
             </p>
             <div class="highlight-wrap reveal stagger-4" style="margin-top: var(--content-gap); max-width: 36em;">
                 <span class="highlight-icon">&#128161;</span>
                 <div class="highlight-box">
-                <p>The hard part wasn&rsquo;t the RL &mdash; it was <strong>designing the prompt mix</strong> and <strong>building reward functions</strong> for a domain where correctness is nuanced.</p>
+                <p>The hard part wasn&rsquo;t the RL &mdash; it was <strong>designing diverse prompt mixtures</strong>, <strong>deriving evaluation dimensions from expert data</strong>, and <strong>building reward functions</strong> for a domain where correctness is nuanced.</p>
                 </div>
             </div>
         </div>
@@ -2735,35 +2735,35 @@
         <div class="slide-content">
             <div class="section-tag reveal stagger-1">Pipeline</div>
             <h2 class="reveal stagger-2">End-to-End <span class="highlight">Pipeline</span></h2>
-            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">A generalizable framework &mdash; designed for one domain, but the methodology transfers.</p>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">A generalizable framework &mdash; designed for health &amp; wellness, but the methodology transfers to any specialized domain.</p>
 
             <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 0.5rem; margin-top: var(--content-gap);">
                 <!-- Step 1 -->
                 <div class="reveal-scale stagger-4" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
                     <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#127793;</div>
                     <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Prompt Mixture Design</div>
-                    <p style="font-size: var(--small-size); margin-top: 0.3em;"><strong>Expert-curated</strong> + <strong>synthetic</strong> (taxonomy &amp; distribution from real user data) + <strong>vendor-provided</strong> + <strong>safety/stress-testing</strong> cases</p>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Multi-dimensional taxonomy from user data &rarr; conditional hierarchical sampling &rarr; LLM-generated queries &rarr; filtering &amp; reweighting</p>
                 </div>
                 <div class="reveal stagger-4" style="font-size: 1.2em; color: var(--accent);">&rarr;</div>
                 <!-- Step 2 -->
                 <div class="reveal-scale stagger-5" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
                     <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#9878;&#65039;</div>
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Rubric-Based Reward Functions</div>
-                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Reference-based (vetted gold answers) + multi-dimensional rubrics (completeness, groundedness, safety, empathy)</p>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Reward Function Design</div>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;">7 fixed evaluation dimensions derived from 1,000 expert-annotated pairs. Verifiable signals + structured multi-criteria scoring.</p>
                 </div>
                 <div class="reveal stagger-5" style="font-size: 1.2em; color: var(--accent);">&rarr;</div>
                 <!-- Step 3 -->
                 <div class="reveal-scale stagger-6" style="text-align: center; padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
                     <div style="font-size: 1.4em; margin-bottom: 0.3em;">&#128300;</div>
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Ablation &amp; Validation</div>
-                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Test with smaller model before submitting to central post-training data mix</p>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Ablation &amp; Calibration</div>
+                    <p style="font-size: var(--small-size); margin-top: 0.3em;">Proxy model (~7&ndash;8B) ablations on reward &amp; mixture design, calibrated against expert evaluations on held-out set</p>
                 </div>
             </div>
 
             <div class="highlight-wrap reveal stagger-7" style="margin-top: var(--content-gap);">
                 <span class="highlight-icon">&#128161;</span>
                 <div class="highlight-box">
-                <p><strong>Query filtering criteria:</strong> learnable (model doesn&rsquo;t already ace it), challenging (not trivially solvable), verifiable (reward signal is reliable).</p>
+                <p><strong>Query filtering criteria:</strong> learnable (model doesn&rsquo;t already ace it), challenging (not trivially solvable), unambiguous (actionable, not vague).</p>
                 </div>
             </div>
         </div>
@@ -2772,51 +2772,69 @@
     </section>
 
     <!-- ==========================================
-         SLIDE 21: VERIFIER DESIGN (STAR SLIDE)
+         SLIDE 20b: PROMPT MIXTURE DESIGN
          ========================================== -->
-    <section class="slide" id="slide-21">
+    <section class="slide" id="slide-20b">
         <div class="slide-content">
-            <div class="section-tag reveal stagger-1">Core Contribution</div>
-            <h2 class="reveal stagger-2">Reward Function <span class="highlight">Design</span></h2>
-            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">No verifiable rewards in this domain &mdash; answers aren&rsquo;t binary like math or code. We design <strong>rubric-based</strong> reward functions using previous-gen flagship instruct model as LLM-as-judge.</p>
-            <p class="reveal stagger-3" style="font-size: var(--small-size); color: var(--text-muted);">Why previous-gen? It&rsquo;s strong enough to follow rubrics reliably, and it&rsquo;s a <strong>different model</strong> from the one being trained &mdash; avoiding self-judging circularity.</p>
-            <p class="reveal stagger-3" style="font-size: var(--small-size); color: var(--text-muted);"><strong>Bootstrapping rubrics:</strong> We feed gold prompt&ndash;reference answer pairs to an LLM and ask it to <strong>reverse-engineer what criteria matter</strong> &mdash; which dimensions distinguish a good answer from a bad one. This seeds the initial rubric, then we refine with expert feedback.</p>
+            <div class="section-tag reveal stagger-1">Data</div>
+            <h2 class="reveal stagger-2">Prompt Mixture <span class="highlight">Design</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">Ensure diversity and coverage via a multi-dimensional annotation taxonomy derived from user query logs.</p>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--content-gap);">
-                <!-- Base layer: always on -->
-                <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Base Layer: Multi-Dimensional Rubric <span style="color: #2d8a4e;">(all prompts)</span></div>
-                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Every response scored on all dimensions:</p>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;"><strong>Completeness</strong> &mdash; covers all relevant aspects</li>
-                        <li style="margin-bottom: 0.3em;"><strong>Groundedness</strong> &mdash; claims supported by given context</li>
-                        <li style="margin-bottom: 0.3em;"><strong>Safety</strong> &mdash; hard gate, not a soft tradeoff</li>
-                        <li><strong>Empathy</strong> &mdash; tone appropriate for the domain</li>
-                    </ul>
-                </div>
-                <!-- Additional layer: conditional -->
-                <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Additional Layer: Reference Match <span style="color: var(--text-muted);">(when available)</span></div>
-                    <p style="font-size: var(--small-size); margin-bottom: 0.5em;">Prompts with <strong>vetted reference answers</strong> get an additional signal:</p>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">LLM judge scores response against reference (expert or strong-model, manually verified)</li>
-                        <li style="margin-bottom: 0.3em;">Rubric defines matching, partially matching, or missing</li>
-                        <li>Not all prompts have references &mdash; activates only when <span style="font-family: var(--font-mono);">reference_answer</span> exists</li>
-                    </ul>
-                </div>
+            <!-- Taxonomy as compact table -->
+            <div class="reveal-scale stagger-4" style="margin-top: var(--content-gap);">
+                <table style="width: 100%; font-size: clamp(0.78rem, 1.2vw, 1rem); border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--rule-color); text-align: left;">
+                            <th style="padding: 0.3em 0.6em; font-family: var(--font-mono); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Dimension</th>
+                            <th style="padding: 0.3em 0.6em;">Values</th>
+                            <th style="padding: 0.3em 0.6em;">Sampling</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--rule-color); background: rgba(230,57,70,0.04);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Topic</td>
+                            <td style="padding: 0.3em 0.6em;">nutrition, fitness, mental wellness, sleep, chronic conditions, preventive care</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">~ Categorical</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Query Type</td>
+                            <td style="padding: 0.3em 0.6em;">factual lookup, personalized plan, safety-critical</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">| Topic</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color); background: rgba(230,57,70,0.04);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Difficulty</td>
+                            <td style="padding: 0.3em 0.6em;">simple &middot; moderate (user context) &middot; hard (multiple considerations)</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">| Topic, QType</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Risk Level</td>
+                            <td style="padding: 0.3em 0.6em;">low (wellness tips) &middot; medium (supplements) &middot; high (medication interactions)</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">| Topic, QType, Diff</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+            <p class="reveal stagger-4" style="font-size: clamp(0.78rem, 1.2vw, 1rem); color: var(--text-muted); margin-top: 0.3em;"><strong>Conditional hierarchical sampling</strong> &mdash; each layer conditions on previous; tables estimated from user logs. More data-efficient than flat joint over all cells.</p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--element-gap);">
-                <div class="reveal-scale stagger-6" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); margin-bottom: 0.3em;">Composite Reward</div>
-                    <p style="font-size: var(--small-size); margin: 0;">reward = rubric_score + (if ref exists) &lambda; &middot; reference_match. Weights ablated on held-out set. Safety gate on top of everything.</p>
+                <!-- QA & Filtering -->
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Query Generation &amp; Filtering</div>
+                    <ul style="font-size: clamp(0.78rem, 1.2vw, 1rem); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.2em;">Sample seed &rarr; <strong>prompt strong LLM</strong> to generate matching query</li>
+                        <li style="margin-bottom: 0.2em;">Verify <strong>taxonomy alignment</strong>: separate LLM re-annotates, measure agreement with seed</li>
+                        <li style="margin-bottom: 0.2em;">Filter ambiguous (&ldquo;best diet?&rdquo;) and trivially easy (model aces without CoT)</li>
+                        <li>Coverage check: % of cells with &ge; N queries; fill gaps</li>
+                    </ul>
                 </div>
-                <div class="reveal-scale stagger-7" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); margin-bottom: 0.3em;">Calibrating the Judge</div>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Human experts <strong>pointwise-score</strong> (1&ndash;5 per dimension) + <strong>pairwise-rank</strong> responses on held-out set</li>
-                        <li style="margin-bottom: 0.3em;">LLM judge scores the same set &mdash; measure <strong>pairwise agreement</strong> (ranking) &amp; <strong>Cohen&rsquo;s kappa</strong> (pointwise)</li>
-                        <li>Iterate on rubric prompt per dimension until agreement crosses threshold; periodic re-calibration to catch drift</li>
+                <!-- Reweighting -->
+                <div class="reveal-scale stagger-6" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Mixture Reweighting</div>
+                    <ul style="font-size: clamp(0.78rem, 1.2vw, 1rem); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.2em;"><strong>Upweight safety-critical</strong> &mdash; rare in user data but highest real-world cost</li>
+                        <li style="margin-bottom: 0.2em;"><strong>Upweight personalized planning</strong> &mdash; harder, more representative</li>
+                        <li style="margin-bottom: 0.2em;"><strong>Maintain topic balance</strong> &mdash; prevent single-topic specialization</li>
+                        <li><strong>Moderate hard query upweight</strong> &mdash; too much &rarr; training instability</li>
                     </ul>
                 </div>
             </div>
@@ -2826,45 +2844,73 @@
     </section>
 
     <!-- ==========================================
-         SLIDE 21b: THREE-PHASE PROCESS
+         SLIDE 21: REWARD FUNCTION DESIGN
          ========================================== -->
-    <section class="slide" id="slide-21b">
+    <section class="slide" id="slide-21">
         <div class="slide-content">
-            <div class="section-tag reveal stagger-1">Process</div>
-            <h2 class="reveal stagger-2">Validation on <span class="highlight">Rubric Reward Functions</span></h2>
+            <div class="section-tag reveal stagger-1">Core Contribution</div>
+            <h2 class="reveal stagger-2">Reward Function <span class="highlight">Design</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">This is a <strong>largely non-verifiable domain</strong> &mdash; answers aren&rsquo;t binary like math or code. All 7 dimensions scored by a <strong>previous-gen flagship LLM-as-judge</strong>, with Safety as a hard gate.</p>
 
-            <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: start; gap: 0.5rem; margin-top: var(--content-gap);">
-                <!-- Phase 1 -->
-                <div class="reveal-scale stagger-3" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 1: Rubric Design</div>
-                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Offline, before any RL</p>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Generate rubrics for all prompts using LLM</li>
-                        <li style="margin-bottom: 0.3em;">Ablate rubric design variants (with/without reference, different weights, different generators, essential-only vs. all criteria)</li>
-                        <li>Produces a fixed dataset of <span style="font-family: var(--font-mono);">(prompt, rubric)</span> pairs</li>
-                    </ul>
+            <!-- 7 dimensions as a compact table -->
+            <div class="reveal-scale stagger-4" style="margin-top: var(--content-gap);">
+                <table style="width: 100%; font-size: clamp(0.78rem, 1.2vw, 1rem); border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--rule-color); text-align: left;">
+                            <th style="padding: 0.3em 0.6em; font-family: var(--font-mono); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em;">Dimension</th>
+                            <th style="padding: 0.3em 0.6em;">Scoring</th>
+                            <th style="padding: 0.3em 0.6em;">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--rule-color); background: rgba(230,57,70,0.04);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Safety</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono); color: var(--accent);">binary &middot; hard-gate</td>
+                            <td style="padding: 0.3em 0.6em;">Fail &rarr; reward floored to 0. Disclaimers, no dangerous dosages, physician referral</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Factual Accuracy</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">binary</td>
+                            <td style="padding: 0.3em 0.6em;">Claims correct per established guidelines; grounded in expert reference when available</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color); background: rgba(230,57,70,0.04);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Completeness</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">1&ndash;3</td>
+                            <td style="padding: 0.3em 0.6em;">Missing key info / partial / thorough coverage</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Personalization</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">1&ndash;3</td>
+                            <td style="padding: 0.3em 0.6em;">Generic / somewhat tailored / well-personalized to user context</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color); background: rgba(230,57,70,0.04);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Actionability</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">binary</td>
+                            <td style="padding: 0.3em 0.6em;">Provides concrete, followable steps</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--rule-color);">
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Appropriate Caveats</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">binary</td>
+                            <td style="padding: 0.3em 0.6em;">Acknowledges limitations, individual variation, when to seek professional help</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.3em 0.6em; font-weight: 600;">Empathy &amp; Tone</td>
+                            <td style="padding: 0.3em 0.6em; font-family: var(--font-mono);">1&ndash;3</td>
+                            <td style="padding: 0.3em 0.6em;">Cold / neutral / warm and supportive</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(0.6rem, 1vw, 1rem); margin-top: var(--element-gap);">
+                <div class="reveal stagger-5" style="padding: 0.4rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Discovery:</strong> 1,000 expert pairs &rarr; cluster recurring quality criteria &rarr; 7 stable dimensions</p>
                 </div>
-                <div class="reveal stagger-3" style="font-size: 1.2em; color: var(--accent); align-self: center;">&rarr;</div>
-                <!-- Phase 2 -->
-                <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 2: GRPO Training</div>
-                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Uses fixed rubrics from Phase 1</p>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Run GRPO with rubric-based rewards</li>
-                        <li style="margin-bottom: 0.3em;">Each rubric variant &rarr; separate training run</li>
-                        <li>Evaluate on held-out domain benchmarks</li>
-                    </ul>
+                <div class="reveal stagger-6" style="padding: 0.4rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Aggregation:</strong> <span style="font-family: var(--font-mono);">&sum;(w_d &middot; s_d) / &sum;(w_d)</span> &mdash; renormalized over available dimensions</p>
                 </div>
-                <div class="reveal stagger-4" style="font-size: 1.2em; color: var(--accent); align-self: center;">&rarr;</div>
-                <!-- Phase 3 -->
-                <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5em;">Phase 3: Compare &amp; Select</div>
-                    <p style="font-size: var(--small-size); color: var(--text-muted); margin-bottom: 0.4em;">Which rubric design wins?</p>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Compare policies across rubric variants</li>
-                        <li style="margin-bottom: 0.3em;">Human eval on best candidates</li>
-                        <li>Winning config submitted to central post-training mix</li>
-                    </ul>
+                <div class="reveal stagger-7" style="padding: 0.4rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Single LLM judge</strong> scores all dimensions &mdash; previous-gen flagship to avoid self-judging circularity</p>
                 </div>
             </div>
         </div>
@@ -2873,49 +2919,136 @@
     </section>
 
     <!-- ==========================================
-         SLIDE 22: DESIGN DECISIONS & LESSONS
+         SLIDE 21c: FIXED vs DYNAMIC RUBRICS
          ========================================== -->
-    <section class="slide" id="slide-22">
+    <section class="slide" id="slide-21c">
         <div class="slide-content">
-            <div class="section-tag reveal stagger-1">Reflections</div>
-            <h2 class="reveal stagger-2">Key <span class="highlight">Ablations</span></h2>
+            <div class="section-tag reveal stagger-1">Design Decision</div>
+            <h2 class="reveal stagger-2">Why <span class="highlight">Fixed</span> Dimensions Over Dynamic Rubrics?</h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">Recent work (Scale AI&rsquo;s RaR, CMU&rsquo;s RLCF) generates per-query rubrics at training time. We chose fixed expert-derived dimensions for open-ended health queries.</p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--content-gap);">
-                <div class="reveal-scale stagger-3" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Dimension Conflicts &amp; Weight Ablation</div>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Completeness vs. empathy vs. safety can conflict &mdash; more complete may mean less empathetic</li>
-                        <li style="margin-bottom: 0.3em;">Ablated reward weights on held-out set; <strong>safety as hard gate</strong> (not a weight to tune)</li>
-                        <li>Discovered some weights were counter-intuitive &mdash; informed final reward design</li>
-                    </ul>
-                </div>
                 <div class="reveal-scale stagger-4" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Small &rarr; Large Model Transfer</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Dynamic Rubrics (RaR / RLCF)</div>
                     <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Ablation on smaller model validates <strong>data quality &amp; reward signal</strong>, not model-specific behavior</li>
-                        <li style="margin-bottom: 0.3em;">Focus on filtering out bad prompts &amp; noisy rewards &mdash; these transfer across scales</li>
-                        <li>Final human eval on large model confirms gains hold</li>
+                        <li style="margin-bottom: 0.3em;">Works well for <strong>constrained queries</strong> with reference answers</li>
+                        <li style="margin-bottom: 0.3em;">Expensive &mdash; LLM call per query to generate rubrics</li>
+                        <li style="margin-bottom: 0.3em;">Rubric quality varies; hard to debug</li>
+                        <li>Domain knowledge re-discovered per query (unreliable)</li>
                     </ul>
                 </div>
                 <div class="reveal-scale stagger-5" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Reward Hacking in Practice</div>
+                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">Fixed Dimensions (Our Approach)</div>
                     <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;">Observed: verbose hedging to maximize completeness score</li>
-                        <li style="margin-bottom: 0.3em;">Mitigated with length penalty + ensemble of reward functions</li>
-                        <li>Periodic manual audits of high-reward outputs to catch new patterns</li>
+                        <li style="margin-bottom: 0.3em;">Works well for <strong>open-ended, fuzzy queries</strong> common in health</li>
+                        <li style="margin-bottom: 0.3em;">Cheap &mdash; one-time discovery, reuse everywhere</li>
+                        <li style="margin-bottom: 0.3em;">Uniform evaluation framework; easy to iterate</li>
+                        <li>Domain knowledge encoded once from expert analysis (reliable)</li>
                     </ul>
                 </div>
-                <div class="reveal-scale stagger-6" style="padding: clamp(0.6rem, 1.2vw, 1rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
-                    <div style="font-family: var(--font-mono); font-size: var(--small-size); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5em;">What Makes a Query &ldquo;Good&rdquo; for RL?</div>
-                    <ul style="font-size: var(--small-size); padding-left: 1.2em; margin: 0;">
-                        <li style="margin-bottom: 0.3em;"><strong>Learnable:</strong> model doesn&rsquo;t already ace it</li>
-                        <li><strong>Challenging:</strong> requires domain reasoning, not trivia</li>
-                    </ul>
+            </div>
+
+            <div class="highlight-wrap reveal stagger-6" style="margin-top: var(--content-gap);">
+                <span class="highlight-icon">&#128161;</span>
+                <div class="highlight-box" style="background: rgba(230, 57, 70, 0.06); border-left-color: var(--accent);">
+                <p><strong>Core insight:</strong> For fuzzy queries like &ldquo;I&rsquo;ve been eating carrots a lot, any tips?&rdquo; &mdash; a rubric generator needs to know carotenemia is the key risk, essentially <strong>solving the problem to write the rubric</strong>. The &ldquo;verification is easier than generation&rdquo; principle breaks down. Fixed dimensions sidestep this entirely.</p>
                 </div>
             </div>
         </div>
         <div class="bottom-rule"></div>
         <div class="slide-number">23</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 21b: CALIBRATION PIPELINE
+         ========================================== -->
+    <section class="slide" id="slide-21b">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Validation</div>
+            <h2 class="reveal stagger-2">Calibration <span class="highlight">Pipeline</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">Dimensions derived from expert data &mdash; so we <strong>cannot</strong> validate on the same data. Split: <strong>700 pairs</strong> for dimension discovery, <strong>300 held out</strong> for calibration.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); align-items: start; gap: 0.4rem; margin-top: var(--content-gap);">
+                <div class="reveal-scale stagger-4" style="padding: clamp(0.4rem, 0.8vw, 0.7rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em;">Step 1</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;">Split 1,000 gold pairs &rarr; 700 discovery / 300 held-out</p>
+                </div>
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.4rem, 0.8vw, 0.7rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em;">Step 2</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;">Derive 7 dimensions + initial weights from 700 pairs</p>
+                </div>
+                <div class="reveal-scale stagger-6" style="padding: clamp(0.4rem, 0.8vw, 0.7rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em;">Step 3</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Offline validation</strong> on 300 held-out &mdash; score gold vs. degraded versions, pick best weight config</p>
+                </div>
+                <div class="reveal-scale stagger-7" style="padding: clamp(0.4rem, 0.8vw, 0.7rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em;">Step 4</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Pairwise preference</strong> on 50&ndash;100 new model outputs &mdash; rubric predicts winner vs. expert pick</p>
+                </div>
+                <div class="reveal-scale stagger-8" style="padding: clamp(0.4rem, 0.8vw, 0.7rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px; text-align: center;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em;">Step 5</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Disagreement analysis</strong> on 20&ndash;30 worst cases &mdash; experts explain <em>why</em>, reveals missing dimensions</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: clamp(0.6rem, 1vw, 1rem); margin-top: var(--content-gap);">
+                <div class="reveal stagger-8" style="padding: 0.5rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Step 3 is free</strong> &mdash; uses existing data, eliminates bad configs early</p>
+                </div>
+                <div class="reveal stagger-8" style="padding: 0.5rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Step 4 is efficient</strong> &mdash; pairwise comparison has higher inter-annotator agreement than absolute scoring</p>
+                </div>
+                <div class="reveal stagger-8" style="padding: 0.5rem 0.7rem; background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 6px;">
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Step 5 extracts max learning</strong> &mdash; tells you <em>what&rsquo;s wrong</em>, not just <em>how wrong</em></p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">24</div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 22: ABLATIONS & KEY FINDINGS
+         ========================================== -->
+    <section class="slide" id="slide-22">
+        <div class="slide-content">
+            <div class="section-tag reveal stagger-1">Reflections</div>
+            <h2 class="reveal stagger-2">Ablations &amp; Key <span class="highlight">Findings</span></h2>
+            <p class="reveal stagger-3" style="margin-top: var(--element-gap); font-size: var(--body-size);">All ablations on a <strong>~7&ndash;8B proxy model</strong> to iterate quickly before committing to full-scale training.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 1.5vw, 1.5rem); margin-top: var(--content-gap);">
+                <div class="reveal-scale stagger-4" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Reward Design Ablations</div>
+                    <ul style="font-size: clamp(0.78rem, 1.2vw, 1rem); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.2em;"><strong>Dimension subsets:</strong> Completeness, Personalization, Empathy added meaningful signal beyond Safety + Accuracy alone</li>
+                        <li style="margin-bottom: 0.2em;"><strong>Scoring granularity:</strong> Mixed binary + 1&ndash;3 scale outperformed binary-only &mdash; captures partial credit on subjective dimensions</li>
+                        <li style="margin-bottom: 0.2em;"><strong>Fixed vs. dynamic rubrics:</strong> Fixed performed comparably on structured queries, <strong>significantly better</strong> on open-ended/fuzzy queries</li>
+                        <li><strong>Safety weight:</strong> Too much &rarr; overly cautious (&ldquo;consult a physician&rdquo; for everything); too little &rarr; unsafe outputs</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-5" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Prompt Mixture Ablations</div>
+                    <ul style="font-size: clamp(0.78rem, 1.2vw, 1rem); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.2em;"><strong>Risk-level distribution:</strong> Overweighting safety-critical queries improved safety benchmarks without degrading general helpfulness</li>
+                        <li><strong>Difficulty distribution:</strong> Moderate upweighting of hard queries helped; excessive upweighting caused training instability</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-6" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: var(--bg-slide-alt); border: 1px solid var(--rule-color); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Reward Hacking Pitfalls</div>
+                    <ul style="font-size: clamp(0.78rem, 1.2vw, 1rem); padding-left: 1.2em; margin: 0;">
+                        <li style="margin-bottom: 0.2em;"><strong>Verbosity hacking:</strong> Model stuffs boilerplate to hit all rubric items &rarr; mitigated with length penalty + anti-verbosity requirements</li>
+                        <li style="margin-bottom: 0.2em;"><strong>Judge inconsistency:</strong> Rubric structure + hybrid program verifiers + stronger judge model</li>
+                        <li><strong>Reward exploitation over time:</strong> Monitor reward-quality divergence, limit training steps, refresh reference policy</li>
+                    </ul>
+                </div>
+                <div class="reveal-scale stagger-7" style="padding: clamp(0.5rem, 1vw, 0.8rem); background: rgba(230,57,70,0.05); border: 1px solid rgba(230,57,70,0.2); border-radius: 8px;">
+                    <div style="font-family: var(--font-mono); font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4em;">Biggest Win</div>
+                    <p style="font-size: clamp(0.78rem, 1.2vw, 1rem); margin: 0;"><strong>Fixed expert-derived dimensions</strong> provided more consistent and reliable reward signal than dynamic per-query rubric generation &mdash; especially for open-ended health queries where dynamic generators struggled. Structured multi-criteria scoring (binary + 1&ndash;3) outperformed both generic Likert-style baselines and pure binary approaches.</p>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-rule"></div>
+        <div class="slide-number">25</div>
     </section>
 
     <!-- ==========================================
