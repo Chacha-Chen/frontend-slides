@@ -51,7 +51,7 @@ We verify two types of consistency for each generated query:
 
 ### Query Filtering
 
-After generation, similar to Qwen3's approach, we use a strong instruction model to further filter:
+After generation, similar to Qwen3's approach, we use a strong instruction model to further filter. The key filtering criteria are: **learnable** (the model doesn't already ace it), **challenging** (not trivially solvable without chain-of-thought reasoning), and **unambiguous** (actionable, not vague):
 
 1. **Filter out ambiguous queries** — e.g., "What's the best diet?" is too vague; "What foods are high in iron for someone with anemia?" is actionable
 2. **Filter out trivially easy queries** — if the model can answer correctly without any chain-of-thought reasoning, it's too easy to provide useful training signal
@@ -82,7 +82,7 @@ The core challenge: health and wellness responses have **both verifiable and non
 
 ### Non-Verifiable Signals (Rubric-Based Rewards)
 
-This is a largely non-verifiable domain. Rather than generating instance-specific rubrics per query (as in Scale AI's RaR or CMU's RLCF), we derive a **fixed set of domain-specific evaluation dimensions** from expert data — then apply these dimensions uniformly across all queries.
+This is a **largely non-verifiable domain** — answers aren't binary like math or code. Rather than generating instance-specific rubrics per query (as in Scale AI's RaR or CMU's RLCF), we derive a **fixed set of domain-specific evaluation dimensions** from expert data — then apply these dimensions uniformly across all queries. All 7 dimensions are scored by a **previous-generation flagship LLM-as-judge** to avoid self-judging circularity (the model being trained should not judge its own outputs).
 
 #### Dimension Discovery Process
 
@@ -164,7 +164,7 @@ Per-dimension scores are combined via weighted sum:
 Reward_rubric = sum(w_d * s_d) / sum(w_d)
 ```
 
-where `w_d` is the importance weight for dimension d, and `s_d` is the normalized score (binary scores as 0/1, 1–3 scores mapped to 0/0.5/1).
+where `w_d` is the importance weight for dimension d, and `s_d` is the normalized score (binary scores as 0/1, 1–3 scores mapped to 0/0.5/1). The sum is **renormalized over available dimensions** — if a dimension is not applicable for a given query, it is excluded from both numerator and denominator rather than scored as zero.
 
 ### Combined Reward
 
@@ -216,7 +216,8 @@ Safety is **hard-gated** — if the response fails the Safety dimension, the rew
 **Evidence from RaR paper (Section 5)**: The `RaR-Predefined` variant, which applies a fixed list of generic rubrics (e.g., "response is concise," "response contains correct information") to every prompt, significantly underperforms instance-specific rubrics. They state: "generic criteria miss prompt-specific requirements and common failure modes, producing misaligned reward signals."
 
 **Mitigation**:
-- Always generate **instance-specific rubrics** per query — this is the core insight of both RaR and RLCF
+- For domains with **heterogeneous tasks** where quality criteria genuinely differ per instance, generate **instance-specific rubrics** per query — this is the core insight of both RaR and RLCF
+- For domains with **stable quality dimensions** (health, legal, education), use **fixed expert-derived dimensions** — they avoid the generic-rubric problem while still being domain-specific, because the dimensions themselves were derived from expert analysis rather than generic principles
 - Ground rubric generation in reference answers where available (Tier 1)
 
 #### Pitfall 5: Reward Model Exploitation Over Training
@@ -265,7 +266,7 @@ We ran ablations on a **small proxy model** (~7–8B scale) to iterate quickly b
 
 We derived our dimensions from expert data, so we cannot validate on the same data — that would be circular. We split the 1,000 expert-annotated pairs:
 
-- **700 pairs for dimension discovery** — used to derive the 6 evaluation dimensions and initial weights
+- **700 pairs for dimension discovery** — used to derive the 7 evaluation dimensions and initial weights
 - **300 pairs held out for calibration** — never seen during dimension design, used purely for validation
 
 #### Calibration Pipeline
@@ -318,6 +319,49 @@ The biggest win came from the **fixed expert-derived dimensions** approach. Comp
 - **DeepSeek-R1** — rule-based rewards for verifiable tasks, GRPO algorithm, cold-start data construction, rejection sampling
 - **Scale AI — Rubrics as Rewards (RaR)** — rubric-based reward functions for non-verifiable domains, explicit vs. implicit aggregation, rubric generation from reference answers, HealthBench evaluation
 - **CMU/Apple — RLCF (Checklists)** — candidate-based checklist generation, program verifiers + LLM judges, DPO with checklist feedback
+
+---
+
+## 4. Hardware & Infrastructure
+
+### Training Compute
+
+- **Proxy model ablations (~7–8B)**: Ran on a single node of 8× H200 GPUs. Each ablation run took ~6–10 hours depending on the data mixture size (~50K–100K prompts). We ran ~15 ablation configs total over ~2 weeks of iteration.
+- **Full-scale training (~70B)**: 8× H200 GPUs on a single node, split **4 GPUs for rollout generation** and **4 GPUs for training**. Used **LoRA** (rank=64, alpha=128) to keep memory feasible — full fine-tuning at 70B wouldn't fit with the rollout/train split. Training ran for ~3 days per run. We did 2 full-scale runs — one with the best ablation config, one with a runner-up config to confirm proxy model findings transferred.
+- **RL algorithm**: GRPO (Group Relative Policy Optimization) — avoids training a separate critic model, which further reduces memory pressure alongside LoRA. The 4+4 GPU split allows continuous rollout generation while training updates proceed, maximizing GPU utilization.
+
+### Inference Compute (Reward & Data Generation)
+
+- **Reward model inference**: The previous-gen flagship LLM judge ran on a separate set of H200 GPUs for online reward scoring during RL training. Batch inference with vLLM, throughput ~500 rollouts/min with 7 dimensions scored per rollout.
+- **Query generation**: Strong instruction model (GPT-4-class) via API for initial query generation from taxonomy seeds. ~200K API calls for the full prompt set, ~$2K total API cost.
+- **Query filtering & re-annotation**: Same API-based model for filtering ambiguous/trivially-easy queries and re-annotating taxonomy labels. Filtering removed ~30% of generated queries.
+
+### Data Scale
+
+- **Raw generated queries**: ~200K from taxonomy-guided generation
+- **After filtering**: ~140K queries retained
+- **After mixture reweighting**: ~80K queries in the final training set (with upsampling of safety-critical and personalized planning categories)
+- **Expert-annotated gold pairs**: 1,000 total (700 discovery / 300 calibration)
+- **Pairwise expert evaluations**: 100 pairs for final calibration (Step 4)
+
+### Tooling & Frameworks
+
+- **Training**: JAX + AXLearn for GRPO implementation (alternatively: PyTorch + TRL if on NVIDIA GPUs)
+- **Serving**: vLLM for batched inference of the judge model during RL training
+- **Experiment tracking**: Weights & Biases for tracking reward curves, eval metrics, and reward-quality divergence monitoring
+- **Data pipeline**: Custom Python scripts for taxonomy sampling, query generation orchestration, and filtering — orchestrated via simple Airflow DAGs
+
+### Wall-Clock Timeline
+
+| Phase | Duration | Notes |
+|---|---|---|
+| Taxonomy design & expert annotation | ~3 weeks | Concurrent with expert recruitment |
+| Dimension discovery from 700 pairs | ~1 week | LLM-assisted clustering + manual refinement |
+| Query generation & filtering | ~3 days | Mostly API call time |
+| Proxy model ablations | ~2 weeks | ~15 configs, parallelized across 2 nodes |
+| Full-scale training (2 runs) | ~1 week | Including eval |
+| Calibration & expert pairwise eval | ~1 week | Expert scheduling was the bottleneck |
+| **Total** | **~7 weeks** | |
 
 ---
 
